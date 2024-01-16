@@ -1,6 +1,36 @@
-.flight-search-pannel label.Mui-focused {
+/* .flight-search-pannel label.Mui-focused {
 	color: #ec5b24 !important;
 }
 label.Mui-focused {
 	color: #ec5b24 !important;
+} */
+.flight-search-pannel
+	.MuiInput-root:hover:not(.Mui-disabled, .Mui-error):before {
+	/* border-color: #ec5b24 !important; */
+	border-bottom: 1px solid rgba(0, 0, 0, 0.42);
+}
+.signup-login-form .MuiInput-root:hover:not(.Mui-disabled, .Mui-error):before {
+	/* border-color: #ec5b24 !important; */
+	border-bottom: 1px solid rgba(0, 0, 0, 0.42);
+}
+.signup-login-form .MuiInput-root::after {
+	border-bottom-width: 3px;
+	border-bottom-color: #ec5b24;
+}
+
+.search-pannel .MuiInputLabel-root {
+	color: rgba(255, 255, 255, 0.6);
+}
+
+.search-pannel .MuiInput-root::before {
+	border-bottom: 2px solid #fff;
+}
+.search-pannel .MuiInput-root:hover:not(.Mui-disabled, .Mui-error):before {
+	border-bottom: 2px solid rgba(255, 255, 255, 0.87);
+}
+.search-pannel .MuiInput-input {
+	color: #fff;
+}
+.filter-options .MuiSlider-markLabel {
+	font-size: 12px;
 }

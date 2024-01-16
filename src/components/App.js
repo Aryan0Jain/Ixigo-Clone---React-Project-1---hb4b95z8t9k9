@@ -6,6 +6,7 @@ import theme from "./Contexts/Theme";
 import Flights from "./Flights";
 import Trains from "./Trains";
 import AuthProvider from "./Contexts/AuthProvider";
+import Search from "./Search";
 
 function App() {
 	return (
@@ -17,6 +18,7 @@ function App() {
 						<Route path="/" element={<Flights />} />
 						<Route path="/flights" element={<Flights />} />
 						<Route path="/trains" element={<Trains />} />
+						<Route path="/search/:type" element={<Search />} />
 					</Routes>
 				</BrowserRouter>
 			</AuthProvider>

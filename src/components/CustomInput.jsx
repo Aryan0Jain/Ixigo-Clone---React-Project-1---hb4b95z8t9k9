@@ -7,7 +7,14 @@ import {
 } from "@mui/material";
 import React from "react";
 
-export default function CustomInput({ type = "text", value, setValue, label }) {
+export default function CustomInput({
+	type = "text",
+	value,
+	setValue,
+	label,
+	crossDefaulFill = "rgba(0, 0, 0, 0.5)",
+	crossHoverFill = "black",
+}) {
 	// const [showClear, setShowClear] = React.useState(false);
 
 	const handleClickClear = () => setValue("");
@@ -17,10 +24,9 @@ export default function CustomInput({ type = "text", value, setValue, label }) {
 	};
 	return (
 		<FormControl
-			color="error"
 			sx={{
 				m: 1,
-				width: "25ch",
+				width: "200px",
 				// ":hover": { border: "none", scale: 5 },
 
 				// "&:hover:not($disabled):after": {
@@ -29,11 +35,18 @@ export default function CustomInput({ type = "text", value, setValue, label }) {
 			}}
 			variant="standard"
 		>
-			<InputLabel sx={{ fontSize: "16px" }} shrink>
+			<InputLabel
+				color="secondary"
+				sx={{
+					fontSize: "16px",
+				}}
+				shrink
+			>
 				{label}
 			</InputLabel>
 			<Input
 				sx={{
+					color: "secondary",
 					// ":focus": { borderColor: "secondary.hover" },
 					"::after": {
 						borderBottomWidth: "3px",
@@ -48,7 +61,7 @@ export default function CustomInput({ type = "text", value, setValue, label }) {
 					<InputAdornment position="end">
 						{value != "" && (
 							<IconButton
-								sx={{ ":hover path": { fill: "black" } }}
+								sx={{ ":hover path": { fill: crossHoverFill } }}
 								disableRipple
 								// aria-label="toggle password visibility"
 								onClick={handleClickClear}
@@ -61,7 +74,7 @@ export default function CustomInput({ type = "text", value, setValue, label }) {
 									viewBox="0 0 384 512"
 								>
 									<path
-										fill="rgba(0, 0, 0, 0.5)"
+										fill={crossDefaulFill}
 										d="M342.6 150.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192 210.7 86.6 105.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L146.7 256 41.4 361.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0L192 301.3 297.4 406.6c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.3 256 342.6 150.6z"
 									/>
 								</svg>

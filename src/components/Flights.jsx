@@ -112,13 +112,13 @@ export default function Flights() {
 				className="flight-search-pannel"
 				// justifyContent={"space-between"}
 				alignItems={"center"}
-				gap={2}
+				gap={4}
 				sx={{
 					width: "fit-content",
 					m: "auto",
 					backgroundColor: "#fff",
-					py: 3,
-					px: 2,
+					py: 4,
+					px: 4,
 					borderRadius: "5px",
 				}}
 			>
@@ -133,7 +133,7 @@ export default function Flights() {
 						mx: 1,
 						p: 0.2,
 						height: "fit-content",
-						border: "1px solid",
+						border: "2px solid",
 					}}
 				>
 					<img src={swapSVG} />

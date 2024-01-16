@@ -1,4 +1,4 @@
-import * as React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import Button from "@mui/material/Button";
 import ClickAwayListener from "@mui/material/ClickAwayListener";
 import Grow from "@mui/material/Grow";
@@ -7,16 +7,22 @@ import Popper from "@mui/material/Popper";
 import MenuItem from "@mui/material/MenuItem";
 import MenuList from "@mui/material/MenuList";
 import { Avatar, IconButton, SvgIcon } from "@mui/material";
+import { useAuthContext } from "./Contexts/AuthProvider";
 
-const username = "Aryan";
+// const username = "Aryan";
 export default function DashboardMenu() {
-	const [open, setOpen] = React.useState(false);
-	const anchorRef = React.useRef(null);
+	const { logOut } = useAuthContext();
+	const [username, setUsername] = useState("");
+	useEffect(() => {
+		const userDetails = JSON.parse(localStorage.getItem("userDetails"));
+		setUsername(userDetails.name);
+	}, []);
+	const [open, setOpen] = useState(false);
+	const anchorRef = useRef(null);
 
 	const handleToggle = () => {
 		setOpen((prevOpen) => !prevOpen);
 	};
-
 	const handleClose = (event) => {
 		if (anchorRef.current && anchorRef.current.contains(event.target)) {
 			return;
@@ -24,19 +30,8 @@ export default function DashboardMenu() {
 
 		setOpen(false);
 	};
-
-	function handleListKeyDown(event) {
-		if (event.key === "Tab") {
-			event.preventDefault();
-			setOpen(false);
-		} else if (event.key === "Escape") {
-			setOpen(false);
-		}
-	}
-
-	// return focus to the button when we transitioned from !open -> open
-	const prevOpen = React.useRef(open);
-	React.useEffect(() => {
+	const prevOpen = useRef(open);
+	useEffect(() => {
 		if (prevOpen.current === true && open === false) {
 			anchorRef.current.focus();
 		}
@@ -61,10 +56,6 @@ export default function DashboardMenu() {
 					},
 				}}
 				ref={anchorRef}
-				id="composition-button"
-				aria-controls={open ? "composition-menu" : undefined}
-				aria-expanded={open ? "true" : undefined}
-				aria-haspopup="true"
 				onClick={handleToggle}
 			>
 				<Avatar
@@ -74,9 +65,9 @@ export default function DashboardMenu() {
 						mr: 2,
 					}}
 				>
-					{username.at(0)}
+					{username?.at(0)}
 				</Avatar>
-				Hey {username}
+				Hey {username?.split(" ")[0]}
 				{open ? (
 					<SvgIcon sx={{ ml: 1, height: "14px", width: "14px" }}>
 						<svg
@@ -110,43 +101,17 @@ export default function DashboardMenu() {
 			<Popper
 				open={open}
 				anchorEl={anchorRef.current}
-				role={undefined}
-				placement="bottom-start"
-				transition
+				placement="bottom"
 				disablePortal
 			>
-				{({ TransitionProps, placement }) => (
-					<Grow
-						{...TransitionProps}
-						style={{
-							transformOrigin:
-								placement === "bottom-start"
-									? "left top"
-									: "left bottom",
-						}}
-					>
-						<Paper>
-							<ClickAwayListener onClickAway={handleClose}>
-								<MenuList
-									autoFocusItem={open}
-									id="composition-menu"
-									aria-labelledby="composition-button"
-									onKeyDown={handleListKeyDown}
-								>
-									<MenuItem onClick={handleClose}>
-										Profile
-									</MenuItem>
-									<MenuItem onClick={handleClose}>
-										My account
-									</MenuItem>
-									<MenuItem onClick={handleClose}>
-										Logout
-									</MenuItem>
-								</MenuList>
-							</ClickAwayListener>
-						</Paper>
-					</Grow>
-				)}
+				<Paper>
+					<ClickAwayListener onClickAway={handleClose}>
+						<MenuList autoFocusItem={open}>
+							<MenuItem onClick={handleClose}>My Trips</MenuItem>
+							<MenuItem onClick={logOut}>Logout</MenuItem>
+						</MenuList>
+					</ClickAwayListener>
+				</Paper>
 			</Popper>
 		</div>
 		// </Stack>

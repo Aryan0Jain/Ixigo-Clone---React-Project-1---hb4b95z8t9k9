@@ -13,7 +13,7 @@ import hotelSVG from "../assests/svgs/hotel.svg";
 import userSVG from "../assests/svgs/user.svg";
 import DashboardMenu from "./DashboardMenu";
 import { useAuthContext } from "./Contexts/AuthProvider";
-import LoginForm from "./LoginSignupForm";
+import LoginSignupForm from "./LoginSignupForm";
 
 const tabs = [
 	{ tabTitle: "Flights", tabLogo: flightSVG },
@@ -23,8 +23,12 @@ const tabs = [
 ];
 
 export default function Navbar() {
-	const { isLoggedIn, setIsLoggedIn, showLoginForm, setShowLoginForm } =
-		useAuthContext();
+	const {
+		isLoggedIn,
+		setIsLoggedIn,
+		showLoginSignupForm,
+		setShowLoginSignupForm,
+	} = useAuthContext();
 	return (
 		<AppBar sx={{ backgroundColor: "#fff", py: 1.5, px: 11 }}>
 			<Stack direction={"row"} justifyContent={"space-between"}>
@@ -80,7 +84,7 @@ export default function Navbar() {
 					<>
 						<Button
 							disableRipple
-							onClick={() => setShowLoginForm(true)}
+							onClick={() => setShowLoginSignupForm(true)}
 							sx={{
 								mr: 2.5,
 								textTransform: "none",
@@ -102,7 +106,7 @@ export default function Navbar() {
 								LogIn/SignUp
 							</Typography>
 						</Button>
-						<LoginForm />
+						<LoginSignupForm />
 					</>
 				)}
 				{isLoggedIn && <DashboardMenu />}
