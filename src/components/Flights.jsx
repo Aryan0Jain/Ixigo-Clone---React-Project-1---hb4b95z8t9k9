@@ -1,10 +1,20 @@
-import { Box, Button, IconButton, Stack, Typography } from "@mui/material";
-import React, { useState } from "react";
+import {
+	Box,
+	Button,
+	IconButton,
+	Popper,
+	Stack,
+	Typography,
+} from "@mui/material";
+import React, { useRef, useState } from "react";
 import flightLogo from "../assests/images/flight-booking.png";
 import banner from "../assests/images/banner1.png";
 import swapSVG from "../assests/svgs/swap.svg";
-import CustomInput from "./CustomInput";
 import Carousel from "./Carousel";
+import { useSearchContext } from "./Contexts/SearchProdiver";
+import { useLocation, useNavigate, useParams } from "react-router-dom";
+import ControlledCustomInput from "./ControlledCustomInput";
+import { BiSolidError } from "react-icons/bi";
 const whiteDot = {
 	display: "inline-block",
 	verticalAlign: "middle",
@@ -14,8 +24,68 @@ const whiteDot = {
 	borderRadius: "10px",
 	margin: "0px 10px",
 };
+const popperSX = {
+	border: 0,
+	py: 0.5,
+	px: 1,
+
+	fontSize: "14px",
+	bgcolor: "rgba(255,0,0,0.1)",
+	color: "#D50000",
+	fontWeight: 500,
+	display: "flex",
+	alignItems: "center",
+	mt: "0px",
+	borderBottomRightRadius: "5px",
+	borderBottomLeftRadius: "5px",
+};
 export default function Flights() {
-	const [value, setValue] = useState("");
+	const location = useLocation();
+	const fromRef = useRef();
+	const toRef = useRef();
+	const departureRef = useRef();
+	const passengerRef = useRef();
+	const [anchorEl, setAnchorEl] = useState(null);
+	const [errorMesaage, setErrorMessage] = useState("");
+	const navigate = useNavigate();
+	const {
+		fromCity,
+		setFromCity,
+		toCity,
+		setToCity,
+		departureDate,
+		setDepartureDate,
+		travellers,
+		setTravellers,
+		airports,
+	} = useSearchContext();
+
+	function validateAndFetch() {
+		const from = fromRef.current.querySelector("input").value.slice(0, 3);
+		const to = toRef.current.querySelector("input").value.slice(0, 3);
+		if (to == from) {
+			setErrorMessage("Form City & to City Can't be same!");
+			setAnchorEl(fromRef.current);
+			return;
+		}
+		const depDate = departureRef.current.value;
+		if (!depDate) {
+			setErrorMessage("Please Enter A Valid Date!");
+			setAnchorEl(departureRef.current);
+			return;
+		}
+		const pass = passengerRef.current.querySelector("input").value.at(0);
+		setFromCity(airports.findIndex((item) => item.iata_code == from));
+		setToCity(airports.findIndex((item) => item.iata_code == to));
+		setDepartureDate(depDate);
+		setTravellers(pass - 1);
+		let url = `/flights/search?date=${depDate}&from=${from}&to=${to}&travellers=${pass}`;
+		navigate(url);
+	}
+	function removeError() {
+		setErrorMessage("");
+		setAnchorEl(null);
+	}
 	return (
 		<Box component={"div"} sx={{ width: "100%" }}>
 			<Box
@@ -40,7 +110,6 @@ export default function Flights() {
 				></Box>
 				<Box
 					component={"div"}
-					// position={"relative"}
 					position={"absolute"}
 					sx={{
 						backgroundColor: "rgba(0, 0, 0, 0.269)",
@@ -62,11 +131,6 @@ export default function Flights() {
 							margin: "auto",
 							alignItems: "center",
 						}}
-						// style={{
-						// 	paddingTop: "150px",
-						// 	width: "fit-content",
-						// 	margin: "auto",
-						// }}
 					>
 						<img src={flightLogo} />
 						<Typography
@@ -74,11 +138,17 @@ export default function Flights() {
 							color={"#fff"}
 							fontWeight={600}
 						>
-							search
-							<span style={whiteDot}></span>
-							book
-							<span style={whiteDot}></span>
-							go
+							{location.pathname != "/" ? (
+								"Flight Booking"
+							) : (
+								<>
+									search
+									<span style={whiteDot}></span>
+									book
+									<span style={whiteDot}></span>
+									go
+								</>
+							)}
 						</Typography>
 						<div
 							style={{
@@ -110,7 +180,6 @@ export default function Flights() {
 			<Stack
 				direction={"row"}
 				className="flight-search-pannel"
-				// justifyContent={"space-between"}
 				alignItems={"center"}
 				gap={4}
 				sx={{
@@ -122,12 +191,19 @@ export default function Flights() {
 					borderRadius: "5px",
 				}}
 			>
-				<CustomInput
+				<ControlledCustomInput
+					removeError={removeError}
 					label="From"
-					value={value}
-					setValue={setValue}
-				></CustomInput>
+					placeholder="Enter city or airport"
+					value={fromCity}
+					setValue={setFromCity}
+					ref={fromRef}
+				></ControlledCustomInput>
 				<IconButton
+					onClick={() => {
+						setFromCity(toCity);
+						setToCity(fromCity);
+					}}
 					disableRipple
 					sx={{
 						mx: 1,
@@ -138,21 +214,32 @@ export default function Flights() {
 				>
 					<img src={swapSVG} />
 				</IconButton>
-				<CustomInput
-					label="From"
-					value={value}
-					setValue={setValue}
-				></CustomInput>
-				<CustomInput
-					label="From"
-					value={value}
-					setValue={setValue}
-				></CustomInput>
-				<CustomInput
-					label="From"
-					value={value}
-					setValue={setValue}
-				></CustomInput>
+				<ControlledCustomInput
+					removeError={removeError}
+					label="To"
+					placeholder="Enter city or airport"
+					value={toCity}
+					setValue={setToCity}
+					ref={toRef}
+				></ControlledCustomInput>
+				<ControlledCustomInput
+					removeError={removeError}
+					label="Departure"
+					placeholder="Departure Date"
+					value={departureDate}
+					setValue={setDepartureDate}
+					type="date"
+					ref={departureRef}
+				></ControlledCustomInput>
+				<ControlledCustomInput
+					removeError={removeError}
+					label="Travellers"
+					placeholder="Number of Travellers"
+					value={travellers}
+					setValue={setTravellers}
+					type="number"
+					ref={passengerRef}
+				></ControlledCustomInput>
 				<Button
 					sx={{
 						color: "#fff",
@@ -165,9 +252,24 @@ export default function Flights() {
 						backgroundColor: "secondary.hover",
 						":hover": { backgroundColor: "secondary.hover" },
 					}}
+					onClick={validateAndFetch}
 				>
 					Search
 				</Button>
+				<Popper
+					placement="bottom-start"
+					open={anchorEl != null}
+					anchorEl={anchorEl}
+					sx={{ zIndex: 100 }}
+				>
+					<Box sx={{ ...popperSX }}>
+						<BiSolidError
+							size="17px"
+							style={{ marginRight: "5px" }}
+						/>{" "}
+						{errorMesaage}
+					</Box>
+				</Popper>
 			</Stack>
 			<Box sx={{ m: "auto", width: "fit-content", my: 5 }}>
 				<img src={banner} />

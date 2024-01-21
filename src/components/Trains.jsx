@@ -1,5 +1,15 @@
-import { Box, Button, IconButton, Stack, Typography } from "@mui/material";
-import React, { useState } from "react";
+import {
+	Autocomplete,
+	Box,
+	Button,
+	IconButton,
+	InputAdornment,
+	Popper,
+	Stack,
+	TextField,
+	Typography,
+} from "@mui/material";
+import React, { useRef, useState } from "react";
 import trainLogo from "../assests/images/train-booking.png";
 import swapSVG from "../assests/svgs/swap.svg";
 import CustomInput from "./CustomInput";
@@ -8,6 +18,28 @@ import guaranteeIMG1 from "../assests/images/train-guarantee-1.webp";
 import guaranteeIMG2 from "../assests/images/train-guarantee-2.webp";
 import guaranteeIMG3 from "../assests/images/train-guarantee-3.webp";
 import guaranteeIMG4 from "../assests/images/train-guarantee-4.webp";
+import { BiSolidError } from "react-icons/bi";
+import { DatePicker } from "@mui/x-date-pickers";
+import dayjs from "dayjs";
+import { useTrainSearchContext } from "./Contexts/TrainSearchProvider";
+import { useNavigate } from "react-router-dom";
+import TrainStationInput from "./TrainStationInput";
+
+const popperSX = {
+	border: 0,
+	py: 0.5,
+	px: 1,
+
+	fontSize: "14px",
+	bgcolor: "rgba(255,0,0,0.1)",
+	color: "#D50000",
+	fontWeight: 500,
+	display: "flex",
+	alignItems: "center",
+	mt: "0px",
+	borderBottomRightRadius: "5px",
+	borderBottomLeftRadius: "5px",
+};
 const guarantees = [
 	{ img: guaranteeIMG1, text: "₹0 Payment Gateway Fee on Payments via UPI" },
 	{
@@ -21,7 +53,56 @@ const guarantees = [
 	{ img: guaranteeIMG4, text: "24*7 Support for IRCTC Train Ticket Booking" },
 ];
 export default function Trains() {
-	const [value, setValue] = useState("");
+	const [anchorEl, setAnchorEl] = useState(null);
+	const [errorMesaage, setErrorMessage] = useState("");
+	const fromRef = useRef();
+	const toRef = useRef();
+	const depDateRef = useRef();
+	const navigate = useNavigate();
+	const {
+		fromStation,
+		setFromStation,
+		toStation,
+		setToStation,
+		departureDate,
+		setDepartureDate,
+		trainStations,
+	} = useTrainSearchContext();
+	function removeError() {
+		setErrorMessage("");
+		setAnchorEl(null);
+	}
+	function validateAndFetch() {
+		if (fromStation == toStation) {
+			setErrorMessage("Source & Destination Can't be same!");
+			setAnchorEl(fromRef.current);
+			return;
+		}
+		if (!departureDate) {
+			setErrorMessage("Please Enter A Date!");
+			setAnchorEl(depDateRef.current);
+			return;
+		}
+		if (departureDate.$d == "Invalid Date") {
+			setErrorMessage("Please Enter A Valid Date!");
+			setAnchorEl(depDateRef.current);
+			return;
+		}
+		const difference = departureDate.diff(new dayjs());
+		if (difference < 0 || difference > 121 * 24 * 3600 * 1000) {
+			setErrorMessage("Date is out of Range!");
+			setAnchorEl(depDateRef.current);
+			return;
+		}
+		setAnchorEl(null);
+		const date = departureDate.toJSON();
+		const from = encodeURI(trainStations[fromStation]);
+		const to = encodeURI(trainStations[toStation]);
+		console.log(from);
+		const url = `/trains/search?date=${date}&from=${from}&to=${to}`;
+		// console.log(url);
+		navigate(url);
+	}
 	return (
 		<Box component={"div"} sx={{ width: "100%" }}>
 			<Box
@@ -44,17 +125,6 @@ export default function Trains() {
 						zIndex: "-10",
 					}}
 				></Box>
-				{/* <Box
-					component={"div"}
-					// position={"relative"}
-					position={"absolute"}
-					sx={{
-						backgroundColor: "rgba(0, 0, 0, 0.269)",
-						width: "100%",
-						height: "550px",
-						zIndex: "-5",
-					}}
-				></Box> */}
 			</Box>
 			<Box>
 				<div style={{ position: "relative" }}>
@@ -68,11 +138,6 @@ export default function Trains() {
 							margin: "auto",
 							alignItems: "center",
 						}}
-						// style={{
-						// 	paddingTop: "150px",
-						// 	width: "fit-content",
-						// 	margin: "auto",
-						// }}
 					>
 						<img src={trainLogo} />
 						<Typography
@@ -87,50 +152,69 @@ export default function Trains() {
 			</Box>
 			<Stack
 				direction={"row"}
-				className="flight-search-pannel"
-				// justifyContent={"space-between"}
+				className="train-search-pannel"
 				alignItems={"center"}
-				gap={2}
+				gap={4}
 				sx={{
 					width: "fit-content",
 					m: "auto",
 					backgroundColor: "#fff",
-					py: 3,
-					px: 2,
+					py: 4,
+					px: 4,
 					borderRadius: "5px",
 				}}
 			>
-				<CustomInput
-					label="From"
-					value={value}
-					setValue={setValue}
-				></CustomInput>
+				<TrainStationInput
+					removeAnchor={removeError}
+					ref={fromRef}
+					options={trainStations}
+					value={fromStation}
+					setValue={setFromStation}
+					label={"From"}
+					placeholder="Leaving From"
+				/>
 				<IconButton
+					onClick={() => {
+						setFromStation(toStation);
+						setToStation(fromStation);
+					}}
 					disableRipple
 					sx={{
 						mx: 1,
 						p: 0.2,
 						height: "fit-content",
-						border: "1px solid",
+						border: "2px solid",
 					}}
 				>
 					<img src={swapSVG} />
 				</IconButton>
-				<CustomInput
-					label="From"
-					value={value}
-					setValue={setValue}
-				></CustomInput>
-				<CustomInput
-					label="From"
-					value={value}
-					setValue={setValue}
-				></CustomInput>
-				<CustomInput
-					label="From"
-					value={value}
-					setValue={setValue}
-				></CustomInput>
+				<TrainStationInput
+					removeAnchor={removeError}
+					ref={toRef}
+					options={trainStations}
+					value={toStation}
+					setValue={setToStation}
+					label={"To"}
+					placeholder="Going To"
+				/>
+				<DatePicker
+					ref={depDateRef}
+					slotProps={{
+						textField: {
+							variant: "standard",
+							InputLabelProps: { shrink: true },
+						},
+					}}
+					disablePast
+					label="Departure"
+					reduceAnimations
+					maxDate={new dayjs().add(120, "day")}
+					value={departureDate}
+					onChange={(val) => {
+						setDepartureDate(val);
+						setAnchorEl(null);
+					}}
+				/>
 				<Button
 					sx={{
 						color: "#fff",
@@ -143,9 +227,24 @@ export default function Trains() {
 						backgroundColor: "secondary.hover",
 						":hover": { backgroundColor: "secondary.hover" },
 					}}
+					onClick={validateAndFetch}
 				>
 					Search
 				</Button>
+				<Popper
+					placement="bottom-start"
+					open={anchorEl != null}
+					anchorEl={anchorEl}
+					sx={{ zIndex: 100 }}
+				>
+					<Box sx={{ ...popperSX }}>
+						<BiSolidError
+							size="17px"
+							style={{ marginRight: "5px" }}
+						/>{" "}
+						{errorMesaage}
+					</Box>
+				</Popper>
 			</Stack>
 			<Box
 				sx={{

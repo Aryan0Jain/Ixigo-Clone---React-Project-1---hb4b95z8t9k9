@@ -3,6 +3,7 @@ import { useAuthContext } from "./Contexts/AuthProvider";
 import {
 	Box,
 	Button,
+	FormControl,
 	Modal,
 	Popper,
 	Stack,
@@ -67,6 +68,7 @@ function LogInTab() {
 	const loginEmailRef = useRef();
 	const loginPasswordRef = useRef();
 	async function handleLoginButton(e) {
+		e.preventDefault();
 		if (loginEmailRef.current.value == "") {
 			setErrorMessage("Please Enter Email!");
 			loginEmailRef.current.focus();
@@ -105,7 +107,10 @@ function LogInTab() {
 		setAnchorEl(null);
 	}
 	return (
-		<Stack direction={"column"} gap={3}>
+		<form
+			onSubmit={handleLoginButton}
+			style={{ display: "flex", flexDirection: "column", gap: "24px" }}
+		>
 			<Typography variant="h5" component="h2" color={"rgba(0,0,0,0.87)"}>
 				Log in to ixigo
 			</Typography>
@@ -125,7 +130,7 @@ function LogInTab() {
 				variant="standard"
 				type="password"
 			/>
-			<Button onClick={handleLoginButton} sx={{ ...buttonSX }}>
+			<Button type="submit" sx={{ ...buttonSX }}>
 				Login
 			</Button>
 			<Box>
@@ -150,7 +155,7 @@ function LogInTab() {
 					<BiSolidError size="15px" /> {errorMesaage}
 				</Box>
 			</Popper>
-		</Stack>
+		</form>
 	);
 }
 function SignUpTab() {
@@ -162,6 +167,7 @@ function SignUpTab() {
 	const signupPasswordRef = useRef();
 	const signupConfirmPasswordRef = useRef();
 	function handleSignUpButton(e) {
+		e.preventDefault();
 		if (signupNameRef.current.value == "") {
 			setErrorMessage("Please Enter Your Name!");
 			signupNameRef.current.focus();
@@ -226,7 +232,10 @@ function SignUpTab() {
 		setAnchorEl(null);
 	}
 	return (
-		<Stack direction={"column"} gap={3}>
+		<form
+			style={{ display: "flex", flexDirection: "column", gap: "24px" }}
+			onSubmit={handleSignUpButton}
+		>
 			<Typography variant="h5" component="h2" color={"rgba(0,0,0,0.87)"}>
 				Sign up to ixigo
 			</Typography>
@@ -260,7 +269,7 @@ function SignUpTab() {
 				variant="standard"
 				type="password"
 			/>
-			<Button onClick={handleSignUpButton} sx={{ ...buttonSX }}>
+			<Button type="submit" sx={{ ...buttonSX }}>
 				SignUp
 			</Button>
 			<Box>
@@ -284,7 +293,7 @@ function SignUpTab() {
 					<BiSolidError size="15px" /> {errorMesaage}
 				</Box>
 			</Popper>
-		</Stack>
+		</form>
 	);
 }
 function CustomTabPanel(props) {

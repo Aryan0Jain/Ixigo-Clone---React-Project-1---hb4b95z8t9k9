@@ -2,7 +2,7 @@ import { Autocomplete, Stack, TextField, Typography } from "@mui/material";
 import React from "react";
 import { useSearchContext } from "./Contexts/SearchProdiver";
 
-const CustomInput = React.forwardRef(
+const ControlledCustomInput = React.forwardRef(
 	(
 		{
 			type = "text",
@@ -12,7 +12,7 @@ const CustomInput = React.forwardRef(
 			placeholder,
 			crossDefaulFill = "rgba(0, 0, 0, 0.5)",
 			crossHoverFill = "black",
-			setDefault,
+			removeError,
 		},
 		ref
 	) => {
@@ -23,24 +23,24 @@ const CustomInput = React.forwardRef(
 				{type == "text" && (
 					<Autocomplete
 						sx={{ width: "200px" }}
-						freeSolo
 						disablePortal
+						disableClearable
 						openOnFocus
 						options={airports}
-						defaultValue={airports[setDefault]}
 						// value={value}
-						// value={airports[value]}
+						value={airports[value]}
 						ref={ref}
-						// onChange={(e, v) => {
-						// 	setValue(
-						// 		v
-						// 			? airports.findIndex(
-						// 					(item) =>
-						// 						item.iata_code == v.iata_code
-						// 			  )
-						// 			: ""
-						// 	);
-						// }}
+						onChange={(e, v) => {
+							removeError();
+							setValue(
+								v
+									? airports.findIndex(
+											(item) =>
+												item.iata_code == v.iata_code
+									  )
+									: ""
+							);
+						}}
 						getOptionLabel={(option) =>
 							option.iata_code + " - " + option.city
 						}
@@ -90,9 +90,12 @@ const CustomInput = React.forwardRef(
 						variant="standard"
 						inputRef={ref}
 						// ref={ref}
-						// value={value}
-						// onChange={(e) => setValue(e.target.value)}
-						defaultValue={setDefault}
+						value={value}
+						onChange={(e) => {
+							removeError();
+							setValue(e.target.value);
+						}}
+						// defaultValue={setDefault}
 						type={type}
 						placeholder={placeholder}
 						// value={value}
@@ -106,11 +109,13 @@ const CustomInput = React.forwardRef(
 					<Autocomplete
 						sx={{ width: "200px" }}
 						disablePortal
+						disableClearable
 						openOnFocus
-						// value={value}
-						// onChange={(e, v) => setValue(v)}
-						// value={value}
-						defaultValue={passengers[setDefault]}
+						onChange={(e, v) => {
+							removeError();
+							setValue(v);
+						}}
+						value={passengers[value]}
 						ref={ref}
 						options={passengers}
 						getOptionLabel={(option) =>
@@ -141,4 +146,4 @@ const CustomInput = React.forwardRef(
 	}
 );
 
-export default CustomInput;
+export default ControlledCustomInput;

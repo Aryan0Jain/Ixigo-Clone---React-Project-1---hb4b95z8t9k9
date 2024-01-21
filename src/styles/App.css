@@ -34,3 +34,27 @@ label.Mui-focused {
 .filter-options .MuiSlider-markLabel {
 	font-size: 12px;
 }
+.MuiAutocomplete-popper {
+	width: 340px !important;
+}
+.search-pannel .MuiAutocomplete-endAdornment svg {
+	color: #fff;
+}
+.filter-options .MuiInput-root:hover:not(.Mui-disabled, .Mui-error):before {
+	border-bottom: 1px solid rgba(0, 0, 0, 0.42);
+}
+.data-container .MuiAccordion-root::before {
+	height: 0px;
+}
+.custom-tab > div {
+	padding: 0;
+}
+.pagination li:first-child svg,
+.pagination li:last-child svg {
+	color: #ec5b24;
+}
+.train-search-pannel
+	.MuiInput-root:hover:not(.Mui-disabled, .Mui-error):before {
+	/* border-color: #ec5b24 !important; */
+	border-bottom: 1px solid rgba(0, 0, 0, 0.42);
+}
