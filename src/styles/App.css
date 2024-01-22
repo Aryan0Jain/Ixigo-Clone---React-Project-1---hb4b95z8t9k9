@@ -4,10 +4,26 @@
 label.Mui-focused {
 	color: #ec5b24 !important;
 } */
+.nav-tabs a {
+	color: rgba(0, 0, 0, 0.87);
+}
+.nav-tabs a.active,
+.nav-tabs a:hover {
+	filter: invert(46%) sepia(45%) saturate(4226%) hue-rotate(348deg)
+		brightness(96%) contrast(91%);
+	color: #ec5b24;
+}
 .flight-search-pannel
 	.MuiInput-root:hover:not(.Mui-disabled, .Mui-error):before {
 	/* border-color: #ec5b24 !important; */
 	border-bottom: 1px solid rgba(0, 0, 0, 0.42);
+}
+.MuiTooltip-arrow::before {
+	background-color: white !important;
+}
+.MuiTooltip-popper div {
+	background-color: white;
+	padding: 0;
 }
 .signup-login-form .MuiInput-root:hover:not(.Mui-disabled, .Mui-error):before {
 	/* border-color: #ec5b24 !important; */
@@ -57,4 +73,45 @@ label.Mui-focused {
 	.MuiInput-root:hover:not(.Mui-disabled, .Mui-error):before {
 	/* border-color: #ec5b24 !important; */
 	border-bottom: 1px solid rgba(0, 0, 0, 0.42);
+}
+.loader {
+	width: 320px;
+	height: 120px;
+	margin: auto;
+	display: block;
+	position: relative;
+	background: #fff;
+	box-sizing: border-box;
+}
+.loader::after {
+	content: "";
+	width: calc(100% - 30px);
+	height: calc(100% - 30px);
+	top: 10px;
+	left: 10px;
+	position: absolute;
+	background-image: linear-gradient(
+			100deg,
+			transparent,
+			rgba(255, 255, 255, 0.5) 50%,
+			transparent 80%
+		),
+		linear-gradient(#ddd 56px, transparent 0),
+		linear-gradient(#ddd 24px, transparent 0),
+		linear-gradient(#ddd 18px, transparent 0),
+		linear-gradient(#ddd 66px, transparent 0);
+	background-repeat: no-repeat;
+	background-size: 75px 130px, 55px 56px, 160px 30px, 260px 20px, 290px 56px;
+	background-position: 0% 0, 0 0, 70px 5px, 70px 38px, 0px 66px;
+	box-sizing: border-box;
+	animation: animloader 1s linear infinite;
+}
+
+@keyframes animloader {
+	0% {
+		background-position: 0% 0, 0 0, 70px 5px, 70px 38px, 0px 66px;
+	}
+	100% {
+		background-position: 150% 0, 0 0, 70px 5px, 70px 38px, 0px 66px;
+	}
 }

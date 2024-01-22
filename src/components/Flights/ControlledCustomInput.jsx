@@ -1,6 +1,9 @@
-import { Autocomplete, Stack, TextField, Typography } from "@mui/material";
+import Autocomplete from "@mui/material/Autocomplete";
+import Stack from "@mui/material/Stack";
+import TextField from "@mui/material/TextField";
+import Typography from "@mui/material/Typography";
 import React from "react";
-import { useSearchContext } from "./Contexts/SearchProdiver";
+import { useSearchContext } from "../Contexts/SearchProdiver";
 
 const ControlledCustomInput = React.forwardRef(
 	(
@@ -16,7 +19,6 @@ const ControlledCustomInput = React.forwardRef(
 		},
 		ref
 	) => {
-		// const [showClear, setShowClear] = React.useState(false);
 		const { airports, passengers } = useSearchContext();
 		return (
 			<>
@@ -27,7 +29,6 @@ const ControlledCustomInput = React.forwardRef(
 						disableClearable
 						openOnFocus
 						options={airports}
-						// value={value}
 						value={airports[value]}
 						ref={ref}
 						onChange={(e, v) => {
@@ -51,8 +52,6 @@ const ControlledCustomInput = React.forwardRef(
 								type={type}
 								variant="standard"
 								placeholder={placeholder}
-								// onChange={(e) => setValue(e.target.value)}
-								// shrink
 								InputLabelProps={{ shrink: true }}
 							/>
 						)}
@@ -89,17 +88,13 @@ const ControlledCustomInput = React.forwardRef(
 						label={label}
 						variant="standard"
 						inputRef={ref}
-						// ref={ref}
 						value={value}
 						onChange={(e) => {
 							removeError();
 							setValue(e.target.value);
 						}}
-						// defaultValue={setDefault}
 						type={type}
 						placeholder={placeholder}
-						// value={value}
-						// onChange={(e) => setValue(e.target.value)}
 						InputLabelProps={{
 							shrink: true,
 						}}
@@ -125,10 +120,8 @@ const ControlledCustomInput = React.forwardRef(
 							<TextField
 								{...params}
 								label={label}
-								// type={type}
 								variant="standard"
 								placeholder={placeholder}
-								// shrink
 								InputLabelProps={{ shrink: true }}
 							/>
 						)}

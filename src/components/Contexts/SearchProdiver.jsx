@@ -1,5 +1,6 @@
+import dayjs from "dayjs";
 import { createContext, useContext, useState } from "react";
-import { useLocation, useParams, useSearchParams } from "react-router-dom";
+import { useSearchParams } from "react-router-dom";
 
 const projectID = "hb4b95z8t9k9";
 const appType = "bookingportals";
@@ -7,42 +8,20 @@ const SearchContext = createContext();
 export const useSearchContext = () => {
 	return useContext(SearchContext);
 };
-
+const weekDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
 export default function SearchProvider({ children }) {
 	const [searchParams, setSearchParams] = useSearchParams();
 	const [fromCity, setFromCity] = useState(0);
 	const [toCity, setToCity] = useState(1);
-	const [departureDate, setDepartureDate] = useState(
-		new Date().toISOString().slice(0, 10)
-	);
+	const [departureDate, setDepartureDate] = useState(new dayjs());
 	const [travellers, setTravellers] = useState(0);
 	const [data, setData] = useState([]);
 	async function searchBookings() {
-		const day = new Date(searchParams.get("date")).toString().slice(0, 3);
-		const maxPrice = searchParams.get("maxprice");
-		const stops = searchParams.get("stops");
-		const departureTimeRange = searchParams.get("departuretime");
-		// const airlines = searchParams.get("airlines");
+		const day = weekDays[new dayjs(searchParams.get("date")).day()];
 		const searchVal = JSON.stringify({
 			source: searchParams.get("from"),
 			destination: searchParams.get("to"),
 		});
-		const filterVal = {};
-		if (stops && stops < 2) {
-			filterVal.stops = stops;
-		}
-		// if (maxPrice) filterVal.ticketPrice = maxPrice;
-		if (departureTimeRange == "early-morning")
-			filterVal.departureTime = { $gte: "00:00", $lte: "06:00" };
-		if (departureTimeRange == "morning")
-			filterVal.departureTime = { $gte: "06:00", $lte: "12:00" };
-		if (departureTimeRange == "mid-day")
-			filterVal.departureTime = { $gte: "12:00", $lte: "18:00" };
-		if (departureTimeRange == "night")
-			filterVal.departureTime = { $gte: "18:00", $lte: "24:00" };
-		// console.log(
-		// 	`https://academics.newtonschool.co/api/v1/bookingportals/flight?search=${searchVal}&day=${day}&limit=1000`
-		// );
 		const res = await fetch(
 			`https://academics.newtonschool.co/api/v1/bookingportals/flight?search=${searchVal}&day=${day}&limit=1000`,
 			{
@@ -55,9 +34,7 @@ export default function SearchProvider({ children }) {
 		);
 		const resp = await res.json();
 		setData(resp.data.flights);
-		// console.log(resp.data.flights);
 	}
-	// search("flight", "Tue");
 	const provider = {
 		fromCity,
 		setFromCity,

@@ -1,17 +1,17 @@
-import {
-	Autocomplete,
-	Box,
-	Button,
-	FormControl,
-	InputAdornment,
-	Stack,
-	TextField,
-	Typography,
-} from "@mui/material";
+import Autocomplete from "@mui/material/Autocomplete";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import InputAdornment from "@mui/material/InputAdornment";
+import Stack from "@mui/material/Stack";
+import TextField from "@mui/material/TextField";
+import Typography from "@mui/material/Typography";
 import React from "react";
-import busBG from "../assests/images/bus-banner.webp";
+import busBG from "../../assests/images/bus-banner.webp";
 import { IoSwapHorizontal } from "react-icons/io5";
 import { FaBusAlt } from "react-icons/fa";
+import BusOffersCarousel from "./BusOffersCarousel";
+import { DatePicker } from "@mui/x-date-pickers";
+import dayjs from "dayjs";
 export default function Buses() {
 	return (
 		<Box sx={{ mt: 8.2 }}>
@@ -40,10 +40,29 @@ export default function Buses() {
 					<StationInputField />
 					<IoSwapHorizontal />
 					<StationInputField />
-					<TextField type="date" />
+					<DatePicker
+						// ref={departureRef}
+						sx={{ width: 200 }}
+						slotProps={{
+							textField: {
+								variant: "standard",
+								InputLabelProps: { shrink: true },
+							},
+						}}
+						disablePast
+						label="Departure"
+						reduceAnimations
+						maxDate={new dayjs().add(120, "day")}
+						// value={departureDate}
+						onChange={(val) => {
+							setDepartureDate(val);
+							setAnchorEl(null);
+						}}
+					/>
 					<Button variant="contained">Search</Button>
 				</Stack>
 			</Stack>
+			<BusOffersCarousel />
 		</Box>
 	);
 }

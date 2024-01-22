@@ -1,27 +1,24 @@
-import {
-	Accordion,
-	AccordionDetails,
-	AccordionSummary,
-	Box,
-	Button,
-	Divider,
-	Stack,
-	Tab,
-	Table,
-	TableBody,
-	TableCell,
-	TableHead,
-	TableRow,
-	Tabs,
-	Typography,
-} from "@mui/material";
-import React, { useState } from "react";
-import AILogo from "../assests/images/airlines/AI.png";
-import INLogo from "../assests/images/airlines/6E.png";
-import G8Logo from "../assests/images/airlines/G8.png";
-import SGLogo from "../assests/images/airlines/SG.png";
-import UKLogo from "../assests/images/airlines/UK.png";
-import { useSearchContext } from "./Contexts/SearchProdiver";
+import Accordion from "@mui/material/Accordion";
+import AccordionDetails from "@mui/material/AccordionDetails";
+import AccordionSummary from "@mui/material/AccordionSummary";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Divider from "@mui/material/Divider";
+import Stack from "@mui/material/Stack";
+import Tab from "@mui/material/Tab";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import Tabs from "@mui/material/Tabs";
+import Typography from "@mui/material/Typography";
+import { useState } from "react";
+import AILogo from "../../assests/images/airlines/AI.png";
+import INLogo from "../../assests/images/airlines/6E.png";
+import G8Logo from "../../assests/images/airlines/G8.png";
+import SGLogo from "../../assests/images/airlines/SG.png";
+import UKLogo from "../../assests/images/airlines/UK.png";
 import { MdExpandMore } from "react-icons/md";
 import { SlClock } from "react-icons/sl";
 import { FaWifi } from "react-icons/fa";
@@ -67,7 +64,7 @@ export default function FlightCard({
 			break;
 		case "G8":
 			airlineImg = G8Logo;
-			airlineName = "GO FAST";
+			airlineName = "GO FIRST";
 			flightName = "GO" + flightID.split("-")[2];
 			break;
 		case "SG":

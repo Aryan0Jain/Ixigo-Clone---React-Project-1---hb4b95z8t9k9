@@ -1,36 +1,32 @@
-import {
-	Box,
-	Button,
-	Checkbox,
-	Divider,
-	FormControl,
-	FormControlLabel,
-	FormGroup,
-	IconButton,
-	InputLabel,
-	MenuItem,
-	Pagination,
-	Popper,
-	Select,
-	Slider,
-	Stack,
-	ToggleButton,
-	ToggleButtonGroup,
-	Typography,
-} from "@mui/material";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Checkbox from "@mui/material/Checkbox";
+import Divider from "@mui/material/Divider";
+import FormControl from "@mui/material/FormControl";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import FormGroup from "@mui/material/FormGroup";
+import IconButton from "@mui/material/IconButton";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import Pagination from "@mui/material/Pagination";
+import Popper from "@mui/material/Popper";
+import Select from "@mui/material/Select";
+import Slider from "@mui/material/Slider";
+import Stack from "@mui/material/Stack";
+import ToggleButton from "@mui/material/ToggleButton";
+import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
+import Typography from "@mui/material/Typography";
+import { DatePicker } from "@mui/x-date-pickers";
 import React, { useEffect, useRef, useState } from "react";
-import {
-	useLocation,
-	useNavigate,
-	useParams,
-	useSearchParams,
-} from "react-router-dom";
-import ControlledCustomInput from "./ControlledCustomInput";
-import swapSVG from "../assests/svgs/swap-white.svg";
+import notFound from "../../assests/images/flightnotFound.png";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
+import swapSVG from "../../assests/svgs/swap-white.svg";
 import Grid2 from "@mui/material/Unstable_Grid2/Grid2";
-import { useSearchContext } from "./Contexts/SearchProdiver";
 import { BiSolidError } from "react-icons/bi";
 import FlightCard from "./FlightCard";
+import { useSearchContext } from "../Contexts/SearchProdiver";
+import ControlledCustomInput from "./ControlledCustomInput";
+import dayjs from "dayjs";
 const popperSX = {
 	border: 0,
 	py: 0.5,
@@ -45,6 +41,19 @@ const popperSX = {
 	borderBottomRightRadius: "5px",
 	borderBottomLeftRadius: "5px",
 };
+const sortingMethodsList = [
+	{ name: "RECOMMENDED", value: "recommended" },
+	{ name: "CHEAPEST", value: "cheapest" },
+	{ name: "QUICKEST", value: "quickest" },
+	{ name: "EARLIEST", value: "earliest" },
+];
+const airlinesInfo = [
+	{ name: "Air India", key: "AI" },
+	{ name: "IndiGo", key: "6E" },
+	{ name: "Vistara", key: "UK" },
+	{ name: "SpiceJet", key: "SG" },
+	{ name: "Go First", key: "G8" },
+];
 export default function Search() {
 	const {
 		fromCity,
@@ -96,7 +105,7 @@ export default function Search() {
 		const to = searchParams.get("to");
 		setFromCity(airports.findIndex((item) => item.iata_code == from));
 		setToCity(airports.findIndex((item) => item.iata_code == to));
-		setDepartureDate(searchParams.get("date"));
+		setDepartureDate(new dayjs(searchParams.get("date")));
 		setTravellers(searchParams.get("travellers") - 1);
 	}, []);
 	useEffect(() => {
@@ -118,23 +127,28 @@ export default function Search() {
 			return;
 		}
 		const depDate = departureRef.current.value;
-		if (!depDate) {
+		if (!departureDate) {
+			setErrorMessage("Please Enter A Date!");
+			setAnchorEl(departureRef.current);
+			return;
+		}
+		if (departureDate.$d == "Invalid Date") {
 			setErrorMessage("Please Enter A Valid Date!");
 			setAnchorEl(departureRef.current);
 			return;
 		}
+		const isInThePast =
+			departureDate.diff(new dayjs().hour(0).minute(0)) < 0;
+		const isItMoreThanAYear =
+			departureDate.diff(new dayjs().add(-1, "day").add(1, "year")) > 0;
+		if (isInThePast < 0 || isItMoreThanAYear) {
+			setErrorMessage("Date is out of Range!");
+			setAnchorEl(departureRef.current);
+			return;
+		}
 		const pass = passengerRef.current.querySelector("input").value.at(0);
-		let airlineArray = [];
-		Object.keys(airlines).forEach((i) => {
-			if (airlines[i]) airlineArray.push(i);
-		});
-		const airlineString = airlineArray.join(",");
-		setFromCity(airports.findIndex((item) => item.iata_code == from));
-		setToCity(airports.findIndex((item) => item.iata_code == to));
-		setDepartureDate(depDate);
-		setTravellers(pass - 1);
 		setPageNumber(1);
-		let url = `/flights/search?date=${depDate}&from=${from}&to=${to}&travellers=${pass}`;
+		let url = `/flights/search?date=${departureDate.toJSON()}&from=${from}&to=${to}&travellers=${pass}`;
 		navigate(url);
 	}
 	function removeError() {
@@ -145,7 +159,6 @@ export default function Search() {
 		setWithFilters(true);
 		setPageNumber(1);
 		let newData = [...data];
-		// console.log(stops, alignment, airlines, price);
 		if (stops < 2) {
 			newData = newData.filter((item) => item.stops <= stops);
 		}
@@ -259,15 +272,28 @@ export default function Search() {
 					setValue={setToCity}
 					ref={toRef}
 				></ControlledCustomInput>
-				<ControlledCustomInput
-					removeError={removeError}
-					label="Departure"
-					placeholder="Departure Date"
-					value={departureDate}
-					setValue={setDepartureDate}
-					type="date"
+				<DatePicker
 					ref={departureRef}
-				></ControlledCustomInput>
+					sx={{ width: 200 }}
+					slotProps={{
+						textField: {
+							variant: "standard",
+							InputLabelProps: { shrink: true },
+						},
+						inputAdornment: {
+							sx: { "& svg": { fill: "white" } },
+						},
+					}}
+					disablePast
+					label="Departure"
+					reduceAnimations
+					maxDate={new dayjs().add(-1, "day").add(1, "year")}
+					value={departureDate}
+					onChange={(val) => {
+						setDepartureDate(val);
+						setAnchorEl(null);
+					}}
+				/>
 				<ControlledCustomInput
 					removeError={removeError}
 					label="Travellers"
@@ -357,70 +383,12 @@ export default function Search() {
 				</Stack>
 				<Stack>
 					<Typography>Departure From {displayFromCity}</Typography>
-					{/* <ToggleButtonGroup
-						variant="small"
-						color="primary"
-						sx={{
-							mt: 2,
-							gap: 1,
-							"& button": {
-								p: 1,
-								border: "1px solid rgba(0,0,0,0.2) !important",
-							},
-							"& button:hover": {
-								color: "#ec5b24",
-								bgcolor: "rgba(236, 91, 36, 0.08)",
-							},
-							"& button.Mui-selected": {
-								color: "white",
-								bgcolor: "#ec5b24",
-							},
-							"& button.Mui-selected:hover": {
-								color: "white",
-								bgcolor: "#ec5b24",
-							},
-						}}
-						value={alignment}
-						exclusive
-						onChange={handleChange}
-					>
-						<ToggleButton
-							sx={{
-								fontSize: "12px",
-							}}
-							disableRipple
-							value="early-morning"
-						>
-							00:00 - 06:00
-						</ToggleButton>
-						<ToggleButton
-							sx={{ fontSize: "12px" }}
-							disableRipple
-							value="morning"
-						>
-							06:00 - 12:00
-						</ToggleButton>
-						<ToggleButton
-							sx={{ fontSize: "12px" }}
-							disableRipple
-							value="mid-day"
-						>
-							12:00 - 18:00
-						</ToggleButton>
-						<ToggleButton
-							sx={{ fontSize: "12px" }}
-							disableRipple
-							value="night"
-						>
-							18:00 - 24:00
-						</ToggleButton>
-					</ToggleButtonGroup> */}
 					<ToggleButtonGroup
 						variant="small"
 						color="primary"
 						sx={{
 							mt: 2,
-							gap: 1,
+							// gap: 1,
 							"& button:hover": {
 								color: "#ec5b24",
 								bgcolor: "rgba(236, 91, 36, 0.08)",
@@ -481,121 +449,35 @@ export default function Search() {
 				<Stack>
 					<Typography>Airlines</Typography>
 					<Grid2 container spacing={0} sx={{ width: "250px" }}>
-						<Grid2 xs={6}>
-							<FormControlLabel
-								control={
-									<Checkbox
-										size="small"
-										checked={airlines.AI}
-										onClick={() =>
-											setAirlines((prev) => {
-												return {
-													...prev,
-													AI: !prev.AI,
-												};
-											})
+						{airlinesInfo.map(({ name, key }) => {
+							return (
+								<Grid2 xs={6} key={key}>
+									<FormControlLabel
+										control={
+											<Checkbox
+												size="small"
+												checked={airlines[key]}
+												onClick={() =>
+													setAirlines((prev) => {
+														const newAirlines = {
+															...prev,
+														};
+														newAirlines[key] =
+															!prev[key];
+														return newAirlines;
+													})
+												}
+											/>
+										}
+										label={
+											<Typography fontSize={"14px"}>
+												{name}
+											</Typography>
 										}
 									/>
-								}
-								label={
-									<Typography fontSize={"14px"}>
-										Air India
-									</Typography>
-								}
-							/>
-						</Grid2>
-						<Grid2 xs={6}>
-							<FormControlLabel
-								control={
-									<Checkbox
-										size="small"
-										checked={airlines["6E"]}
-										onClick={() =>
-											setAirlines((prev) => {
-												return {
-													...prev,
-													"6E": !prev["6E"],
-												};
-											})
-										}
-									/>
-								}
-								label={
-									<Typography fontSize={"14px"}>
-										IndiGo
-									</Typography>
-								}
-							/>
-						</Grid2>
-						<Grid2 xs={6}>
-							<FormControlLabel
-								control={
-									<Checkbox
-										checked={airlines.UK}
-										size="small"
-										onClick={() =>
-											setAirlines((prev) => {
-												return {
-													...prev,
-													UK: !prev["UK"],
-												};
-											})
-										}
-									/>
-								}
-								label={
-									<Typography fontSize={"14px"}>
-										Vistara
-									</Typography>
-								}
-							/>
-						</Grid2>
-						<Grid2 xs={6}>
-							<FormControlLabel
-								control={
-									<Checkbox
-										checked={airlines.SG}
-										size="small"
-										onClick={() =>
-											setAirlines((prev) => {
-												return {
-													...prev,
-													SG: !prev["SG"],
-												};
-											})
-										}
-									/>
-								}
-								label={
-									<Typography fontSize={"14px"}>
-										SpiceJet
-									</Typography>
-								}
-							/>
-						</Grid2>
-						<Grid2 xs={6}>
-							<FormControlLabel
-								control={
-									<Checkbox
-										size="small"
-										checked={airlines.G8}
-										onClick={() =>
-											setAirlines((prev) => {
-												return {
-													...prev,
-													G8: !prev["G8"],
-												};
-											})
-										}
-									/>
-								}
-								label={
-									<Typography fontSize={"14px"}>
-										Go First
-									</Typography>
-								}
-							/>
-						</Grid2>
+								</Grid2>
+							);
+						})}
 					</Grid2>
 				</Stack>
 				<Stack>
@@ -605,10 +487,8 @@ export default function Search() {
 							{priceLabelFormat(price)}
 						</span>
 					</Typography>
-
 					<Box sx={{ width: 300 }}>
 						<Slider
-							aria-label="Custom marks"
 							sx={{
 								".MuiSlider-markLabel": {
 									fontSize: "12px",
@@ -668,44 +548,46 @@ export default function Search() {
 									color: "#ec5b24",
 								}}
 							>
-								<MenuItem
-									sx={{
-										fontSize: "12px",
-									}}
-									value={"recommended"}
-								>
-									RECOMMENDED
-								</MenuItem>
-								<MenuItem
-									sx={{
-										fontSize: "12px",
-									}}
-									value={"cheapest"}
-								>
-									CHEAPTEST
-								</MenuItem>
-								<MenuItem
-									sx={{
-										fontSize: "12px",
-									}}
-									value={"quickest"}
-								>
-									QUICKEST
-								</MenuItem>
-								<MenuItem
-									sx={{
-										fontSize: "12px",
-									}}
-									value={"earliest"}
-								>
-									EARLIEST
-								</MenuItem>
+								{sortingMethodsList.map(({ name, value }) => {
+									return (
+										<MenuItem
+											value={value}
+											key={value}
+											sx={{ fontSize: 12 }}
+										>
+											{name}
+										</MenuItem>
+									);
+								})}
 							</Select>
 						</FormControl>
 					</Stack>
 				</Stack>
 			</Stack>
+			{/* <span class="loader"></span> */}
 			<Stack gap={2} sx={{ pt: 2 }} className="data-container">
+				{((withfilters && filteredData.length == 0) ||
+					(!withfilters && data.length == 0)) && (
+					<Stack alignItems={"center"} gap={2} sx={{ my: 2 }}>
+						<img src={notFound} style={{ width: "800px" }} />
+						<Typography color="rgba(0,0,0,.64)" fontSize={20}>
+							Oops! No matches for the applied filters
+						</Typography>
+						<Typography color="rgba(0,0,0,.64)" fontSize={14}>
+							Try applying a different set of filters and search
+							again.
+						</Typography>
+						<Button
+							onClick={handleResetFilters}
+							disableRipple
+							variant="contained"
+							sx={{ px: 4, fontWeight: 700 }}
+						>
+							RESET FILTERS
+						</Button>
+						{/* </Box> */}
+					</Stack>
+				)}
 				{(withfilters
 					? filteredData.slice(
 							8 * (pageNumber - 1),
@@ -722,19 +604,22 @@ export default function Search() {
 						searchParams={searchParams}
 					/>
 				))}
-				<Pagination
-					color="secondary"
-					className="pagination"
-					sx={{ alignSelf: "center", m: 2 }}
-					page={pageNumber}
-					onChange={(e, p) => setPageNumber(p)}
-					count={
-						withfilters
-							? Math.ceil(filteredData.length / 8)
-							: Math.ceil(data.length / 8)
-					}
-					shape="rounded"
-				/>
+				{((withfilters && filteredData.length != 0) ||
+					(!withfilters && data.length != 0)) && (
+					<Pagination
+						color="secondary"
+						className="pagination"
+						sx={{ alignSelf: "center", m: 2 }}
+						page={pageNumber}
+						onChange={(e, p) => setPageNumber(p)}
+						count={
+							withfilters
+								? Math.ceil(filteredData.length / 8)
+								: Math.ceil(data.length / 8)
+						}
+						shape="rounded"
+					/>
+				)}
 			</Stack>
 		</Box>
 	);

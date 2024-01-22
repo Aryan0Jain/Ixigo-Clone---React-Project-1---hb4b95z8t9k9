@@ -1,26 +1,25 @@
-import {
-	Box,
-	Button,
-	Checkbox,
-	Divider,
-	FormControlLabel,
-	IconButton,
-	Popper,
-	Stack,
-	ToggleButton,
-	ToggleButtonGroup,
-	Typography,
-} from "@mui/material";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Checkbox from "@mui/material/Checkbox";
+import Divider from "@mui/material/Divider";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import IconButton from "@mui/material/IconButton";
+import Popper from "@mui/material/Popper";
+import Stack from "@mui/material/Stack";
+import ToggleButton from "@mui/material/ToggleButton";
+import ToggleButtonGroup from "@mui/material/ToggleButtonGroup";
+import Typography from "@mui/material/Typography";
 import React, { useEffect, useRef, useState } from "react";
-import TrainStationInput from "./TrainStationInput";
 import { DatePicker } from "@mui/x-date-pickers";
 import { BiSolidError } from "react-icons/bi";
-import swapSVG from "../assests/svgs/swap.svg";
-import { useTrainSearchContext } from "./Contexts/TrainSearchProvider";
+import swapSVG from "../../assests/svgs/swap-white.svg";
 import dayjs from "dayjs";
 import Grid2 from "@mui/material/Unstable_Grid2/Grid2";
-import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import { useTrainSearchContext } from "../Contexts/TrainSearchProvider";
+import TrainStationInput from "./TrainStationInput";
 import TrainCard from "./TrainCard";
+import notFound from "../../assests/images/trainNotFound.png";
 
 const popperSX = {
 	border: 0,
@@ -139,7 +138,7 @@ export default function TrainsSearch() {
 						mx: 1,
 						p: 0.2,
 						height: "fit-content",
-						border: "2px solid",
+						border: "2px solid white",
 					}}
 				>
 					<img src={swapSVG} />
@@ -160,6 +159,9 @@ export default function TrainsSearch() {
 						textField: {
 							variant: "standard",
 							InputLabelProps: { shrink: true },
+						},
+						inputAdornment: {
+							sx: { "& svg": { fill: "white" } },
 						},
 					}}
 					disablePast
@@ -387,17 +389,39 @@ export default function TrainsSearch() {
 					</Box>
 				</Stack>
 			</Stack>
-			<Stack>
-				{trainRoutes.map((train) => {
-					return (
-						<TrainCard
-							key={train._id}
-							train={train}
-							departureDate={departureDate}
-						/>
-					);
-				})}
-			</Stack>
+			{trainRoutes.length > 0 && (
+				<Stack gap={2} sx={{ my: 5 }}>
+					{trainRoutes.map((train) => {
+						return (
+							<TrainCard
+								key={train._id}
+								train={train}
+								departureDate={departureDate}
+							/>
+						);
+					})}
+				</Stack>
+			)}
+			{trainRoutes.length == 0 && (
+				<Stack
+					direction={"row"}
+					alignItems={"center"}
+					sx={{ width: "fit-content", mx: "auto", my: 4 }}
+					gap={5}
+				>
+					<img src={notFound} style={{ width: "400px" }} />
+					<Box sx={{ width: 380 }}>
+						<Typography fontSize={20} color="rgba(0,0,0,.64)">
+							No trains found
+						</Typography>
+						<Typography fontSize={14} color="rgba(0,0,0,.64)">
+							Sorry! No trains found in the selected route. Please
+							choose a different origin and destination & try
+							again
+						</Typography>
+					</Box>
+				</Stack>
+			)}
 		</Box>
 	);
 }

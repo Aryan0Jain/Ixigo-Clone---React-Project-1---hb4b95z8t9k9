@@ -1,12 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
 import Button from "@mui/material/Button";
 import ClickAwayListener from "@mui/material/ClickAwayListener";
-import Grow from "@mui/material/Grow";
 import Paper from "@mui/material/Paper";
 import Popper from "@mui/material/Popper";
 import MenuItem from "@mui/material/MenuItem";
 import MenuList from "@mui/material/MenuList";
-import { Avatar, IconButton, SvgIcon } from "@mui/material";
+import Avatar from "@mui/material/Avatar";
+import SvgIcon from "@mui/material/SvgIcon";
 import { useAuthContext } from "./Contexts/AuthProvider";
 
 // const username = "Aryan";

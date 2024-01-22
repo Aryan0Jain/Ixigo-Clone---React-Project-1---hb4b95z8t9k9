@@ -1,17 +1,15 @@
 import React, { useRef, useState } from "react";
 import { useAuthContext } from "./Contexts/AuthProvider";
-import {
-	Box,
-	Button,
-	FormControl,
-	Modal,
-	Popper,
-	Stack,
-	Tab,
-	Tabs,
-	TextField,
-	Typography,
-} from "@mui/material";
+
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Modal from "@mui/material/Modal";
+import Popper from "@mui/material/Popper";
+import Stack from "@mui/material/Stack";
+import Tab from "@mui/material/Tab";
+import Tabs from "@mui/material/Tabs";
+import TextField from "@mui/material/TextField";
+import Typography from "@mui/material/Typography";
 import loginSignupImg from "../assests/images/login-signup-banner.png";
 import { BiSolidError } from "react-icons/bi";
 

@@ -19,7 +19,7 @@ export default function TrainSearchProvider({ children }) {
 		const day = weekDays[new dayjs(searchParams.get("date")).day()];
 		const searchVal = JSON.stringify({
 			source: trainStations[fromStation],
-			// destination: trainStations[toStation],
+			destination: trainStations[toStation],
 		});
 		const url = `https://academics.newtonschool.co/api/v1/bookingportals/train?search=${searchVal}&day=${day}&limit=1000`;
 		// console.log(url);
@@ -32,10 +32,13 @@ export default function TrainSearchProvider({ children }) {
 				},
 			});
 			const res = await data.json();
+			// console.log(res);
 			console.log(res);
 			if (!res.message) {
 				setTrainRoutes(res.data.trains);
-				console.log(res.data.trains);
+				// console.log(res.data.trains);
+			} else {
+				setTrainRoutes([]);
 			}
 		} catch (error) {
 			console.log(error);

@@ -1,6 +1,8 @@
-import { Autocomplete, Stack, TextField, Typography } from "@mui/material";
+import Autocomplete from "@mui/material/Autocomplete";
+import Stack from "@mui/material/Stack";
+import TextField from "@mui/material/TextField";
+import Typography from "@mui/material/Typography";
 import React from "react";
-import { useSearchContext } from "./Contexts/SearchProdiver";
 
 const CustomInput = React.forwardRef(
 	(
@@ -16,7 +18,6 @@ const CustomInput = React.forwardRef(
 		},
 		ref
 	) => {
-		// const [showClear, setShowClear] = React.useState(false);
 		const { airports, passengers } = useSearchContext();
 		return (
 			<>
@@ -28,19 +29,7 @@ const CustomInput = React.forwardRef(
 						openOnFocus
 						options={airports}
 						defaultValue={airports[setDefault]}
-						// value={value}
-						// value={airports[value]}
 						ref={ref}
-						// onChange={(e, v) => {
-						// 	setValue(
-						// 		v
-						// 			? airports.findIndex(
-						// 					(item) =>
-						// 						item.iata_code == v.iata_code
-						// 			  )
-						// 			: ""
-						// 	);
-						// }}
 						getOptionLabel={(option) =>
 							option.iata_code + " - " + option.city
 						}
@@ -51,8 +40,6 @@ const CustomInput = React.forwardRef(
 								type={type}
 								variant="standard"
 								placeholder={placeholder}
-								// onChange={(e) => setValue(e.target.value)}
-								// shrink
 								InputLabelProps={{ shrink: true }}
 							/>
 						)}
@@ -89,14 +76,9 @@ const CustomInput = React.forwardRef(
 						label={label}
 						variant="standard"
 						inputRef={ref}
-						// ref={ref}
-						// value={value}
-						// onChange={(e) => setValue(e.target.value)}
 						defaultValue={setDefault}
 						type={type}
 						placeholder={placeholder}
-						// value={value}
-						// onChange={(e) => setValue(e.target.value)}
 						InputLabelProps={{
 							shrink: true,
 						}}
@@ -107,9 +89,6 @@ const CustomInput = React.forwardRef(
 						sx={{ width: "200px" }}
 						disablePortal
 						openOnFocus
-						// value={value}
-						// onChange={(e, v) => setValue(v)}
-						// value={value}
 						defaultValue={passengers[setDefault]}
 						ref={ref}
 						options={passengers}
@@ -120,10 +99,8 @@ const CustomInput = React.forwardRef(
 							<TextField
 								{...params}
 								label={label}
-								// type={type}
 								variant="standard"
 								placeholder={placeholder}
-								// shrink
 								InputLabelProps={{ shrink: true }}
 							/>
 						)}

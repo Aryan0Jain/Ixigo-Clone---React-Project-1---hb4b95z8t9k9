@@ -1,11 +1,10 @@
-import { AppBar, Button, Stack, SvgIcon, Typography } from "@mui/material";
+import AppBar from "@mui/material/AppBar";
+import Button from "@mui/material/Button";
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
 import React from "react";
 import logo from "../assests/images/logo.webp";
 import { NavLink } from "react-router-dom";
-// import { ReactComponent as flightSVG } from "../assests/svgs/flight.svg";
-// import { ReactComponent as trainSVG } from "../assests/svgs/train.svg";
-// import { ReactComponent as busSVG } from "../assests/svgs/bus.svg";
-// import { ReactComponent as hotelSVG } from "../assests/svgs/hotel.svg";
 import flightSVG from "../assests/svgs/flight.svg";
 import trainSVG from "../assests/svgs/train.svg";
 import busSVG from "../assests/svgs/bus.svg";
@@ -40,12 +39,16 @@ export default function Navbar() {
 							style={{ width: "85px" }}
 						/>
 					</NavLink>
-					<Stack direction="row" gap={3} alignItems="center">
+					<Stack
+						direction="row"
+						gap={3}
+						alignItems="center"
+						className="nav-tabs"
+					>
 						{tabs.map(({ tabLogo, tabTitle }) => {
 							return (
 								<NavLink
 									style={{ textDecoration: "none" }}
-									variant="a"
 									key={tabTitle}
 									to={`/${tabTitle.toLowerCase()}`}
 								>
@@ -53,15 +56,6 @@ export default function Navbar() {
 										direction="row"
 										gap={0.5}
 										alignItems="center"
-										sx={{
-											"&:hover *": {
-												color: "secondary.hover",
-												filter: "invert(46%) sepia(45%) saturate(4226%) hue-rotate(348deg) brightness(96%) contrast(91%)",
-											},
-											"& *": {
-												color: "secondary.light",
-											},
-										}}
 									>
 										<img
 											src={tabLogo}

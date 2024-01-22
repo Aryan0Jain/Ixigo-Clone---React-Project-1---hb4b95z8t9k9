@@ -1,28 +1,22 @@
-import {
-	Autocomplete,
-	Box,
-	Button,
-	IconButton,
-	InputAdornment,
-	Popper,
-	Stack,
-	TextField,
-	Typography,
-} from "@mui/material";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import IconButton from "@mui/material/IconButton";
+import Popper from "@mui/material/Popper";
+import Stack from "@mui/material/Stack";
+import Typography from "@mui/material/Typography";
 import React, { useRef, useState } from "react";
-import trainLogo from "../assests/images/train-booking.png";
-import swapSVG from "../assests/svgs/swap.svg";
-import CustomInput from "./CustomInput";
-import irctcLogo from "../assests/images/irctc-logo.webp";
-import guaranteeIMG1 from "../assests/images/train-guarantee-1.webp";
-import guaranteeIMG2 from "../assests/images/train-guarantee-2.webp";
-import guaranteeIMG3 from "../assests/images/train-guarantee-3.webp";
-import guaranteeIMG4 from "../assests/images/train-guarantee-4.webp";
+import trainLogo from "../../assests/images/train-booking.png";
+import swapSVG from "../../assests/svgs/swap.svg";
+import irctcLogo from "../../assests/images/irctc-logo.webp";
+import guaranteeIMG1 from "../../assests/images/train-guarantee-1.webp";
+import guaranteeIMG2 from "../../assests/images/train-guarantee-2.webp";
+import guaranteeIMG3 from "../../assests/images/train-guarantee-3.webp";
+import guaranteeIMG4 from "../../assests/images/train-guarantee-4.webp";
 import { BiSolidError } from "react-icons/bi";
 import { DatePicker } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
-import { useTrainSearchContext } from "./Contexts/TrainSearchProvider";
 import { useNavigate } from "react-router-dom";
+import { useTrainSearchContext } from "../Contexts/TrainSearchProvider";
 import TrainStationInput from "./TrainStationInput";
 
 const popperSX = {
@@ -88,7 +82,7 @@ export default function Trains() {
 			setAnchorEl(depDateRef.current);
 			return;
 		}
-		const difference = departureDate.diff(new dayjs());
+		const difference = departureDate.diff(new dayjs().hour(0).minute(0));
 		if (difference < 0 || difference > 121 * 24 * 3600 * 1000) {
 			setErrorMessage("Date is out of Range!");
 			setAnchorEl(depDateRef.current);
@@ -98,7 +92,7 @@ export default function Trains() {
 		const date = departureDate.toJSON();
 		const from = encodeURI(trainStations[fromStation]);
 		const to = encodeURI(trainStations[toStation]);
-		console.log(from);
+		// console.log(from);
 		const url = `/trains/search?date=${date}&from=${from}&to=${to}`;
 		// console.log(url);
 		navigate(url);
@@ -165,7 +159,7 @@ export default function Trains() {
 				}}
 			>
 				<TrainStationInput
-					removeAnchor={removeError}
+					removeError={removeError}
 					ref={fromRef}
 					options={trainStations}
 					value={fromStation}
@@ -189,7 +183,7 @@ export default function Trains() {
 					<img src={swapSVG} />
 				</IconButton>
 				<TrainStationInput
-					removeAnchor={removeError}
+					removeError={removeError}
 					ref={toRef}
 					options={trainStations}
 					value={toStation}

@@ -3,16 +3,17 @@ import "../styles/App.css";
 import Navbar from "./Navbar";
 import { ThemeProvider } from "@mui/material";
 import theme from "./Contexts/Theme";
-import Flights from "./Flights";
-import Trains from "./Trains";
+import Flights from "./Flights/Flights";
+import Trains from "./Trains/Trains.jsx";
 import AuthProvider from "./Contexts/AuthProvider";
-import Search from "./Search";
+import Search from "./Flights/Search";
 import SearchProvider from "./Contexts/SearchProdiver";
-import Buses from "./Buses";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import TrainSearchProvider from "./Contexts/TrainSearchProvider";
-import TrainsSearch from "./TrainsSearch";
+import TrainsSearch from "./Trains/TrainsSearch.jsx";
+import Footer from "./Footer";
+import Buses from "./Buses/Buses.jsx";
 
 function App() {
 	return (
@@ -47,6 +48,7 @@ function App() {
 										element={<Search />}
 									/>
 								</Routes>
+								<Footer />
 							</TrainSearchProvider>
 						</SearchProvider>
 					</BrowserRouter>

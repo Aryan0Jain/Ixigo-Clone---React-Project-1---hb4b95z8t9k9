@@ -1,4 +1,5 @@
-import { Autocomplete, TextField } from "@mui/material";
+import Autocomplete from "@mui/material/Autocomplete";
+import TextField from "@mui/material/TextField";
 import { forwardRef } from "react";
 
 const TrainStationInput = forwardRef(
