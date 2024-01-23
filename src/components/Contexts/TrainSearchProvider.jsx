@@ -15,7 +15,7 @@ export default function TrainSearchProvider({ children }) {
 	const [toStation, setToStation] = useState(1);
 	const [trainRoutes, setTrainRoutes] = useState([]);
 	const [departureDate, setDepartureDate] = useState(new dayjs());
-	async function searchTrains() {
+	async function searchTrains(setIsLoading) {
 		const day = weekDays[new dayjs(searchParams.get("date")).day()];
 		const searchVal = JSON.stringify({
 			source: trainStations[fromStation],
@@ -42,6 +42,8 @@ export default function TrainSearchProvider({ children }) {
 			}
 		} catch (error) {
 			console.log(error);
+		} finally {
+			setIsLoading(false);
 		}
 	}
 	const provider = {

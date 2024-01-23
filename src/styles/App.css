@@ -74,44 +74,31 @@ label.Mui-focused {
 	/* border-color: #ec5b24 !important; */
 	border-bottom: 1px solid rgba(0, 0, 0, 0.42);
 }
-.loader {
-	width: 320px;
-	height: 120px;
+/* HTML: <div class="loader"></div> */
+.flight-cards-loader {
 	margin: auto;
-	display: block;
-	position: relative;
-	background: #fff;
-	box-sizing: border-box;
+	margin-top: 20px;
+	width: 980px;
+	height: 100px;
+	background: linear-gradient(90deg, #0001 33%, #0005 50%, #0001 66%) #f2f2f2;
+	background-size: 300% 100%;
+	animation: l1 1s infinite linear;
 }
-.loader::after {
-	content: "";
-	width: calc(100% - 30px);
-	height: calc(100% - 30px);
-	top: 10px;
-	left: 10px;
-	position: absolute;
-	background-image: linear-gradient(
-			100deg,
-			transparent,
-			rgba(255, 255, 255, 0.5) 50%,
-			transparent 80%
-		),
-		linear-gradient(#ddd 56px, transparent 0),
-		linear-gradient(#ddd 24px, transparent 0),
-		linear-gradient(#ddd 18px, transparent 0),
-		linear-gradient(#ddd 66px, transparent 0);
-	background-repeat: no-repeat;
-	background-size: 75px 130px, 55px 56px, 160px 30px, 260px 20px, 290px 56px;
-	background-position: 0% 0, 0 0, 70px 5px, 70px 38px, 0px 66px;
-	box-sizing: border-box;
-	animation: animloader 1s linear infinite;
+.train-cards-loader {
+	margin: auto;
+	margin-top: 20px;
+	width: 980px;
+	height: 100px;
+	background: linear-gradient(90deg, #0001 33%, #0005 50%, #0001 66%) #f2f2f2;
+	background-size: 300% 100%;
+	animation: l1 1s infinite linear;
 }
-
-@keyframes animloader {
+@keyframes l1 {
 	0% {
-		background-position: 0% 0, 0 0, 70px 5px, 70px 38px, 0px 66px;
+		background-position: right;
 	}
-	100% {
-		background-position: 150% 0, 0 0, 70px 5px, 70px 38px, 0px 66px;
-	}
+}
+.flight-booking-page
+	.MuiInput-root:hover:not(.Mui-disabled, .Mui-error):before {
+	border-bottom: 1px solid rgba(0, 0, 0, 0.42);
 }

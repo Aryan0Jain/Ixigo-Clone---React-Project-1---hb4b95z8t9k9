@@ -10,6 +10,7 @@ import SvgIcon from "@mui/material/SvgIcon";
 import { useAuthContext } from "./Contexts/AuthProvider";
 
 // const username = "Aryan";
+
 export default function DashboardMenu() {
 	const { logOut } = useAuthContext();
 	const [username, setUsername] = useState("");
@@ -38,7 +39,7 @@ export default function DashboardMenu() {
 
 		prevOpen.current = open;
 	}, [open]);
-
+	let firstLetter = username ? username.at(0) : "U";
 	return (
 		// <Stack direction="row" spacing={2}>
 		<div>
@@ -63,9 +64,16 @@ export default function DashboardMenu() {
 						width: "30px",
 						height: "30px",
 						mr: 2,
+						bgcolor: `${
+							avatarBackgroundColors[
+								(firstLetter.charCodeAt(0) -
+									"A".charCodeAt(0)) %
+									20
+							]
+						}`,
 					}}
 				>
-					{username?.at(0)}
+					{firstLetter}
 				</Avatar>
 				Hey {username?.split(" ")[0]}
 				{open ? (
@@ -117,3 +125,25 @@ export default function DashboardMenu() {
 		// </Stack>
 	);
 }
+const avatarBackgroundColors = [
+	"#800080",
+	"#a52a2a",
+	"#ee82ee",
+	"#008080",
+	"#ff7f50",
+	"#800020",
+	"#b7410e",
+	"#4b0082",
+	"#fa8072",
+	"#00ffff",
+	"#dc143c",
+	"#f4c430",
+	"#43254f",
+	"#ff00ff",
+	"#f28500",
+	"#733635",
+	"#de3163",
+	"#50c878",
+	"#0f52ba",
+	"#65000b",
+];

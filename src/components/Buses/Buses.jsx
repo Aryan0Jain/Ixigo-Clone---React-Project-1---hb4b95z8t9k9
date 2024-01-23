@@ -20,6 +20,8 @@ export default function Buses() {
 				sx={{
 					backgroundImage: `url(${busBG})`,
 					minHeight: "428px",
+					backgroundRepeat: "no-repeat",
+					backgroundPosition: "center",
 				}}
 				alignItems={"center"}
 				justifyContent={"center"}

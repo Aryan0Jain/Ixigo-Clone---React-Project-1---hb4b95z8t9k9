@@ -27,6 +27,7 @@ import FlightCard from "./FlightCard";
 import { useSearchContext } from "../Contexts/SearchProdiver";
 import ControlledCustomInput from "./ControlledCustomInput";
 import dayjs from "dayjs";
+import { useAuthContext } from "../Contexts/AuthProvider";
 const popperSX = {
 	border: 0,
 	py: 0.5,
@@ -68,6 +69,8 @@ export default function Search() {
 		searchBookings,
 		airports,
 	} = useSearchContext();
+	const { setShowLoginSignupForm, isLoggedIn, setRedirect, setRedirectTo } =
+		useAuthContext();
 	const fromRef = useRef();
 	const toRef = useRef();
 	const departureRef = useRef();
@@ -83,6 +86,7 @@ export default function Search() {
 	const [anchorEl, setAnchorEl] = useState(null);
 	const [errorMesaage, setErrorMessage] = useState("");
 	const [sortingMethod, setSortingMethod] = useState("recommended");
+	const [isLoading, setIsLoading] = useState(true);
 	const [pageNumber, setPageNumber] = useState(1);
 	const [airlines, setAirlines] = useState({
 		"6E": false,
@@ -107,9 +111,10 @@ export default function Search() {
 		setToCity(airports.findIndex((item) => item.iata_code == to));
 		setDepartureDate(new dayjs(searchParams.get("date")));
 		setTravellers(searchParams.get("travellers") - 1);
+		window.scrollTo(0, 0);
 	}, []);
 	useEffect(() => {
-		searchBookings();
+		searchBookings(setIsLoading);
 		setPageNumber(1);
 	}, [location]);
 	const priceLabelFormat = (x) =>
@@ -126,7 +131,6 @@ export default function Search() {
 			setAnchorEl(fromRef.current);
 			return;
 		}
-		const depDate = departureRef.current.value;
 		if (!departureDate) {
 			setErrorMessage("Please Enter A Date!");
 			setAnchorEl(departureRef.current);
@@ -147,6 +151,7 @@ export default function Search() {
 			return;
 		}
 		const pass = passengerRef.current.querySelector("input").value.at(0);
+		setIsLoading(true);
 		setPageNumber(1);
 		let url = `/flights/search?date=${departureDate.toJSON()}&from=${from}&to=${to}&travellers=${pass}`;
 		navigate(url);
@@ -227,6 +232,17 @@ export default function Search() {
 			G8: false,
 		});
 		setPrice(2500);
+	}
+	function handleBook(id) {
+		let url = `/flights/booking/review/${id}?date=${departureDate.toJSON()}&travellers=${
+			travellers + 1
+		}`;
+		console.log(url);
+		if (!isLoggedIn) {
+			setShowLoginSignupForm(true);
+			return;
+		}
+		navigate(url);
 	}
 	return (
 		<Box sx={{ mt: 8.2 }}>
@@ -564,63 +580,69 @@ export default function Search() {
 					</Stack>
 				</Stack>
 			</Stack>
-			{/* <span class="loader"></span> */}
-			<Stack gap={2} sx={{ pt: 2 }} className="data-container">
-				{((withfilters && filteredData.length == 0) ||
-					(!withfilters && data.length == 0)) && (
-					<Stack alignItems={"center"} gap={2} sx={{ my: 2 }}>
-						<img src={notFound} style={{ width: "800px" }} />
-						<Typography color="rgba(0,0,0,.64)" fontSize={20}>
-							Oops! No matches for the applied filters
-						</Typography>
-						<Typography color="rgba(0,0,0,.64)" fontSize={14}>
-							Try applying a different set of filters and search
-							again.
-						</Typography>
-						<Button
-							onClick={handleResetFilters}
-							disableRipple
-							variant="contained"
-							sx={{ px: 4, fontWeight: 700 }}
-						>
-							RESET FILTERS
-						</Button>
-						{/* </Box> */}
-					</Stack>
-				)}
-				{(withfilters
-					? filteredData.slice(
-							8 * (pageNumber - 1),
-							Math.min(8 * pageNumber, filteredData.length)
-					  )
-					: data.slice(
-							8 * (pageNumber - 1),
-							Math.min(8 * pageNumber, data.length)
-					  )
-				).map((item) => (
-					<FlightCard
-						key={item._id}
-						{...item}
-						searchParams={searchParams}
-					/>
+			{isLoading &&
+				Array.from({ length: 10 }, (_, i) => i + 1).map((i) => (
+					<div key={i} className="flight-cards-loader"></div>
 				))}
-				{((withfilters && filteredData.length != 0) ||
-					(!withfilters && data.length != 0)) && (
-					<Pagination
-						color="secondary"
-						className="pagination"
-						sx={{ alignSelf: "center", m: 2 }}
-						page={pageNumber}
-						onChange={(e, p) => setPageNumber(p)}
-						count={
-							withfilters
-								? Math.ceil(filteredData.length / 8)
-								: Math.ceil(data.length / 8)
-						}
-						shape="rounded"
-					/>
-				)}
-			</Stack>
+			{!isLoading && (
+				<Stack gap={2} sx={{ pt: 2 }} className="data-container">
+					{((withfilters && filteredData.length == 0) ||
+						(!withfilters && data.length == 0)) && (
+						<Stack alignItems={"center"} gap={2} sx={{ my: 2 }}>
+							<img src={notFound} style={{ width: "800px" }} />
+							<Typography color="rgba(0,0,0,.64)" fontSize={20}>
+								Oops! No matches for the applied filters
+							</Typography>
+							<Typography color="rgba(0,0,0,.64)" fontSize={14}>
+								Try applying a different set of filters and
+								search again.
+							</Typography>
+							<Button
+								onClick={handleResetFilters}
+								disableRipple
+								variant="contained"
+								sx={{ px: 4, fontWeight: 700 }}
+							>
+								RESET FILTERS
+							</Button>
+							{/* </Box> */}
+						</Stack>
+					)}
+					{(withfilters
+						? filteredData.slice(
+								8 * (pageNumber - 1),
+								Math.min(8 * pageNumber, filteredData.length)
+						  )
+						: data.slice(
+								8 * (pageNumber - 1),
+								Math.min(8 * pageNumber, data.length)
+						  )
+					).map((item) => (
+						<FlightCard
+							key={item._id}
+							{...item}
+							handleBook={handleBook}
+							searchParams={searchParams}
+						/>
+					))}
+					{((withfilters && filteredData.length != 0) ||
+						(!withfilters && data.length != 0)) && (
+						<Pagination
+							color="secondary"
+							className="pagination"
+							sx={{ alignSelf: "center", m: 2 }}
+							page={pageNumber}
+							onChange={(e, p) => setPageNumber(p)}
+							count={
+								withfilters
+									? Math.ceil(filteredData.length / 8)
+									: Math.ceil(data.length / 8)
+							}
+							shape="rounded"
+						/>
+					)}
+				</Stack>
+			)}
 		</Box>
 	);
 }

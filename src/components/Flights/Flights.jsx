@@ -4,7 +4,7 @@ import IconButton from "@mui/material/IconButton";
 import Popper from "@mui/material/Popper";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import swapSVG from "../../assests/svgs/swap.svg";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { BiSolidError } from "react-icons/bi";
@@ -21,7 +21,6 @@ const popperSX = {
 	border: 0,
 	py: 0.5,
 	px: 1,
-
 	fontSize: "14px",
 	bgcolor: "rgba(255,0,0,0.1)",
 	color: "#D50000",
@@ -52,7 +51,7 @@ export default function Flights() {
 		setTravellers,
 		airports,
 	} = useSearchContext();
-
+	useEffect(() => window.scrollTo(0, 0), []);
 	function validateAndFetch() {
 		const from = fromRef.current.querySelector("input").value.slice(0, 3);
 		const to = toRef.current.querySelector("input").value.slice(0, 3);

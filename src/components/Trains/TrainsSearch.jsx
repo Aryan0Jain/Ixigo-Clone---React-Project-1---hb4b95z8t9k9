@@ -15,7 +15,7 @@ import { BiSolidError } from "react-icons/bi";
 import swapSVG from "../../assests/svgs/swap-white.svg";
 import dayjs from "dayjs";
 import Grid2 from "@mui/material/Unstable_Grid2/Grid2";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { useTrainSearchContext } from "../Contexts/TrainSearchProvider";
 import TrainStationInput from "./TrainStationInput";
 import TrainCard from "./TrainCard";
@@ -41,10 +41,12 @@ export default function TrainsSearch() {
 	const [errorMesaage, setErrorMessage] = useState("");
 	const fromRef = useRef();
 	const toRef = useRef();
+	const [searchParams] = useSearchParams();
 	const navigate = useNavigate();
 	const location = useLocation();
 	const depDateRef = useRef();
 	const [depTimeRange, setDepTimeRange] = useState(null);
+	const [isLoading, setIsLoading] = useState(true);
 	const [sortBy, setSortBy] = useState("departure");
 	const [classes, setClasses] = useState({
 		CC: false,
@@ -67,7 +69,16 @@ export default function TrainsSearch() {
 		trainRoutes,
 	} = useTrainSearchContext();
 	useEffect(() => {
-		searchTrains();
+		const from = searchParams.get("from");
+		const to = searchParams.get("to");
+		setFromStation(trainStations.findIndex((item) => item == from));
+		setToStation(trainStations.findIndex((item) => item == to));
+		setDepartureDate(new dayjs(searchParams.get("date")));
+		// setTravellers(searchParams.get("travellers") - 1);
+		window.scrollTo(0, 0);
+	}, []);
+	useEffect(() => {
+		searchTrains(setIsLoading);
 	}, [location]);
 	function removeError() {
 		setErrorMessage("");
@@ -103,6 +114,7 @@ export default function TrainsSearch() {
 		// console.log(from);
 		const url = `/trains/search?date=${date}&from=${from}&to=${to}`;
 		// console.log(url);
+		setIsLoading(true);
 		navigate(url);
 	}
 
@@ -389,38 +401,52 @@ export default function TrainsSearch() {
 					</Box>
 				</Stack>
 			</Stack>
-			{trainRoutes.length > 0 && (
-				<Stack gap={2} sx={{ my: 5 }}>
-					{trainRoutes.map((train) => {
-						return (
-							<TrainCard
-								key={train._id}
-								train={train}
-								departureDate={departureDate}
-							/>
-						);
-					})}
-				</Stack>
-			)}
-			{trainRoutes.length == 0 && (
-				<Stack
-					direction={"row"}
-					alignItems={"center"}
-					sx={{ width: "fit-content", mx: "auto", my: 4 }}
-					gap={5}
-				>
-					<img src={notFound} style={{ width: "400px" }} />
-					<Box sx={{ width: 380 }}>
-						<Typography fontSize={20} color="rgba(0,0,0,.64)">
-							No trains found
-						</Typography>
-						<Typography fontSize={14} color="rgba(0,0,0,.64)">
-							Sorry! No trains found in the selected route. Please
-							choose a different origin and destination & try
-							again
-						</Typography>
-					</Box>
-				</Stack>
+			{isLoading &&
+				Array.from({ length: 5 }, (_, i) => i + 1).map((i) => (
+					<div key={i} className="train-cards-loader"></div>
+				))}
+			{!isLoading && (
+				<>
+					{trainRoutes.length > 0 && (
+						<Stack gap={2} sx={{ my: 5 }}>
+							{trainRoutes.map((train) => {
+								return (
+									<TrainCard
+										key={train._id}
+										train={train}
+										departureDate={departureDate}
+									/>
+								);
+							})}
+						</Stack>
+					)}
+					{trainRoutes.length == 0 && (
+						<Stack
+							direction={"row"}
+							alignItems={"center"}
+							sx={{ width: "fit-content", mx: "auto", my: 4 }}
+							gap={5}
+						>
+							<img src={notFound} style={{ width: "400px" }} />
+							<Box sx={{ width: 380 }}>
+								<Typography
+									fontSize={20}
+									color="rgba(0,0,0,.64)"
+								>
+									No trains found
+								</Typography>
+								<Typography
+									fontSize={14}
+									color="rgba(0,0,0,.64)"
+								>
+									Sorry! No trains found in the selected
+									route. Please choose a different origin and
+									destination & try again
+								</Typography>
+							</Box>
+						</Stack>
+					)}
+				</>
 			)}
 		</Box>
 	);

@@ -14,13 +14,14 @@ import TrainSearchProvider from "./Contexts/TrainSearchProvider";
 import TrainsSearch from "./Trains/TrainsSearch.jsx";
 import Footer from "./Footer";
 import Buses from "./Buses/Buses.jsx";
+import FlightBooking from "./Flights/FlightBooking.jsx";
 
 function App() {
 	return (
 		<LocalizationProvider dateAdapter={AdapterDayjs}>
 			<ThemeProvider theme={theme}>
-				<AuthProvider>
-					<BrowserRouter>
+				<BrowserRouter>
+					<AuthProvider>
 						<SearchProvider>
 							<TrainSearchProvider>
 								<Navbar />
@@ -33,6 +34,10 @@ function App() {
 									<Route
 										path="/flights/search"
 										element={<Search />}
+									/>
+									<Route
+										path="/flights/booking/:progress/:details"
+										element={<FlightBooking />}
 									/>
 									<Route
 										path="/trains"
@@ -51,8 +56,8 @@ function App() {
 								<Footer />
 							</TrainSearchProvider>
 						</SearchProvider>
-					</BrowserRouter>
-				</AuthProvider>
+					</AuthProvider>
+				</BrowserRouter>
 			</ThemeProvider>
 		</LocalizationProvider>
 	);

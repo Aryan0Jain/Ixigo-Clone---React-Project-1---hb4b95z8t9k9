@@ -16,7 +16,7 @@ export default function SearchProvider({ children }) {
 	const [departureDate, setDepartureDate] = useState(new dayjs());
 	const [travellers, setTravellers] = useState(0);
 	const [data, setData] = useState([]);
-	async function searchBookings() {
+	async function searchBookings(setIsLoading) {
 		const day = weekDays[new dayjs(searchParams.get("date")).day()];
 		const searchVal = JSON.stringify({
 			source: searchParams.get("from"),
@@ -34,6 +34,8 @@ export default function SearchProvider({ children }) {
 		);
 		const resp = await res.json();
 		setData(resp.data.flights);
+		// console.log(resp.data.flights);
+		setIsLoading(false);
 	}
 	const provider = {
 		fromCity,

@@ -1,4 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const AuthContext = createContext();
 const JWT = JSON.parse(localStorage.getItem("authToken"));
@@ -48,6 +49,10 @@ export default function AuthProvider({ children }) {
 				};
 				localStorage.setItem("userDetails", JSON.stringify(user));
 				setIsLoggedIn(true);
+				if (redirect) {
+					setRedirect(false);
+					navigate(redirectTo);
+				}
 			}
 		} catch (error) {
 			return error;
@@ -75,7 +80,12 @@ export default function AuthProvider({ children }) {
 				localStorage.setItem("authToken", JSON.stringify(data.token));
 				const user = { name: data.data.name, email: data.data.email };
 				localStorage.setItem("userDetails", JSON.stringify(user));
+				console.log(data);
 				setIsLoggedIn(true);
+				if (redirect) {
+					setRedirect(false);
+					navigate(redirectTo);
+				}
 			}
 		} catch (error) {
 			return error;
@@ -89,6 +99,9 @@ export default function AuthProvider({ children }) {
 	}
 	const [showLoginSignupForm, setShowLoginSignupForm] = useState(false);
 	const [isLoggedIn, setIsLoggedIn] = useState(false);
+	const [redirect, setRedirect] = useState(false);
+	const [redirectTo, setRedirectTo] = useState("");
+	const navigate = useNavigate();
 	const provider = {
 		showLoginSignupForm,
 		setShowLoginSignupForm,
@@ -97,6 +110,10 @@ export default function AuthProvider({ children }) {
 		logIn,
 		signUp,
 		logOut,
+		redirect,
+		setRedirect,
+		redirectTo,
+		setRedirectTo,
 	};
 	// logIn(tempUserDetail);
 	useEffect(() => {

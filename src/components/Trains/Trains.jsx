@@ -4,7 +4,7 @@ import IconButton from "@mui/material/IconButton";
 import Popper from "@mui/material/Popper";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import trainLogo from "../../assests/images/train-booking.png";
 import swapSVG from "../../assests/svgs/swap.svg";
 import irctcLogo from "../../assests/images/irctc-logo.webp";
@@ -97,6 +97,7 @@ export default function Trains() {
 		// console.log(url);
 		navigate(url);
 	}
+	useEffect(() => window.scrollTo(0, 0), []);
 	return (
 		<Box component={"div"} sx={{ width: "100%" }}>
 			<Box
