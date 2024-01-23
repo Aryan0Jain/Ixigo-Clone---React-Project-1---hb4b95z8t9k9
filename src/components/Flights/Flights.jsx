@@ -74,7 +74,7 @@ export default function Flights() {
 			departureDate.diff(new dayjs().hour(0).minute(0)) < 0;
 		const isItMoreThanAYear =
 			departureDate.diff(new dayjs().add(-1, "day").add(1, "year")) > 0;
-		if (isInThePast < 0 || isItMoreThanAYear) {
+		if (isInThePast || isItMoreThanAYear) {
 			setErrorMessage("Date is out of Range!");
 			setAnchorEl(departureRef.current);
 			return;
@@ -96,7 +96,7 @@ export default function Flights() {
 				sx={{
 					width: "fit-content",
 					m: "auto",
-					py: 4,
+					py: 3,
 					px: 4,
 					backgroundColor: "#fff",
 					borderRadius: "5px",
@@ -209,7 +209,12 @@ export default function Flights() {
 						</Box>
 					</Popper>
 				</Stack>
-				<Stack direction={"row"} alignItems={"center"} gap={1}>
+				<Stack
+					direction={"row"}
+					alignItems={"center"}
+					gap={1}
+					sx={{ mt: 2 }}
+				>
 					<Typography
 						fontSize={"13px"}
 						fontWeight={400}

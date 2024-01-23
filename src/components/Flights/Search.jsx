@@ -145,7 +145,7 @@ export default function Search() {
 			departureDate.diff(new dayjs().hour(0).minute(0)) < 0;
 		const isItMoreThanAYear =
 			departureDate.diff(new dayjs().add(-1, "day").add(1, "year")) > 0;
-		if (isInThePast < 0 || isItMoreThanAYear) {
+		if (isInThePast || isItMoreThanAYear) {
 			setErrorMessage("Date is out of Range!");
 			setAnchorEl(departureRef.current);
 			return;

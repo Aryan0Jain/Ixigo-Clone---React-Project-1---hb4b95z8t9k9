@@ -102,3 +102,17 @@ label.Mui-focused {
 	.MuiInput-root:hover:not(.Mui-disabled, .Mui-error):before {
 	border-bottom: 1px solid rgba(0, 0, 0, 0.42);
 }
+.flight-booking-loader {
+	margin: auto;
+	margin-top: 20px;
+	width: 980px;
+	height: 100px;
+	background: linear-gradient(90deg, #0001 33%, #0005 50%, #0001 66%) #f2f2f2;
+	background-size: 300% 100%;
+	animation: loader 1s infinite linear;
+}
+@keyframes loader {
+	0% {
+		background-position: right;
+	}
+}
