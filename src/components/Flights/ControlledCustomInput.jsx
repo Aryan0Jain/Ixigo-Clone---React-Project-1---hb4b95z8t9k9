@@ -102,13 +102,15 @@ const ControlledCustomInput = React.forwardRef(
 				)}
 				{type == "number" && (
 					<Autocomplete
-						sx={{ width: "200px" }}
+						sx={{
+							width: "200px",
+						}}
 						disablePortal
 						disableClearable
 						openOnFocus
 						onChange={(e, v) => {
 							removeError();
-							setValue(v);
+							setValue(v - 1);
 						}}
 						value={passengers[value]}
 						ref={ref}

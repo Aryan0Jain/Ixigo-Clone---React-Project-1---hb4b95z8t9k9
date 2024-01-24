@@ -405,7 +405,29 @@ export default function TrainsSearch() {
 				Array.from({ length: 5 }, (_, i) => i + 1).map((i) => (
 					<div key={i} className="train-cards-loader"></div>
 				))}
-			{!isLoading && (
+			{!isLoading && trainRoutes == null && (
+				<Stack
+					direction={"row"}
+					alignItems={"center"}
+					sx={{
+						width: "fit-content",
+						mx: "auto",
+						my: 4,
+					}}
+					gap={5}
+				>
+					<img src={notFound} style={{ width: "400px" }} />
+					<Box sx={{ width: 380 }}>
+						<Typography fontSize={20} color="rgba(0,0,0,.64)">
+							Oops! Some Error occurred.
+						</Typography>
+						<Typography fontSize={14} color="rgba(0,0,0,.64)">
+							Please retry after sometime.
+						</Typography>
+					</Box>
+				</Stack>
+			)}
+			{!isLoading && trainRoutes != null && (
 				<>
 					{trainRoutes.length > 0 && (
 						<Stack gap={2} sx={{ my: 5 }}>
@@ -424,7 +446,11 @@ export default function TrainsSearch() {
 						<Stack
 							direction={"row"}
 							alignItems={"center"}
-							sx={{ width: "fit-content", mx: "auto", my: 4 }}
+							sx={{
+								width: "fit-content",
+								mx: "auto",
+								my: 4,
+							}}
 							gap={5}
 						>
 							<img src={notFound} style={{ width: "400px" }} />

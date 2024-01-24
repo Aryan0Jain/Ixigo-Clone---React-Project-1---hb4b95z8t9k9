@@ -1,17 +1,4 @@
-import {
-	Autocomplete,
-	Box,
-	Button,
-	Divider,
-	FormControl,
-	InputLabel,
-	MenuItem,
-	Popper,
-	Select,
-	Stack,
-	TextField,
-	Typography,
-} from "@mui/material";
+import { Box, Button, Divider, Popper, Stack, Typography } from "@mui/material";
 import React, { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { FaCheck } from "react-icons/fa6";
@@ -20,15 +7,19 @@ import INLogo from "../../assests/images/airlines/6E.png";
 import G8Logo from "../../assests/images/airlines/G8.png";
 import SGLogo from "../../assests/images/airlines/SG.png";
 import UKLogo from "../../assests/images/airlines/UK.png";
-import FlightDetailsTab from "./FlightDetailsTab";
 import { MdExpandMore } from "react-icons/md";
 import { BiSolidError } from "react-icons/bi";
 import { useSearchContext } from "../Contexts/SearchProdiver";
+import ReviewCard from "./ReviewCard";
+import PassengerDetailsCard from "./PassengerDetailsCard";
+import ReviewAndPay from "./ReviewAndPay";
+import BookingModal from "./BookingModal";
 const progressStages = [
 	{ name: "Review", id: "review" },
 	{ name: "Traveller Details", id: "traveller-details" },
 	{ name: "Payment", id: "payment" },
 ];
+const titles = ["Mr", "Ms", "Mrs"];
 function isValidEmail(email) {
 	const pattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 	return pattern.test(email);
@@ -39,11 +30,11 @@ function isValidPincode(code) {
 export default function FlightBooking() {
 	const [showDetails, setShowDetails] = useState(false);
 	const contactEmailRef = useRef();
+	const [contactEmail, setContactEmail] = useState();
 	const pincodeRef = useRef();
 	const billingAddressRef = useRef();
 	const [anchorEl, setAnchorEl] = useState(null);
 	const [errorMesaage, setErrorMessage] = useState("");
-	const [title, setTile] = useState("");
 	const [isLoading, setIsLoading] = useState(true);
 	const [searchParams] = useSearchParams();
 	const navigate = useNavigate();
@@ -51,97 +42,37 @@ export default function FlightBooking() {
 	const flight_id = params.details;
 	const departureDate = searchParams.get("date");
 	const travellers = searchParams.get("travellers");
+	const [bookingWait, setBookingWait] = useState({
+		startWaiting: false,
+		recieved: false,
+		message: "",
+	});
 	const [passengerDetails, setPassengerDetails] = useState(
 		Array.from({ length: travellers }).map((_, i) => {
-			return { id: i + 1, firstName: "", lastName: "", nationality: "" };
+			return {
+				id: i + 1,
+				title: "",
+				firstName: "",
+				lastName: "",
+				nationality: "",
+			};
 		})
 	);
 	const passgengerIDs = Array.from({ length: travellers }).map((_, i) => {
 		return {
 			id: i + 1,
+			titleID: `title-${i + 1}`,
 			firstNameID: `firstname-${i + 1}`,
 			lastNameID: `lastname-${i + 1}`,
 			nationalityID: `nationality-${i + 1}`,
 		};
 	});
-	const { airports, getFlightDetails, countries, tempData } =
-		useSearchContext();
+	const { airports, bookFlight, tempData } = useSearchContext();
 	const [flightData, setFlightData] = useState(tempData);
 	const progressIndex = progressStages.findIndex(
 		({ id }) => id == params.progress
 	);
 	const user = JSON.parse(localStorage.getItem("userDetails")) || {};
-
-	useEffect(() => {
-		async function getData() {
-			const data = await getFlightDetails(flight_id);
-			setFlightData(data.data);
-			setIsLoading(false);
-		}
-		getData();
-	}, []);
-	function handleContinue() {
-		if (progressIndex == 0) {
-			if (!isValidEmail(contactEmailRef.current.value)) {
-				setAnchorEl(contactEmailRef.current);
-				setErrorMessage("Please enter a valid email!");
-				contactEmailRef.current.focus();
-				return;
-			}
-			if (!isValidPincode(pincodeRef.current.value)) {
-				setAnchorEl(pincodeRef.current);
-				setErrorMessage("Please enter a valid pincode!");
-				pincodeRef.current.focus();
-				return;
-			}
-			const progress = progressStages[progressIndex + 1].id;
-			const emailID = contactEmailRef.current.value;
-			const pinCode = pincodeRef.current.value;
-			let url = `/flights/booking/${progress}/${flight_id}?date=${departureDate}&travellers=${travellers}&email=${emailID}&pincode=${pinCode}`;
-			navigate(url);
-		}
-		if (progressIndex == 1) {
-			for (let i = 0; i < travellers; i++) {
-				const { firstName, lastName, nationality } =
-					passengerDetails[i];
-				if (firstName.length < 4) {
-					const element = document.getElementById(
-						passgengerIDs[i].firstNameID
-					);
-					setAnchorEl(element);
-					element.focus();
-					setErrorMessage("Please enter a valid first name!");
-					return;
-				}
-				if (lastName.length < 4) {
-					const element = document.getElementById(
-						passgengerIDs[i].lastNameID
-					);
-					setAnchorEl(element);
-					element.focus();
-					setErrorMessage("Please enter a valid last name!");
-					return;
-				}
-				if (!nationality) {
-					const element = document.getElementById(
-						passgengerIDs[i].nationalityID
-					);
-					console.log(nationality);
-					setAnchorEl(element);
-					element.focus();
-					setErrorMessage("Please select your Nationality!");
-					return;
-				}
-			}
-			const progress = progressStages[progressIndex + 1].id;
-			const emailID = searchParams.get("email");
-			const pinCode = searchParams.get("pincode");
-			let url = `/flights/booking/${progress}/${flight_id}?date=${departureDate}&travellers=${travellers}&email=${emailID}&pincode=${pinCode}&passengerdetails=${JSON.stringify(
-				passengerDetails
-			)}`;
-			navigate(url);
-		}
-	}
 	const {
 		source,
 		destination,
@@ -153,7 +84,7 @@ export default function FlightBooking() {
 		stops,
 	} = flightData;
 	let airlineImg, airlineName, flightName;
-	const calulatedDuration = ("" + duration).padStart(2, "0") + "hr 00min";
+	const calculatedDuration = ("" + duration).padStart(2, "0") + "hr 00min";
 	const depDate = new Date(departureDate);
 	depDate.setHours(
 		+departureTime.slice(0, 2) + 5 + (+departureTime.slice(3, 5) + 30) / 60,
@@ -192,6 +123,92 @@ export default function FlightBooking() {
 			flightName = "UK" + flightID.split("-")[2];
 			break;
 	}
+	useEffect(() => {
+		setFlightData(JSON.parse(searchParams.get("flightdata")));
+		setIsLoading(false);
+	}, []);
+	function handleContinue() {
+		if (progressIndex == 0) {
+			if (!isValidEmail(contactEmailRef.current.value)) {
+				setAnchorEl(contactEmailRef.current);
+				setErrorMessage("Please enter a valid email!");
+				contactEmailRef.current.focus();
+				return;
+			}
+			if (!isValidPincode(pincodeRef.current.value)) {
+				setAnchorEl(pincodeRef.current);
+				setErrorMessage("Please enter a valid pincode!");
+				pincodeRef.current.focus();
+				return;
+			}
+			const progress = progressStages[progressIndex + 1].id;
+			const emailID = contactEmailRef.current.value;
+			setContactEmail(emailID);
+			const pinCode = pincodeRef.current.value;
+			let url = `/flights/booking/${progress}/${flight_id}?date=${departureDate}&travellers=${travellers}&email=${emailID}&pincode=${pinCode}`;
+			navigate(url);
+		}
+		if (progressIndex == 1) {
+			for (let i = 0; i < travellers; i++) {
+				const { title, firstName, lastName, nationality } =
+					passengerDetails[i];
+				if (!title) {
+					const element = document.getElementById(
+						passgengerIDs[i].titleID
+					);
+					setAnchorEl(element);
+					element.focus();
+					setErrorMessage("Please select your title!");
+					return;
+				}
+				if (firstName.length < 4) {
+					const element = document.getElementById(
+						passgengerIDs[i].firstNameID
+					);
+					setAnchorEl(element);
+					element.focus();
+					setErrorMessage("Please enter a valid first name!");
+					return;
+				}
+				if (lastName.length < 4) {
+					const element = document.getElementById(
+						passgengerIDs[i].lastNameID
+					);
+					setAnchorEl(element);
+					element.focus();
+					setErrorMessage("Please enter a valid last name!");
+					return;
+				}
+				if (!nationality) {
+					const element = document.getElementById(
+						passgengerIDs[i].nationalityID
+					);
+					setAnchorEl(element);
+					element.focus();
+					setErrorMessage("Please select your Nationality!");
+					return;
+				}
+			}
+			const progress = progressStages[progressIndex + 1].id;
+			const emailID = searchParams.get("email");
+			const pinCode = searchParams.get("pincode");
+			let url = `/flights/booking/${progress}/${flight_id}?date=${departureDate}&travellers=${travellers}&email=${emailID}&pincode=${pinCode}&passengerdetails=${JSON.stringify(
+				passengerDetails
+			)}`;
+			navigate(url);
+		}
+	}
+	async function handlePayButton() {
+		setBookingWait((prev) => {
+			return { ...prev, startWaiting: true };
+		});
+		const message = await bookFlight(flight_id, depDate, arrDate);
+		setBookingWait((prev) => {
+			setTimeout(() => navigate("/"), 5000);
+			return { ...prev, message: message.message, recieved: true };
+		});
+	}
+
 	return (
 		<Box sx={{ mt: 8.2, width: "100%" }}>
 			<Box
@@ -217,7 +234,7 @@ export default function FlightBooking() {
 						/>
 					}
 				>
-					{progressStages.map(({ name, id }, index) => {
+					{progressStages.map(({ name }, index) => {
 						return (
 							<Stack key={index} position={"relative"}>
 								<Stack
@@ -265,542 +282,73 @@ export default function FlightBooking() {
 			{!isLoading && (
 				<Stack direction={"row"} gap={5} sx={{ m: 4, ml: 15 }}>
 					{progressIndex == 0 && (
-						<Stack
-							sx={{ width: "fit-content" }}
-							gap={3}
-							className="flight-booking-page"
-						>
-							<Box
-								sx={{
-									bgcolor: "#E1E1E1",
-									// width: "fit-content",
-									boxShadow: "0 0 10px rgba(0,0,0,.3)",
-								}}
-							>
-								<Typography
-									sx={{ ml: 3, my: 2 }}
-									color="rgba(0,0,0,.64)"
-									fontWeight={600}
-									fontSize={14}
-								>
-									{airports[sourceIndex].city} to{" "}
-									{airports[destinationIndex].city}
-								</Typography>
-								<FlightDetailsTab
-									{...{
-										flightID,
-										source,
-										destination,
-										departureTime,
-										arrivalTime,
-										duration,
-										ticketPrice,
-										searchParams,
-									}}
-								/>
-								<Stack direction={"row"} gap={10} sx={{ p: 3 }}>
-									<Stack>
-										<Typography
-											color="rgba(0,0,0,0.54)"
-											fontWeight={700}
-											fontSize={12}
-										>
-											BAGGAGE
-										</Typography>
-										<Typography
-											color={"rgba(0,0,0,.87)"}
-											fontSize={18}
-											fontWeight={600}
-										>
-											{source}-{destination}
-										</Typography>
-									</Stack>
-									<Stack>
-										<Typography
-											color="rgba(0,0,0,.54)"
-											fontSize={14}
-											fontWeight={600}
-										>
-											CHECK-IN
-										</Typography>
-										<Typography
-											color={"rgba(0,0,0,.54)"}
-											fontSize={14}
-											fontWeight={600}
-										>
-											{ticketPrice <= 2250
-												? "15 kilograms (1 piece per pax)"
-												: "20 kilograms (1 piece per pax)"}
-										</Typography>
-									</Stack>
-									<Stack>
-										<Typography
-											color="rgba(0,0,0,.54)"
-											fontSize={14}
-											fontWeight={600}
-										>
-											CABIN
-										</Typography>
-										<Typography
-											color={"rgba(0,0,0,.54)"}
-											fontSize={14}
-											fontWeight={600}
-										>
-											{ticketPrice <= 2250
-												? "7 kg (1 piece per pax)"
-												: "10 kg (1 piece per pax)"}
-										</Typography>
-									</Stack>
-								</Stack>
-							</Box>
-							<Box
-								sx={{
-									bgcolor: "#E1E1E1",
-									width: "100%",
-									boxShadow: "0 0 10px rgba(0,0,0,.3)",
-								}}
-							>
-								<Typography
-									sx={{ ml: 3, my: 2 }}
-									color={"rgba(0,0,0,.38)"}
-									fontSize={14}
-									fontWeight={400}
-								>
-									<span
-										style={{
-											color: "rgba(0,0,0,.64)",
-											fontWeight: 600,
-										}}
-									>
-										Contact Details
-									</span>{" "}
-									(Your ticket and flight info will be sent
-									here)
-								</Typography>
-								<Stack
-									sx={{ pl: 3, py: 2, bgcolor: "#fff" }}
-									direction={"row"}
-								>
-									<TextField
-										label="Email Address"
-										variant="standard"
-										defaultValue={user.email}
-										InputLabelProps={{ shrink: true }}
-										inputRef={contactEmailRef}
-										onChange={() => setAnchorEl(null)}
-									/>
-								</Stack>
-							</Box>
-							<Box
-								sx={{
-									bgcolor: "#E1E1E1",
-									width: "100%",
-									boxShadow: "0 0 10px rgba(0,0,0,.3)",
-								}}
-							>
-								<Typography
-									sx={{ ml: 3, my: 2 }}
-									color="rgba(0,0,0,.64)"
-									fontWeight={600}
-									fontSize={14}
-								>
-									Billing Address
-								</Typography>
-								<Stack
-									sx={{ pl: 3, py: 2, bgcolor: "#fff" }}
-									direction={"row"}
-									gap={3}
-								>
-									<TextField
-										label="Pincode"
-										required
-										variant="standard"
-										defaultValue={400000}
-										InputLabelProps={{ shrink: true }}
-										inputRef={pincodeRef}
-										InputProps={{ type: "number" }}
-										onChange={() => setAnchorEl(null)}
-									/>
-									<TextField
-										sx={{ width: 500 }}
-										label="Address"
-										variant="standard"
-										placeholder="Enter Billing Address"
-										InputLabelProps={{ shrink: true }}
-										inputRef={billingAddressRef}
-										onChange={() => setAnchorEl(null)}
-									/>
-								</Stack>
-							</Box>
-						</Stack>
+						<ReviewCard
+							{...{
+								sourceIndex,
+								destinationIndex,
+								flightID,
+								source,
+								destination,
+								departureTime,
+								arrivalTime,
+								duration,
+								ticketPrice,
+								searchParams,
+								user,
+								contactEmailRef,
+								billingAddressRef,
+								pincodeRef,
+								setAnchorEl,
+							}}
+						/>
 					)}
 					{progressIndex == 1 && (
-						<Stack sx={{ width: 940 }} gap={5}>
-							<Stack
-								sx={{
-									mx: "auto",
-									pl: 2,
-									p: 2,
-									width: "100%",
-									flexDirection: "row",
-									bgcolor: "#fff",
-								}}
-								divider={
-									<Divider orientation="vertical" flexItem />
-								}
-								gap={4}
-							>
-								<Stack
-									justifyContent={"center"}
-									alignItems={"center"}
-								>
-									<img
-										src={airlineImg}
-										style={{
-											width: "50px",
-											height:
-												airlineName == "AIR INDIA"
-													? "50px"
-													: "40px",
-											marginBottom: "10px",
-										}}
-									/>
-									<Typography
-										fontSize={"12px"}
-										color="rgba(0,0,0,0.4)"
-									>
-										{airlineName}
-									</Typography>
-									<Typography
-										fontSize={"12px"}
-										color="rgba(0,0,0,0.4)"
-									>
-										{flightName}
-									</Typography>
-								</Stack>
-								<Stack
-									divider={
-										<Stack alignItems={"center"} gap={1}>
-											<Typography
-												color="rgb(0,0,0,0.5)"
-												fontSize={"12px"}
-											>
-												{calulatedDuration}
-											</Typography>
-											<Stack
-												justifyContent={"space-between"}
-												alignItems={"center"}
-												direction={"row"}
-												sx={{
-													height: "2px",
-													bgcolor:
-														"rgb(187, 187, 187) ",
-													width: "250px",
-													mx: 3,
-												}}
-											>
-												<div
-													style={{
-														width: "6px",
-														height: "6px",
-														borderRadius: "6px",
-														backgroundColor:
-															"rgb(117, 117, 117)",
-														mt: "-2px",
-													}}
-												></div>
-												<div
-													style={{
-														width: "6px",
-														height: "6px",
-														borderRadius: "6px",
-														backgroundColor:
-															"rgb(117, 117, 117)",
-														mt: "-2px",
-													}}
-												></div>
-											</Stack>
-											<Typography
-												color="rgb(0,0,0,0.5)"
-												fontSize={"12px"}
-											>
-												Stops: {stops}
-											</Typography>
-										</Stack>
-									}
-									flexDirection={"row"}
-									alignItems={"center"}
-									justifyContent={"center"}
-								>
-									<Stack textAlign={"right"}>
-										<Typography
-											fontSize={"14px"}
-											color="rgba(0,0,0,0.7)"
-										>
-											{source}
-										</Typography>
-										<Typography
-											fontWeight={600}
-											variant="h5"
-											fontSize={"22px"}
-										>
-											{departureTime}
-										</Typography>
-										<Typography
-											fontSize={"12px"}
-											color="rgb(0,0,0,0.5)"
-										>
-											{depDate.toUTCString().slice(0, 11)}
-										</Typography>
-										<Typography
-											fontSize={"12px"}
-											color="rgb(0,0,0,0.5)"
-										>
-											{airports[sourceIndex].city}
-										</Typography>
-									</Stack>
-									{/* <Divider> </Divider> */}
-									<Stack textAlign={"left"}>
-										<Typography
-											fontSize={"14px"}
-											color="rgba(0,0,0,0.7)"
-										>
-											{destination}
-										</Typography>
-										<Typography
-											fontWeight={600}
-											variant="h5"
-											fontSize={"22px"}
-										>
-											{arrivalTime}
-										</Typography>
-										<Typography
-											fontSize={"12px"}
-											color="rgb(0,0,0,0.5)"
-										>
-											{arrDate.toUTCString().slice(0, 11)}
-										</Typography>
-										<Typography
-											fontSize={"12px"}
-											color="rgb(0,0,0,0.5)"
-										>
-											{airports[destinationIndex].city}
-										</Typography>
-									</Stack>
-								</Stack>
-								<Stack
-									width="100%"
-									direction={"row"}
-									alignItems={"center"}
-									justifyContent={"space-between"}
-								>
-									<Typography
-										color="rgba(0,0,0,.64)"
-										fontSize={12}
-									>
-										aryanajjain@gmail.com
-									</Typography>
-									<Button disableRipple sx={{ fontSize: 16 }}>
-										Modify
-									</Button>
-								</Stack>
-							</Stack>
-							<Box
-								sx={{
-									bgcolor: "#E1E1E1",
-									width: "100%",
-									boxShadow: "0 0 10px rgba(0,0,0,.3)",
-								}}
-							>
-								<Typography
-									sx={{ ml: 3, my: 2 }}
-									color="rgba(0,0,0,.64)"
-									fontWeight={600}
-									fontSize={14}
-								>
-									Enter traveller details
-								</Typography>
-								<Stack
-									sx={{
-										bgcolor: "#fff",
-										p: 3,
-										"& .MuiInput-root:hover:not(.Mui-disabled, .Mui-error):before":
-											{
-												borderBottom:
-													"1px solid rgba(0, 0, 0, 0.42)",
-											},
-									}}
-									gap={4}
-								>
-									{passengerDetails.map(({ id }, i) => {
-										return (
-											<Box key={i}>
-												<Typography
-													color="rgba(0,0,0,.87)"
-													fontSize={16}
-													fontWeight={600}
-												>
-													Passenger {id}
-												</Typography>
-												<Stack
-													direction={"row"}
-													columnGap={4}
-													rowGap={2}
-													sx={{ mt: 2 }}
-													flexWrap={"wrap"}
-												>
-													<TextField
-														variant="standard"
-														label="First Name"
-														placeholder="First Name & Middle Name(if any)"
-														InputLabelProps={{
-															shrink: true,
-															style: {
-																color: "rgba(0,0,0,.38)",
-															},
-														}}
-														sx={{
-															width: 240,
-															"& input": {
-																fontSize: 14,
-															},
-														}}
-														id={
-															passgengerIDs[i]
-																.firstNameID
-														}
-														onChange={(e) => {
-															setAnchorEl(null);
-															setPassengerDetails(
-																(prev) => {
-																	const newDetails =
-																		[
-																			...prev,
-																		];
-																	newDetails[
-																		i
-																	].firstName =
-																		e.target.value;
-																	return newDetails;
-																}
-															);
-														}}
-													/>
-													<TextField
-														variant="standard"
-														label="Last Name"
-														placeholder="Last Name"
-														InputLabelProps={{
-															shrink: true,
-															style: {
-																color: "rgba(0,0,0,.38)",
-															},
-														}}
-														sx={{
-															width: 240,
-															"& input": {
-																fontSize: 14,
-															},
-														}}
-														id={
-															passgengerIDs[i]
-																.lastNameID
-														}
-														onChange={(e) => {
-															setAnchorEl(null);
-															setPassengerDetails(
-																(prev) => {
-																	const newDetails =
-																		[
-																			...prev,
-																		];
-																	newDetails[
-																		i
-																	].lastName =
-																		e.target.value;
-																	return newDetails;
-																}
-															);
-														}}
-													/>
-													<Autocomplete
-														options={countries}
-														getOptionLabel={(
-															option
-														) => option}
-														renderInput={(
-															params
-														) => (
-															<TextField
-																{...params}
-																sx={{
-																	width: 320,
-																}}
-																variant="standard"
-																label="Nationality"
-																InputLabelProps={{
-																	shrink: true,
-																	style: {
-																		color: "rgba(0,0,0,.38)",
-																	},
-																}}
-																placeholder="Select Country"
-															/>
-														)}
-														sx={{
-															"& input": {
-																fontSize: 14,
-															},
-														}}
-														id={
-															passgengerIDs[i]
-																.nationalityID
-														}
-														onChange={(e, v) => {
-															setAnchorEl(null);
-															setPassengerDetails(
-																(prev) => {
-																	const newDetails =
-																		[
-																			...prev,
-																		];
-																	newDetails[
-																		i
-																	].nationality =
-																		v;
-																	return newDetails;
-																}
-															);
-														}}
-													/>
-												</Stack>
-											</Box>
-										);
-									})}
-								</Stack>
-							</Box>
-						</Stack>
+						<PassengerDetailsCard
+							{...{
+								airlineImg,
+								airlineName,
+								flightName,
+								calculatedDuration,
+								depDate,
+								arrDate,
+								source,
+								destination,
+								stops,
+								departureTime,
+								arrivalTime,
+								sourceIndex,
+								destinationIndex,
+								contactEmail,
+								passengerDetails,
+								passgengerIDs,
+								setAnchorEl,
+								setPassengerDetails,
+								titles,
+							}}
+						/>
 					)}
 					{progressIndex == 2 && (
-						<Stack sx={{ width: 940 }}>
-							<Box
-								sx={{
-									bgcolor: "#E1E1E1",
-									width: "100%",
-									boxShadow: "0 0 10px rgba(0,0,0,.3)",
-								}}
-							>
-								<Typography
-									sx={{ ml: 3, my: 2 }}
-									color="rgba(0,0,0,.64)"
-									fontWeight={600}
-									fontSize={14}
-								>
-									Summary
-								</Typography>
-								<Stack></Stack>
-							</Box>
-						</Stack>
+						<ReviewAndPay
+							{...{
+								airlineImg,
+								airlineName,
+								flightName,
+								calculatedDuration,
+								stops,
+								source,
+								departureTime,
+								depDate,
+								destination,
+								arrivalTime,
+								arrDate,
+								contactEmail,
+								travellers,
+								passengerDetails,
+								handlePayButton,
+								ticketPrice,
+								extraCharges,
+							}}
+						/>
 					)}
 					<Stack gap={10}>
 						<Box
@@ -915,13 +463,15 @@ export default function FlightBooking() {
 								</Stack>
 							</Stack>
 						</Box>
-						<Button
-							onClick={handleContinue}
-							disableRipple
-							variant="contained"
-						>
-							Continue
-						</Button>
+						{progressIndex < 2 && (
+							<Button
+								onClick={handleContinue}
+								disableRipple
+								variant="contained"
+							>
+								Continue
+							</Button>
+						)}
 					</Stack>
 				</Stack>
 			)}
@@ -950,6 +500,7 @@ export default function FlightBooking() {
 					{errorMesaage}
 				</Box>
 			</Popper>
+			<BookingModal {...{ bookingWait }} />
 		</Box>
 	);
 }

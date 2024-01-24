@@ -42,6 +42,7 @@ export default function TrainSearchProvider({ children }) {
 			}
 		} catch (error) {
 			console.log(error);
+			setTrainRoutes(null)
 		} finally {
 			setIsLoading(false);
 		}

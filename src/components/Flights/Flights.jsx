@@ -160,15 +160,6 @@ export default function Flights() {
 							setAnchorEl(null);
 						}}
 					/>
-					{/* <ControlledCustomInput
-						removeError={removeError}
-						label="Departure"
-						placeholder="Departure Date"
-						value={departureDate}
-						setValue={setDepartureDate}
-						type="date"
-						ref={departureRef}
-					></ControlledCustomInput> */}
 					<ControlledCustomInput
 						removeError={removeError}
 						label="Travellers"

@@ -234,10 +234,11 @@ export default function Search() {
 		setPrice(2500);
 	}
 	function handleBook(id) {
+		const { aircraftModel, airline, amenities, ...flightdata } =
+			data[data.findIndex((item) => item._id == id)];
 		let url = `/flights/booking/review/${id}?date=${departureDate.toJSON()}&travellers=${
 			travellers + 1
-		}`;
-		console.log(url);
+		}&flightdata=${JSON.stringify(flightdata)}`;
 		if (!isLoggedIn) {
 			setShowLoginSignupForm(true);
 			return;
@@ -584,7 +585,20 @@ export default function Search() {
 				Array.from({ length: 10 }, (_, i) => i + 1).map((i) => (
 					<div key={i} className="flight-cards-loader"></div>
 				))}
-			{!isLoading && (
+			{!isLoading && data == null && (
+				<Stack gap={2} sx={{ pt: 2 }} className="data-container">
+					<Stack alignItems={"center"} gap={2} sx={{ my: 2 }}>
+						<img src={notFound} style={{ width: "800px" }} />
+						<Typography color="rgba(0,0,0,.64)" fontSize={20}>
+							Oops! Some Error occurred.
+						</Typography>
+						<Typography color="rgba(0,0,0,.64)" fontSize={14}>
+							Please retry after sometime.
+						</Typography>
+					</Stack>
+				</Stack>
+			)}
+			{!isLoading && data != null && (
 				<Stack gap={2} sx={{ pt: 2 }} className="data-container">
 					{((withfilters && filteredData.length == 0) ||
 						(!withfilters && data.length == 0)) && (

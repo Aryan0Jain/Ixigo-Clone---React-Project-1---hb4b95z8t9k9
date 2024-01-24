@@ -22,25 +22,10 @@ export default function SearchProvider({ children }) {
 			source: searchParams.get("from"),
 			destination: searchParams.get("to"),
 		});
-		const res = await fetch(
-			`https://academics.newtonschool.co/api/v1/bookingportals/flight?search=${searchVal}&day=${day}&limit=1000`,
-			{
-				method: "GET",
-				headers: {
-					"Content-Type": "application/json",
-					projectID: projectID,
-				},
-			}
-		);
-		const resp = await res.json();
-		setData(resp.data.flights);
-		// console.log(resp.data.flights);
-		setIsLoading(false);
-	}
-	async function getFlightDetails(flight_id) {
-		const data = await (
-			await fetch(
-				`https://academics.newtonschool.co/api/v1/bookingportals/flight/${flight_id}`,
+		let resp;
+		try {
+			const res = await fetch(
+				`https://academics.newtonschool.co/api/v1/bookingportals/flight?search=${searchVal}&day=${day}&limit=1000`,
 				{
 					method: "GET",
 					headers: {
@@ -48,9 +33,67 @@ export default function SearchProvider({ children }) {
 						projectID: projectID,
 					},
 				}
-			)
-		).json();
-		return data;
+			);
+			resp = await res.json();
+			setData(resp.data.flights);
+		} catch (error) {
+			setData(null);
+		} finally {
+			setIsLoading(false);
+		}
+		// console.log(resp.data.flights);
+	}
+	async function getFlightDetails(flight_id) {
+		try {
+			const data = await (
+				await fetch(
+					`https://academics.newtonschool.co/api/v1/bookingportals/fligh/${flight_id}`,
+					{
+						method: "GET",
+						headers: {
+							"Content-Type": "application/json",
+							projectID: projectID,
+						},
+					}
+				)
+			).json();
+			return data.data;
+		} catch (error) {
+			return null;
+		}
+	}
+	async function bookFlight(id, depDate, arrDate) {
+		const JWT = JSON.parse(localStorage.getItem("authToken"));
+		// console.log(JWT);
+		// console.log(depDate.toJSON());
+		// console.log(arrDate.toJSON());
+		const body = {
+			bookingType: "flight",
+			bookingDetails: {
+				flightId: id,
+				startdate: depDate.toJSON(),
+				endDate: arrDate.toJSON(),
+			},
+		};
+		try {
+			const data = await (
+				await fetch(
+					`https://academics.newtonschool.co/api/v1/bookingportals/booking`,
+					{
+						method: "POST",
+						headers: {
+							"Content-Type": "application/json",
+							Authorization: `Bearer ${JWT}`,
+							projectID: projectID,
+						},
+						body: JSON.stringify(body),
+					}
+				)
+			).json();
+			return data;
+		} catch (error) {
+			return { message: "Some Error Occurred!" };
+		}
 	}
 	const provider = {
 		fromCity,
@@ -69,6 +112,7 @@ export default function SearchProvider({ children }) {
 		getFlightDetails,
 		countries,
 		tempData,
+		bookFlight,
 	};
 	return (
 		<SearchContext.Provider value={{ ...provider }}>
