@@ -63,8 +63,7 @@ export default function Navbar() {
 											height={"30px"}
 										/>
 										<Typography
-											variant="sting"
-											// color="secondary"
+										// color="secondary"
 										>
 											{tabTitle}
 										</Typography>

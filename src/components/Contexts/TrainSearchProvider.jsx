@@ -33,19 +33,78 @@ export default function TrainSearchProvider({ children }) {
 			});
 			const res = await data.json();
 			// console.log(res);
-			console.log(res);
 			if (!res.message) {
-				setTrainRoutes(res.data.trains);
-				// console.log(res.data.trains);
+				setTrainRoutes(
+					res.data.trains.sort((a, b) => {
+						const aTime =
+							+a.departureTime.slice(0, 2) * 60 +
+							+a.departureTime.slice(3, 5);
+						const bTime =
+							+b.departureTime.slice(0, 2) * 60 +
+							+b.departureTime.slice(3, 5);
+						return aTime - bTime;
+					})
+				);
 			} else {
 				setTrainRoutes([]);
 			}
 		} catch (error) {
 			console.log(error);
-			setTrainRoutes(null)
+			setTrainRoutes(null);
 		} finally {
 			setIsLoading(false);
 		}
+	}
+	async function bookTrain(id, depDate, arrDate) {
+		const JWT = JSON.parse(localStorage.getItem("authToken"));
+		const body = {
+			bookingType: "train",
+			bookingDetails: {
+				trainId: id,
+				startdate: depDate.toJSON(),
+				endDate: arrDate.toJSON(),
+			},
+		};
+		try {
+			const data = await (
+				await fetch(
+					`https://academics.newtonschool.co/api/v1/bookingportals/booking`,
+					{
+						method: "POST",
+						headers: {
+							"Content-Type": "application/json",
+							Authorization: `Bearer ${JWT}`,
+							projectID: projectID,
+						},
+						body: JSON.stringify(body),
+					}
+				)
+			).json();
+			return data;
+		} catch (error) {
+			return { message: "Some Error Occurred!" };
+		}
+	}
+	function getFare(type, baseFare) {
+		switch (type) {
+			case "CC":
+				return Math.round(baseFare * 2);
+			case "2S":
+				return Math.round(baseFare * 0.75);
+			case "SL":
+				return Math.round(baseFare);
+			case "1A":
+				return Math.round(baseFare * 6.25);
+			case "2A":
+				return Math.round(baseFare * 3.5);
+			case "3A":
+				return Math.round(baseFare * 2.75);
+			case "3E":
+				return Math.round(baseFare * 1.75);
+			case "EA":
+				return Math.round(baseFare * 5);
+		}
+		return baseFare;
 	}
 	const provider = {
 		fromStation,
@@ -58,6 +117,8 @@ export default function TrainSearchProvider({ children }) {
 		searchTrains,
 		trainRoutes,
 		setTrainRoutes,
+		getFare,
+		bookTrain,
 	};
 	return (
 		<TrainSearchContext.Provider value={{ ...provider }}>

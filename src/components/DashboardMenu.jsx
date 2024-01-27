@@ -115,7 +115,6 @@ export default function DashboardMenu() {
 				<Paper>
 					<ClickAwayListener onClickAway={handleClose}>
 						<MenuList autoFocusItem={open}>
-							<MenuItem onClick={handleClose}>My Trips</MenuItem>
 							<MenuItem onClick={logOut}>Logout</MenuItem>
 						</MenuList>
 					</ClickAwayListener>

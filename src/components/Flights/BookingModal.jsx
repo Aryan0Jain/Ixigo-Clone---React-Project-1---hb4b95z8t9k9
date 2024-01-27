@@ -1,6 +1,6 @@
 import { Box, Modal, Typography } from "@mui/material";
 import React from "react";
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { IoIosThumbsUp } from "react-icons/io";
 import { IoIosThumbsDown } from "react-icons/io";
 
@@ -14,6 +14,7 @@ const modalStyle = {
 };
 
 export default function BookingModal({ bookingWait }) {
+	const navigate = useNavigate();
 	return (
 		<Modal open={bookingWait.startWaiting} onClose={() => navigate("/")}>
 			<Box sx={modalStyle}>

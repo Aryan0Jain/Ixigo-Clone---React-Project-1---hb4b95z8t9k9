@@ -241,6 +241,8 @@ export default function Search() {
 		}&flightdata=${JSON.stringify(flightdata)}`;
 		if (!isLoggedIn) {
 			setShowLoginSignupForm(true);
+			setRedirect(true);
+			setRedirectTo(url);
 			return;
 		}
 		navigate(url);
@@ -301,6 +303,7 @@ export default function Search() {
 							sx: { "& svg": { fill: "white" } },
 						},
 					}}
+					format="DD MMM, dddd"
 					disablePast
 					label="Departure"
 					reduceAnimations

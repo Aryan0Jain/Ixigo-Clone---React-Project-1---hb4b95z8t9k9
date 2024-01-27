@@ -20,6 +20,8 @@ import { useTrainSearchContext } from "../Contexts/TrainSearchProvider";
 import TrainStationInput from "./TrainStationInput";
 import TrainCard from "./TrainCard";
 import notFound from "../../assests/images/trainNotFound.png";
+import { useAuthContext } from "../Contexts/AuthProvider";
+import { Pagination } from "@mui/material";
 
 const popperSX = {
 	border: 0,
@@ -45,9 +47,13 @@ export default function TrainsSearch() {
 	const navigate = useNavigate();
 	const location = useLocation();
 	const depDateRef = useRef();
-	const [depTimeRange, setDepTimeRange] = useState(null);
+	const [depTimeRange, setDepTimeRange] = useState([]);
 	const [isLoading, setIsLoading] = useState(true);
 	const [sortBy, setSortBy] = useState("departure");
+	const [filtered, setFiltered] = useState(false);
+	const [filteredData, setFilteredData] = useState([]);
+	const [availablityBoxId, setAvailablityBoxId] = useState(0);
+	const [pageNumber, setPageNumber] = useState(1);
 	const [classes, setClasses] = useState({
 		CC: false,
 		"2S": false,
@@ -56,6 +62,7 @@ export default function TrainsSearch() {
 		"3A": false,
 		SL: false,
 		"3E": false,
+		EA: false,
 	});
 	const {
 		fromStation,
@@ -67,7 +74,10 @@ export default function TrainsSearch() {
 		trainStations,
 		searchTrains,
 		trainRoutes,
+		getFare,
 	} = useTrainSearchContext();
+	const { setShowLoginSignupForm, isLoggedIn, setRedirect, setRedirectTo } =
+		useAuthContext();
 	useEffect(() => {
 		const from = searchParams.get("from");
 		const to = searchParams.get("to");
@@ -79,7 +89,26 @@ export default function TrainsSearch() {
 	}, []);
 	useEffect(() => {
 		searchTrains(setIsLoading);
+		handleResetFilters();
 	}, [location]);
+	function handleBook(id, coachType) {
+		const { coaches, daysOfOperation, ...trainDetails } =
+			trainRoutes[trainRoutes.findIndex((item) => item._id == id)];
+		const seats = coaches.find(
+			(item) => item.coachType == coachType
+		).numberOfSeats;
+		const fare = getFare(coachType, trainDetails.fare);
+		let url = `/trains/booking/${id}?date=${departureDate.toJSON()}&coach=${coachType}&seats=${seats}&fare=${fare}&traindetails=${JSON.stringify(
+			trainDetails
+		)}`;
+		if (!isLoggedIn) {
+			setShowLoginSignupForm(true);
+			setRedirect(true);
+			setRedirectTo(url);
+			return;
+		}
+		navigate(url);
+	}
 	function removeError() {
 		setErrorMessage("");
 		setAnchorEl(null);
@@ -116,6 +145,73 @@ export default function TrainsSearch() {
 		// console.log(url);
 		setIsLoading(true);
 		navigate(url);
+	}
+	function handleApplyFiltersButton() {
+		setIsLoading(true);
+		setFiltered(true);
+		handleApplyFilters();
+	}
+	function handleApplyFilters() {
+		let newData = [...trainRoutes];
+		console.log(trainRoutes);
+		if (Object.values(classes).includes(true)) {
+			newData = newData.filter(({ coaches }) => {
+				return coaches.some(({ coachType }) => classes[coachType]);
+			});
+		}
+		if (depTimeRange.length > 0 && depTimeRange.length < 4) {
+			newData = newData.filter(({ departureTime }) =>
+				depTimeRange.includes(getTimeRange(departureTime))
+			);
+		}
+		console.log(sortBy === "arrival");
+		if (sortBy === "arrival") {
+			newData = newData.sort((a, b) => {
+				const aTime =
+					+a.arrivalTime.slice(0, 2) * 60 +
+					+a.arrivalTime.slice(3, 5);
+				const bTime =
+					+b.arrivalTime.slice(0, 2) * 60 +
+					+b.arrivalTime.slice(3, 5);
+				console.log(aTime - bTime);
+				return aTime - bTime;
+			});
+		}
+		if (sortBy === "duration") {
+			newData = newData.sort((a, b) => {
+				let duration = a.travelDuration.split(" ");
+				const aDuration =
+					+duration[0].slice(0, -1) * 60 + +duration[1].slice(0, -1);
+				duration = b.travelDuration.split(" ");
+				const bDuration =
+					+duration[0].slice(0, -1) * 60 + +duration[1].slice(0, -1);
+				return aDuration - bDuration;
+			});
+		}
+		if (sortBy === "name") {
+			newData = newData.sort((a, b) =>
+				a.trainName.localeCompare(b.trainName)
+			);
+		}
+		setFilteredData(newData);
+		setIsLoading(false);
+	}
+	function handleResetFiltersButton() {
+		setIsLoading(true);
+		handleResetFilters();
+	}
+	function handleResetFilters() {
+		setFiltered(false);
+		Object.keys(classes).forEach((key) => (classes[key] = false));
+		setDepTimeRange([]);
+		setSortBy("departure");
+		setIsLoading(false);
+	}
+	function getTimeRange(time) {
+		if (time >= "00:00" && time <= "06:00") return "early-morning";
+		if (time > "06:00" && time <= "12:00") return "morning";
+		if (time > "12:00" && time <= "18:00") return "mid-day";
+		if (time > "18:00" && time <= "24:00") return "night";
 	}
 
 	return (
@@ -165,7 +261,7 @@ export default function TrainsSearch() {
 					placeholder="Going To"
 				/>
 				<DatePicker
-					sx={{ width: 150 }}
+					sx={{ width: 180 }}
 					ref={depDateRef}
 					slotProps={{
 						textField: {
@@ -176,6 +272,7 @@ export default function TrainsSearch() {
 							sx: { "& svg": { fill: "white" } },
 						},
 					}}
+					format="DD MMM, dddd"
 					disablePast
 					label="Departure"
 					reduceAnimations
@@ -394,10 +491,16 @@ export default function TrainsSearch() {
 							disableRipple
 							variant="contained"
 							sx={{ px: 2, fontWeight: 700, mr: 1 }}
+							onClick={handleApplyFiltersButton}
 						>
 							Apply Filters
 						</Button>
-						<Button disableRipple>Remove Filters</Button>
+						<Button
+							disableRipple
+							onClick={handleResetFiltersButton}
+						>
+							Remove Filters
+						</Button>
 					</Box>
 				</Stack>
 			</Stack>
@@ -429,20 +532,7 @@ export default function TrainsSearch() {
 			)}
 			{!isLoading && trainRoutes != null && (
 				<>
-					{trainRoutes.length > 0 && (
-						<Stack gap={2} sx={{ my: 5 }}>
-							{trainRoutes.map((train) => {
-								return (
-									<TrainCard
-										key={train._id}
-										train={train}
-										departureDate={departureDate}
-									/>
-								);
-							})}
-						</Stack>
-					)}
-					{trainRoutes.length == 0 && (
+					{!filtered && trainRoutes.length == 0 && (
 						<Stack
 							direction={"row"}
 							alignItems={"center"}
@@ -471,6 +561,122 @@ export default function TrainsSearch() {
 								</Typography>
 							</Box>
 						</Stack>
+					)}
+					{!filtered && trainRoutes.length > 0 && (
+						<Stack gap={2} sx={{ my: 5 }}>
+							{trainRoutes
+								.slice(
+									5 * (pageNumber - 1),
+									Math.min(5 * pageNumber, trainRoutes.length)
+								)
+								.map((train) => {
+									return (
+										<TrainCard
+											handleBook={handleBook}
+											key={train._id}
+											train={train}
+											departureDate={departureDate}
+											availablityBoxId={availablityBoxId}
+											setAvailablityBoxId={
+												setAvailablityBoxId
+											}
+										/>
+									);
+								})}
+						</Stack>
+					)}
+					{filtered && filteredData.length > 0 && (
+						<Stack gap={2} sx={{ my: 5 }}>
+							{filteredData
+								.slice(
+									5 * (pageNumber - 1),
+									Math.min(
+										5 * pageNumber,
+										filteredData.length
+									)
+								)
+								.map((train) => {
+									return (
+										<TrainCard
+											handleBook={handleBook}
+											key={train._id}
+											train={train}
+											departureDate={departureDate}
+											availablityBoxId={availablityBoxId}
+											setAvailablityBoxId={
+												setAvailablityBoxId
+											}
+										/>
+									);
+								})}
+						</Stack>
+					)}
+					{filtered && filteredData.length == 0 && (
+						<Stack
+							direction={"row"}
+							alignItems={"center"}
+							sx={{
+								width: "fit-content",
+								mx: "auto",
+								my: 4,
+							}}
+							gap={5}
+						>
+							<img src={notFound} style={{ width: "400px" }} />
+							<Stack
+								sx={{ width: 380 }}
+								alignItems={"center"}
+								gap={1}
+							>
+								<Typography
+									fontSize={20}
+									color="rgba(0,0,0,.64)"
+								>
+									No trains found
+								</Typography>
+								<Typography
+									fontSize={14}
+									color="rgba(0,0,0,.64)"
+								>
+									Sorry! No trains found for the selected
+									filters.
+								</Typography>
+								<Button
+									disableRipple
+									variant="contained"
+									sx={{
+										px: 2,
+										fontWeight: 700,
+										mr: 1,
+										mt: 1,
+									}}
+									onClick={handleResetFiltersButton}
+								>
+									Reset Filters
+								</Button>
+							</Stack>
+						</Stack>
+					)}
+					{((filtered && filteredData.length != 0) ||
+						(!filtered && trainRoutes.length != 0)) && (
+						<Pagination
+							color="secondary"
+							className="pagination"
+							sx={{
+								alignSelf: "center",
+								m: 2,
+								mx: "auto",
+								width: "fit-content",
+							}}
+							page={pageNumber}
+							onChange={(e, p) => setPageNumber(p)}
+							count={
+								filtered
+									? Math.ceil(filteredData.length / 5)
+									: Math.ceil(trainRoutes.length / 5)
+							}
+							shape="rounded"
+						/>
 					)}
 				</>
 			)}

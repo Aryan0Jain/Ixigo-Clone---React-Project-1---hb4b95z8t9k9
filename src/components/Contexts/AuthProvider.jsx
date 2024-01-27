@@ -10,18 +10,6 @@ const appType = "bookingportals";
 export const useAuthContext = () => {
 	return useContext(AuthContext);
 };
-
-// const tempUserDetail = {
-// 	name: "John Doe",
-// 	email: "johndoe@gmail.com",
-// 	password: "123456",
-// };
-const tempUserDetail = {
-	name: "Gurpreet",
-	email: "guru@guru.guru",
-	password: "guru",
-};
-// logIn(userDetail);
 export default function AuthProvider({ children }) {
 	async function signUp(user) {
 		const bodyObj = { ...user, appType: "bookingportals" };

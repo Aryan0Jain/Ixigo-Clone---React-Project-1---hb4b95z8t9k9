@@ -1,21 +1,21 @@
+import React, { useEffect, useRef, useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import IconButton from "@mui/material/IconButton";
 import Popper from "@mui/material/Popper";
 import Stack from "@mui/material/Stack";
 import Typography from "@mui/material/Typography";
-import React, { useEffect, useRef, useState } from "react";
-import swapSVG from "../../assests/svgs/swap.svg";
-import { useNavigate, useSearchParams } from "react-router-dom";
 import { BiSolidError } from "react-icons/bi";
 import { DatePicker } from "@mui/x-date-pickers";
+import dayjs from "dayjs";
 import { useSearchContext } from "../Contexts/SearchProdiver";
 import ControlledCustomInput from "./ControlledCustomInput";
 import Carousel from "./Carousel";
 import BannerOfTheDay from "./BannerOfTheDay";
 import BackgroundCarousel from "./BackgroundCarousel";
 import SpecialFares from "./SpecialFares";
-import dayjs from "dayjs";
+import swapSVG from "../../assests/svgs/swap.svg";
 
 const popperSX = {
 	border: 0,
@@ -36,7 +36,6 @@ export default function Flights() {
 	const toRef = useRef();
 	const departureRef = useRef();
 	const passengerRef = useRef();
-	const [searchParams] = useSearchParams();
 	const [anchorEl, setAnchorEl] = useState(null);
 	const [errorMesaage, setErrorMessage] = useState("");
 	const navigate = useNavigate();
@@ -49,13 +48,12 @@ export default function Flights() {
 		setDepartureDate,
 		travellers,
 		setTravellers,
-		airports,
 	} = useSearchContext();
 	useEffect(() => window.scrollTo(0, 0), []);
 	function validateAndFetch() {
 		const from = fromRef.current.querySelector("input").value.slice(0, 3);
 		const to = toRef.current.querySelector("input").value.slice(0, 3);
-		if (to == from) {
+		if (to === from) {
 			setErrorMessage("Form City & to City Can't be same!");
 			setAnchorEl(fromRef.current);
 			return;
@@ -65,7 +63,7 @@ export default function Flights() {
 			setAnchorEl(departureRef.current);
 			return;
 		}
-		if (departureDate.$d == "Invalid Date") {
+		if (departureDate.$d === "Invalid Date") {
 			setErrorMessage("Please Enter A Valid Date!");
 			setAnchorEl(departureRef.current);
 			return;
@@ -150,6 +148,7 @@ export default function Flights() {
 								InputLabelProps: { shrink: true },
 							},
 						}}
+						format="DD MMM, dddd"
 						disablePast
 						label="Departure"
 						reduceAnimations

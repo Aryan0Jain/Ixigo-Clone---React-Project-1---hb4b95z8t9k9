@@ -23,7 +23,6 @@ const popperSX = {
 	border: 0,
 	py: 0.5,
 	px: 1,
-
 	fontSize: "14px",
 	bgcolor: "rgba(255,0,0,0.1)",
 	color: "#D50000",
@@ -200,6 +199,7 @@ export default function Trains() {
 							InputLabelProps: { shrink: true },
 						},
 					}}
+					format="DD MMM, dddd"
 					disablePast
 					label="Departure"
 					reduceAnimations

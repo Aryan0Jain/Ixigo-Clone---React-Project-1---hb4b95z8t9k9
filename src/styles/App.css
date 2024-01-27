@@ -69,12 +69,14 @@ label.Mui-focused {
 .pagination li:last-child svg {
 	color: #ec5b24;
 }
-.train-search-pannel
-	.MuiInput-root:hover:not(.Mui-disabled, .Mui-error):before {
-	/* border-color: #ec5b24 !important; */
+.train-search-pannel .MuiInput-root:hover:not(.Mui-disabled, .Mui-error):before,
+.bus-search-pannel .MuiInput-root:hover:not(.Mui-disabled, .Mui-error):before {
 	border-bottom: 1px solid rgba(0, 0, 0, 0.42);
 }
-/* HTML: <div class="loader"></div> */
+.bus-search-page .MuiSlider-markLabel {
+	font-size: 12px;
+	font-weight: 600;
+}
 .flight-cards-loader {
 	margin: auto;
 	margin-top: 20px;
@@ -93,13 +95,22 @@ label.Mui-focused {
 	background-size: 300% 100%;
 	animation: l1 1s infinite linear;
 }
+.bus-cards-loader {
+	margin: auto;
+	margin-top: 20px;
+	width: 800px;
+	height: 120px;
+	background: linear-gradient(90deg, #0001 33%, #0005 50%, #0001 66%) #f2f2f2;
+	background-size: 300% 100%;
+	animation: l1 1s infinite linear;
+}
 @keyframes l1 {
 	0% {
 		background-position: right;
 	}
 }
-.flight-booking-page
-	.MuiInput-root:hover:not(.Mui-disabled, .Mui-error):before {
+.flight-booking-page .MuiInput-root:hover:not(.Mui-disabled, .Mui-error):before,
+.train-booking-page .MuiInput-root:hover:not(.Mui-disabled, .Mui-error):before {
 	border-bottom: 1px solid rgba(0, 0, 0, 0.42);
 }
 .flight-booking-loader {

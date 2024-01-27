@@ -6,33 +6,20 @@ import Typography from "@mui/material/Typography";
 import dayjs from "dayjs";
 import React, { useState } from "react";
 import { IoIosArrowDown } from "react-icons/io";
-import { IoIosArrowUp } from "react-icons/io";
-function getFare(type, baseFare) {
-	switch (type) {
-		case "CC":
-			return Math.round(baseFare * 1.25);
-		case "2S":
-			return Math.round(baseFare * 0.75);
-		case "SL":
-			return Math.round(baseFare);
-		case "1A":
-			return Math.round(baseFare * 6);
-		case "2A":
-			return Math.round(baseFare * 4);
-		case "3A":
-			return Math.round(baseFare * 2.5);
-		case "3E":
-			return Math.round(baseFare * 1.75);
-	}
-	return baseFare;
-}
+import { useTrainSearchContext } from "../Contexts/TrainSearchProvider";
 function getDateString(dateObj) {
 	return `${dateObj.format("ddd")}, ${dateObj.format("D")} ${dateObj.format(
 		"MMM"
 	)}`;
 }
 const weekDays = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
-export default function TrainCard({ train, departureDate }) {
+export default function TrainCard({
+	train,
+	departureDate,
+	availablityBoxId,
+	setAvailablityBoxId,
+	handleBook,
+}) {
 	const {
 		_id,
 		arrivalTime,
@@ -52,7 +39,7 @@ export default function TrainCard({ train, departureDate }) {
 		if (daysOfOperation.includes(day)) return "rgba(0,0,0,.87)";
 		else return "rgba(0,0,0,0.2)";
 	}
-
+	const { getFare } = useTrainSearchContext();
 	const depHour = +departureTime.slice(0, 2);
 	const depMin = +departureTime.slice(3, 5);
 	const durationHours = +travelDuration.split(" ")[0].slice(0, -1);
@@ -61,11 +48,9 @@ export default function TrainCard({ train, departureDate }) {
 	const arrDate = depDate
 		.add(durationHours, "hour")
 		.add(durationMin, "minute");
-	const [isAvailablityBoxVisible, setISAvailablityBoxVisible] =
-		useState(false);
-	const [cardID, setCardID] = useState(0);
-	function handleShowAvailability() {
-		setISAvailablityBoxVisible(!isAvailablityBoxVisible);
+	function handleShowAvailability(id) {
+		if (id === availablityBoxId) setAvailablityBoxId(0);
+		else setAvailablityBoxId(id);
 	}
 	return (
 		<Stack
@@ -73,7 +58,7 @@ export default function TrainCard({ train, departureDate }) {
 			sx={{
 				my: 2,
 				mx: "auto",
-				width: "fit-content",
+				width: 1140,
 				boxShadow: "0 0 10px rgba(0,0,0,.3)",
 				bgcolor: "#fff",
 			}}
@@ -85,8 +70,9 @@ export default function TrainCard({ train, departureDate }) {
 				gap={2}
 				sx={{ m: 2 }}
 				divider={<Divider orientation="vertical" flexItem />}
+				justifyContent={"center"}
 			>
-				<Box>
+				<Box sx={{ width: 310 }}>
 					<Typography
 						sx={{ textTransform: "uppercase" }}
 						fontSize={"16px"}
@@ -228,27 +214,26 @@ export default function TrainCard({ train, departureDate }) {
 							fontSize: "12px",
 							borderRadius: 0,
 						}}
-						onClick={handleShowAvailability}
+						onClick={() => handleShowAvailability(_id)}
 					>
-						{isAvailablityBoxVisible ? (
-							<>
-								Hide Availability{" "}
-								<IoIosArrowUp
-									size={"20px"}
-									fontWeight={"600"}
-									style={{ marginLeft: "6px" }}
-								/>
-							</>
-						) : (
-							<>
-								Show Availability{" "}
-								<IoIosArrowDown
-									size={"20px"}
-									fontWeight={"600"}
-									style={{ marginLeft: "6px" }}
-								/>
-							</>
-						)}
+						<>
+							{availablityBoxId == _id
+								? "Hide Availability"
+								: "Show Availability"}
+							<IoIosArrowDown
+								size={"20px"}
+								fontWeight={"600"}
+								style={{
+									marginLeft: "6px",
+									transform: `rotate(${
+										availablityBoxId == _id
+											? "180deg"
+											: "0deg"
+									})`,
+									transition: "transform 200ms",
+								}}
+							/>
+						</>
 					</Button>
 				</Stack>
 			</Stack>
@@ -261,15 +246,16 @@ export default function TrainCard({ train, departureDate }) {
 									color: "#559b09",
 									bgcolor: "rgba(85,155,9,.08)",
 									py: 1,
-									px: 3,
+									px: "auto",
 									border: "1px solid rgba(85,155,9,.4)",
 									borderRadius: "4px",
-									cursor: "pointer",
+									width: 125,
 								}}
 							>
 								<Stack
 									direction={"row"}
 									alignItems={"center"}
+									justifyContent={"center"}
 									gap={1}
 								>
 									<Typography
@@ -313,58 +299,67 @@ export default function TrainCard({ train, departureDate }) {
 					);
 				})}
 			</Stack>
-			{isAvailablityBoxVisible && (
-				<DropDownCard date={depDate} seats={availableSeats} />
+			{availablityBoxId == _id && (
+				<DropDownCard
+					coaches={coaches}
+					date={depDate}
+					id={_id}
+					handleBook={handleBook}
+				/>
 			)}
 		</Stack>
 	);
 }
-function DropDownCard({ date, seats }) {
+function DropDownCard({ date, coaches, id, handleBook }) {
 	return (
 		<Stack
 			sx={{
-				p: 3,
+				p: 2,
 				background: "#FCF5F2",
 				boxShadow: "inset 0 2px 20px rgba(0,0,0,.1)",
+				flexDirection: "row",
+				gap: 2,
 			}}
 		>
-			<Box width={"fit-content"}>
-				<Stack
-					alignItems={"center"}
-					justifyContent={"center"}
-					gap={1}
-					sx={{
-						width: "120px",
-						height: "90px",
-						background: "#FFF",
-						border: "1px solid rgba(236,91,36,.2)",
-						bordeRadius: "2px 2px 0 0",
-					}}
-				>
-					<Typography fontSize={"12px"}>
-						{getDateString(date)}
-					</Typography>
-					<Typography
-						fontSize={"12px"}
-						color={"green"}
-						fontWeight={600}
+			{coaches.map(({ coachType, numberOfSeats }) => (
+				<Box width={"fit-content"} key={coachType}>
+					<Stack
+						alignItems={"center"}
+						justifyContent={"center"}
+						gap={1}
+						sx={{
+							width: "125px",
+							height: "90px",
+							background: "#FFF",
+							border: "1px solid rgba(236,91,36,.2)",
+							bordeRadius: "2px 2px 0 0",
+						}}
 					>
-						AVL {seats}
-					</Typography>
-				</Stack>
-				<Button
-					disableRipple
-					variant="contained"
-					sx={{
-						width: "100%",
-						fontSize: "12px",
-						borderTopLeftRadius: 0,
-						borderTopRightRadius: 0,
-					}}
-				>
-					BOOK
-				</Button>
-			</Box>
+						<Typography fontSize={"12px"}>{coachType}</Typography>
+						{/* {getDateString(date)} */}
+						<Typography
+							fontSize={"12px"}
+							color={"green"}
+							fontWeight={600}
+						>
+							AVL {numberOfSeats}
+						</Typography>
+					</Stack>
+					<Button
+						disableRipple
+						variant="contained"
+						sx={{
+							width: "100%",
+							fontSize: "12px",
+							borderTopLeftRadius: 0,
+							borderTopRightRadius: 0,
+						}}
+						onClick={() => handleBook(id, coachType)}
+					>
+						BOOK
+					</Button>
+				</Box>
+			))}
 		</Stack>
 	);
 }

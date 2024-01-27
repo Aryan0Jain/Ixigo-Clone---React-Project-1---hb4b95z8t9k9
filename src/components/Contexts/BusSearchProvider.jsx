@@ -1,6 +1,6 @@
 import dayjs from "dayjs";
 import { createContext, useContext, useState } from "react";
-import { useSearchParams } from "react-router-dom";
+import { useLocation, useSearchParams } from "react-router-dom";
 
 const projectID = "hb4b95z8t9k9";
 const appType = "bookingportals";
@@ -18,11 +18,10 @@ export default function BusSearchProvider({ children }) {
 	async function searchBuses(setIsLoading) {
 		const day = weekDays[new dayjs(searchParams.get("date")).day()];
 		const searchVal = JSON.stringify({
-			source: busStations[source],
-			destination: busStations[destination],
+			source: cities[source],
+			destination: cities[destination],
 		});
 		const url = `https://academics.newtonschool.co/api/v1/bookingportals/bus?search=${searchVal}&day=${day}&limit=1000`;
-		// console.log(url);
 		try {
 			const data = await fetch(url, {
 				method: "GET",
@@ -32,18 +31,43 @@ export default function BusSearchProvider({ children }) {
 				},
 			});
 			const res = await data.json();
-			// console.log(res);
-			console.log(res);
-			if (!res.message) {
-				// setBusRoutes(res.data.buses);
-				// console.log(res.data.trains);
-			} else {
-				setBusRoutes([]);
-			}
+			setBusRoutes(res.data.buses);
+			console.log(res.data.buses);
 		} catch (error) {
 			console.log(error);
+			setBusRoutes(null);
 		} finally {
 			setIsLoading(false);
+		}
+	}
+	async function bookBus(id, depDate, arrDate) {
+		const JWT = JSON.parse(localStorage.getItem("authToken"));
+		const body = {
+			bookingType: "bus",
+			bookingDetails: {
+				trainId: id,
+				startdate: depDate.toJSON(),
+				endDate: arrDate.toJSON(),
+			},
+		};
+		try {
+			const data = await (
+				await fetch(
+					`https://academics.newtonschool.co/api/v1/bookingportals/booking`,
+					{
+						method: "POST",
+						headers: {
+							"Content-Type": "application/json",
+							Authorization: `Bearer ${JWT}`,
+							projectID: projectID,
+						},
+						body: JSON.stringify(body),
+					}
+				)
+			).json();
+			return data;
+		} catch (error) {
+			return { message: "Some Error Occurred!" };
 		}
 	}
 	const provider = {
@@ -55,6 +79,8 @@ export default function BusSearchProvider({ children }) {
 		setDepartureDate,
 		busRoutes,
 		searchBuses,
+		cities,
+		bookBus,
 	};
 	return (
 		<BusSearchContext.Provider value={{ ...provider }}>
@@ -62,4 +88,45 @@ export default function BusSearchProvider({ children }) {
 		</BusSearchContext.Provider>
 	);
 }
-const busStations = [1, 2, 3, 4];
+const cities = [
+	"Mumbai",
+	"Delhi",
+	"Bangalore",
+	"Kolkata",
+	"Chennai",
+	"Hyderabad",
+	"Pune",
+	"Ahmedabad",
+	"Surat",
+	"Jaipur",
+	"Lucknow",
+	"Nagpur",
+	"Thane",
+	"Bhopal",
+	"Visakhapatnam",
+	"Patna",
+	"Vadodara",
+	"Ludhiana",
+	"Agra",
+	"Nashik",
+	"Faridabad",
+	"Rajkot",
+	"Varanasi",
+	"Dhanbad",
+	"Jodhpur",
+	"Raipur",
+	"Coimbatore",
+	"Jabalpur",
+	"Vijayawada",
+	"Kanpur",
+	"Indore",
+	"Pimpri-Chinchwad",
+	"Ghaziabad",
+	"Meerut",
+	"Kalyan-Dombivali",
+	"Vasai-Virar",
+	"Srinagar",
+	"Amritsar",
+	"Allahabad",
+	"Gwalior",
+];

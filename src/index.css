@@ -4,7 +4,7 @@
 	box-sizing: border-box;
 }
 body {
-	font-family: "Open Sans", Helvetica, Arial, sans-serif !important;
+	/* font-family: "Open Sans", Helvetica, Arial, sans-serif !important; */
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 	background-color: #f2f2f2;
