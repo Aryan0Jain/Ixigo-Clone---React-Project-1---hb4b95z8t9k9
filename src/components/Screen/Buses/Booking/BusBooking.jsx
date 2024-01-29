@@ -318,7 +318,7 @@ export default function BusBooking() {
 									row
 									value={gender}
 									onChange={(e) => {
-										setGender(gender);
+										setGender(e.target.value);
 									}}
 								>
 									<FormControlLabel

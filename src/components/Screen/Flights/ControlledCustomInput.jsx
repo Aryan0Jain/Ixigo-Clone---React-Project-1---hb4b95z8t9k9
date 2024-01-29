@@ -52,7 +52,7 @@ const ControlledCustomInput = React.forwardRef(
 									{...props}
 									sx={{
 										width: 320,
-										":hover": {
+										"&:hover": {
 											borderLeft:
 												"2px soild #ec5b24 !important",
 										},

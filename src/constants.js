@@ -54,6 +54,12 @@ import img11 from "./assests/images/offers/11.webp";
 import specialFareSVG1 from "./assests/images/homePage/student.svg";
 import specialFareSVG2 from "./assests/images/homePage/seniorCitizen.svg";
 import specialFareSVG3 from "./assests/images/homePage/armedForces.svg";
+import hotelOffer1 from "./assests/images/hotel-carousel/1.png";
+import hotelOffer2 from "./assests/images/hotel-carousel/2.png";
+import hotelOffer3 from "./assests/images/hotel-carousel/3.png";
+import hotelOffer4 from "./assests/images/hotel-carousel/4.png";
+import hotelOffer5 from "./assests/images/hotel-carousel/5.png";
+import hotelOffer6 from "./assests/images/hotel-carousel/6.png";
 
 export const projectID = "hb4b95z8t9k9";
 export const appType = "bookingportals";
@@ -101,6 +107,14 @@ export const FLIGHT_CAROUSEL_OFFERS = [
 	{ src: img9 },
 	{ src: img10 },
 	{ src: img11 },
+];
+export const HOTEL_OFFERS_CAROUSEL = [
+	{ src: hotelOffer1 },
+	{ src: hotelOffer2 },
+	{ src: hotelOffer3 },
+	{ src: hotelOffer4 },
+	{ src: hotelOffer5 },
+	{ src: hotelOffer6 },
 ];
 
 export const FLIGHT_BANNERS_OF_THE_DAY = [
@@ -747,6 +761,88 @@ export const TRAIN_STATIONS = [
 	"Patna Junction",
 	"Guwahati",
 	"Jaipur Junction",
+];
+export const LOCATIONS = [
+	{
+		city: "Mumbai",
+		state: "Maharashtra",
+	},
+	{
+		city: "Delhi",
+		state: "National Capital Territory of Delhi",
+	},
+	{
+		city: "Bangalore",
+		state: "Karnataka",
+	},
+	{
+		city: "Kolkata",
+		state: "West Bengal",
+	},
+	{
+		city: "Chennai",
+		state: "Tamil Nadu",
+	},
+	{
+		city: "Hyderabad",
+		state: "Telangana",
+	},
+	{
+		city: "Pune",
+		state: "Maharashtra",
+	},
+	{
+		city: "Ahmedabad",
+		state: "Gujarat",
+	},
+	{
+		city: "Surat",
+		state: "Gujarat",
+	},
+	{
+		city: "Jaipur",
+		state: "Rajasthan",
+	},
+	{
+		city: "Lucknow",
+		state: "Uttar Pradesh",
+	},
+	{
+		city: "Kanpur",
+		state: "Uttar Pradesh",
+	},
+	{
+		city: "Nagpur",
+		state: "Maharashtra",
+	},
+	{
+		city: "Indore",
+		state: "Madhya Pradesh",
+	},
+	{
+		city: "Thane",
+		state: "Maharashtra",
+	},
+	{
+		city: "Bhopal",
+		state: "Madhya Pradesh",
+	},
+	{
+		city: "Visakhapatnam",
+		state: "Andhra Pradesh",
+	},
+	{
+		city: "Pimpri-Chinchwad",
+		state: "Maharashtra",
+	},
+	{
+		city: "Patna",
+		state: "Bihar",
+	},
+	{
+		city: "Vadodara",
+		state: "Gujarat",
+	},
 ];
 export const AVATAR_BACKGROUND_COLORS = [
 	"#800080",

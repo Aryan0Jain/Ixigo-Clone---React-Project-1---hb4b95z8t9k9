@@ -20,6 +20,7 @@ import BusSearchProvider from "../Contexts/BusSearchProvider.jsx";
 import BusSearch from "./Screen/Buses/Search/BusSearch.jsx";
 import BusBooking from "./Screen/Buses/Booking/BusBooking.jsx";
 import Hotels from "./Screen/Hotels/Hotels.jsx";
+import HotelSearchProvider from "../Contexts/HotelSearchProvider.jsx";
 
 function App() {
 	return (
@@ -30,51 +31,56 @@ function App() {
 						<SearchProvider>
 							<TrainSearchProvider>
 								<BusSearchProvider>
-									<Navbar />
-									<Routes>
-										<Route path="/" element={<Flights />} />
-										<Route
-											path="/flights"
-											element={<Flights />}
-										/>
-										<Route
-											path="/flights/search"
-											element={<FlightSearch />}
-										/>
-										<Route
-											path="/flights/booking/:progress/:details"
-											element={<FlightBooking />}
-										/>
-										<Route
-											path="/trains"
-											element={<Trains />}
-										/>
-										<Route
-											path="/trains/search"
-											element={<TrainsSearch />}
-										/>
-										<Route
-											path="/trains/booking/:details"
-											element={<TrainBooking />}
-										/>
-										<Route
-											path="/buses"
-											element={<Buses />}
-										/>
-										<Route
-											path="/buses/search"
-											element={<BusSearch />}
-										/>
-										<Route
-											path="/buses/booking/:details"
-											element={<BusBooking />}
-										/>
-										<Route
-											path="/hotels"
-											element={<Hotels />}
-										/>
-									</Routes>
-									<Footer />
+									<HotelSearchProvider>
+										<Navbar />
+										<Routes>
+											<Route
+												path="/"
+												element={<Flights />}
+											/>
+											<Route
+												path="/flights"
+												element={<Flights />}
+											/>
+											<Route
+												path="/flights/search"
+												element={<FlightSearch />}
+											/>
+											<Route
+												path="/flights/booking/:progress/:details"
+												element={<FlightBooking />}
+											/>
+											<Route
+												path="/trains"
+												element={<Trains />}
+											/>
+											<Route
+												path="/trains/search"
+												element={<TrainsSearch />}
+											/>
+											<Route
+												path="/trains/booking/:details"
+												element={<TrainBooking />}
+											/>
+											<Route
+												path="/buses"
+												element={<Buses />}
+											/>
+											<Route
+												path="/buses/search"
+												element={<BusSearch />}
+											/>
+											<Route
+												path="/buses/booking/:details"
+												element={<BusBooking />}
+											/>
+											<Route
+												path="/hotels"
+												element={<Hotels />}
+											/>
+										</Routes>
+										<Footer />
+									</HotelSearchProvider>
 								</BusSearchProvider>
 							</TrainSearchProvider>
 						</SearchProvider>
