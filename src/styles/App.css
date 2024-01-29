@@ -1,9 +1,3 @@
-/* .flight-search-pannel label.Mui-focused {
-	color: #ec5b24 !important;
-}
-label.Mui-focused {
-	color: #ec5b24 !important;
-} */
 .nav-tabs a {
 	color: rgba(0, 0, 0, 0.87);
 }
@@ -13,18 +7,7 @@ label.Mui-focused {
 		brightness(96%) contrast(91%);
 	color: #ec5b24;
 }
-.flight-search-pannel
-	.MuiInput-root:hover:not(.Mui-disabled, .Mui-error):before {
-	/* border-color: #ec5b24 !important; */
-	border-bottom: 1px solid rgba(0, 0, 0, 0.42);
-}
-.MuiTooltip-arrow::before {
-	background-color: white !important;
-}
-.MuiTooltip-popper div {
-	background-color: white;
-	padding: 0;
-}
+
 .signup-login-form .MuiInput-root:hover:not(.Mui-disabled, .Mui-error):before {
 	/* border-color: #ec5b24 !important; */
 	border-bottom: 1px solid rgba(0, 0, 0, 0.42);
@@ -34,31 +17,13 @@ label.Mui-focused {
 	border-bottom-color: #ec5b24;
 }
 
-.search-pannel .MuiInputLabel-root {
-	color: rgba(255, 255, 255, 0.6);
-}
-
-.search-pannel .MuiInput-root::before {
-	border-bottom: 2px solid #fff;
-}
-.search-pannel .MuiInput-root:hover:not(.Mui-disabled, .Mui-error):before {
-	border-bottom: 2px solid rgba(255, 255, 255, 0.87);
-}
-.search-pannel .MuiInput-input {
-	color: #fff;
-}
-.filter-options .MuiSlider-markLabel {
-	font-size: 12px;
-}
 .MuiAutocomplete-popper {
 	width: 340px !important;
 }
 .search-pannel .MuiAutocomplete-endAdornment svg {
 	color: #fff;
 }
-.filter-options .MuiInput-root:hover:not(.Mui-disabled, .Mui-error):before {
-	border-bottom: 1px solid rgba(0, 0, 0, 0.42);
-}
+
 .data-container .MuiAccordion-root::before {
 	height: 0px;
 }
@@ -69,9 +34,12 @@ label.Mui-focused {
 .pagination li:last-child svg {
 	color: #ec5b24;
 }
-.train-search-pannel .MuiInput-root:hover:not(.Mui-disabled, .Mui-error):before,
+.search-pannel .MuiInput-root:hover:not(.Mui-disabled, .Mui-error):before,
 .bus-search-pannel .MuiInput-root:hover:not(.Mui-disabled, .Mui-error):before {
 	border-bottom: 1px solid rgba(0, 0, 0, 0.42);
+}
+.search-pannel {
+	color: white !important;
 }
 .bus-search-page .MuiSlider-markLabel {
 	font-size: 12px;
@@ -157,4 +125,17 @@ label.Mui-focused {
 	100% {
 		height: 0%;
 	}
+}
+.train-search-pannel .MuiInputLabel-root {
+	color: hsla(0, 0%, 100%, 0.6);
+}
+.train-search-pannel .MuiInput-input {
+	color: #fff;
+}
+.train-search-pannel .MuiInput-root:before {
+	border-bottom: 2px solid #fff;
+}
+.train-search-pannel
+	.MuiInput-root:hover:not(.Mui-disabled, .Mui-error):before {
+	border-bottom: 2px solid rgba(255, 255, 255, 0.87);
 }

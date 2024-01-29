@@ -1,0 +1,21 @@
+footer .top-section {
+	background-color: #3a1248;
+	width: 100%;
+}
+footer .top-section-body {
+	max-width: 1280px;
+	margin: auto;
+	padding-top: 32px;
+	padding-bottom: 32px;
+	color: rgba(255, 255, 255, 0.8);
+}
+footer .bottom-section {
+	width: 100%;
+	background-color: #2e013d;
+	padding: 16px;
+}
+@media only screen and (max-width: 1300px) {
+	footer .top-section-body {
+		margin: auto 20px;
+	}
+}

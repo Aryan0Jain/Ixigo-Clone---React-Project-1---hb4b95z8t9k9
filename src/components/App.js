@@ -1,31 +1,31 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "../styles/App.css";
-import Navbar from "./Navbar";
+import Navbar from "./Common/Navbar.jsx";
 import { ThemeProvider } from "@mui/material";
-import Flights from "./Flights/Flights";
-import { defaultTheme } from "./Contexts/Theme.jsx";
-import Trains from "./Trains/Trains.jsx";
-import AuthProvider from "./Contexts/AuthProvider";
-import Search from "./Flights/Search";
-import SearchProvider from "./Contexts/SearchProdiver";
+import Flights from "./Screen/Flights/Flights.jsx";
+import { defaultTheme } from "../Contexts/Theme.jsx";
+import Trains from "./Screen/Trains/Trains.jsx";
+import AuthProvider from "../Contexts/AuthProvider.jsx";
+import FlightSearch from "./Screen/Flights/Search/FlightSearch.jsx";
+import SearchProvider from "../Contexts/SearchProdiver";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import TrainSearchProvider from "./Contexts/TrainSearchProvider";
-import TrainsSearch from "./Trains/TrainsSearch.jsx";
-import Footer from "./Footer";
-import Buses from "./Buses/Buses.jsx";
-import FlightBooking from "./Flights/FlightBooking.jsx";
-import TrainBooking from "./Trains/Booking/TrainBooking.jsx";
-import BusSearchProvider from "./Contexts/BusSearchProvider.jsx";
-import BusSearch from "./Buses/Search/BusSearch.jsx";
-import BusBooking from "./Buses/Search/Booking/BusBooking.jsx";
-import Hotels from "./Hotels/Hotels.jsx";
+import TrainSearchProvider from "../Contexts/TrainSearchProvider";
+import TrainsSearch from "./Screen/Trains/Search/TrainsSearch.jsx";
+import Footer from "./Common/Footer.jsx";
+import Buses from "./Screen/Buses/Buses.jsx";
+import FlightBooking from "./Screen/Flights/Booking/FlightBooking.jsx";
+import TrainBooking from "./Screen/Trains/Booking/TrainBooking.jsx";
+import BusSearchProvider from "../Contexts/BusSearchProvider.jsx";
+import BusSearch from "./Screen/Buses/Search/BusSearch.jsx";
+import BusBooking from "./Screen/Buses/Booking/BusBooking.jsx";
+import Hotels from "./Screen/Hotels/Hotels.jsx";
 
 function App() {
 	return (
 		<LocalizationProvider dateAdapter={AdapterDayjs}>
-			<BrowserRouter>
-				<ThemeProvider theme={defaultTheme}>
+			<ThemeProvider theme={defaultTheme}>
+				<BrowserRouter>
 					<AuthProvider>
 						<SearchProvider>
 							<TrainSearchProvider>
@@ -39,7 +39,7 @@ function App() {
 										/>
 										<Route
 											path="/flights/search"
-											element={<Search />}
+											element={<FlightSearch />}
 										/>
 										<Route
 											path="/flights/booking/:progress/:details"
@@ -79,8 +79,8 @@ function App() {
 							</TrainSearchProvider>
 						</SearchProvider>
 					</AuthProvider>
-				</ThemeProvider>
-			</BrowserRouter>
+				</BrowserRouter>
+			</ThemeProvider>
 		</LocalizationProvider>
 	);
 }

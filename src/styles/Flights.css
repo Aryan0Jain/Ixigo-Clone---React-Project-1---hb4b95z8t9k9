@@ -1,0 +1,361 @@
+.flights {
+	width: 100%;
+}
+.flights .main-section {
+	width: fit-content;
+	margin: auto;
+	padding: 24px 32px;
+	background-color: #fff;
+	border-radius: 5px;
+	box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+}
+.flights
+	.flight-search-pannel
+	.MuiInput-root:hover:not(.Mui-disabled, .Mui-error):before {
+	border-bottom: 1px solid rgba(0, 0, 0, 0.42);
+}
+.flights .swap-icon {
+	margin: auto 8px;
+	padding: 1.6px;
+	height: fit-content;
+	border: 2px solid;
+}
+.flights .search-button {
+	color: #fff;
+	margin: auto;
+	padding: 8px 56px;
+	font-weight: 700;
+	font-size: 16px;
+	border-radius: 2px;
+	background-color: #ec5b24;
+	&:hover {
+		background-color: #ec5b24;
+	}
+}
+.flights-popper {
+	border: 0;
+	padding: 4px 8px;
+	font-size: 14px;
+	background-color: rgba(255, 0, 0, 0.1) !important;
+	color: #d50000 !important;
+	font-weight: 500;
+	align-items: center;
+	margin-top: 0;
+	border-bottom-left-radius: 5px;
+	border-bottom-right-radius: 5px;
+}
+.flights .background-carousel-top {
+	transition: opacity 400ms ease-in-out;
+	background-size: cover;
+	background-repeat: no-repeat;
+	background-position: center;
+	position: absolute;
+	height: 550px;
+	width: 100%;
+	z-index: -10;
+}
+.flights .background-carousel-bottom {
+	background-size: cover;
+	background-repeat: no-repeat;
+	background-position: center;
+	position: absolute;
+	height: 550px;
+	width: 100%;
+	z-index: -15;
+}
+.flights .background-carousel-top img,
+.flights .background-carousel-bottom img {
+	width: 100%;
+	height: 550px;
+	z-index: -100;
+	object-fit: cover;
+}
+.flights .background-img-cover {
+	background-color: rgba(0, 0, 0, 0.269);
+	width: 100%;
+	height: 550px;
+	z-index: -5;
+}
+.flights .background-seperator {
+	position: absolute;
+	padding: 0 0 10%;
+	width: 100%;
+	top: 550px;
+	background: linear-gradient(
+		to bottom,
+		rgba(0, 0, 0, 0.45),
+		rgba(0, 0, 0, 0)
+	);
+	z-index: -10;
+}
+.flights .overlay {
+	padding-top: 140px;
+	padding-bottom: 100px;
+	width: fit-content;
+	margin: auto;
+	align-items: center;
+}
+.flights .whitedot {
+	display: inline-block;
+	vertical-align: middle;
+	width: 5px;
+	height: 5px;
+	background-color: #fff;
+	border-radius: 10px;
+	margin: 0px 10px;
+}
+.flights .background-image-info {
+	position: absolute;
+	right: 200px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+.flights .banner {
+	margin: 40px auto;
+	width: fit-content;
+}
+.flights .offer-carousel {
+	margin-top: 60px;
+	overflow: hidden;
+	position: relative;
+	padding: 40px;
+	background-color: #fff;
+}
+.flights .offer-carousel .left-button {
+	background-color: #fff;
+	position: absolute;
+	left: 50px;
+	top: 175px;
+	z-index: 1;
+	padding: 15px;
+	box-shadow: 0px 4px 5px 2px rgba(0, 0, 0, 0.3);
+}
+.flights .offer-carousel .right-button {
+	background-color: #fff;
+	position: absolute;
+	right: 50px;
+	top: 175px;
+	z-index: 1;
+	padding: 15px;
+	box-shadow: 0px 4px 5px 2px rgba(0, 0, 0, 0.3);
+}
+.flights .offer-carousel .left-button-m {
+	background-color: #fff;
+	position: absolute;
+	left: 20px;
+	top: 240px;
+	z-index: 1;
+	padding: 8px;
+	box-shadow: 0px 4px 5px 2px rgba(0, 0, 0, 0.3);
+}
+.flights .offer-carousel .right-button-m {
+	background-color: #fff;
+	position: absolute;
+	right: 20px;
+	top: 240px;
+	z-index: 1;
+	padding: 8px;
+	box-shadow: 0px 4px 5px 2px rgba(0, 0, 0, 0.3);
+}
+.flights .image-container {
+	padding: auto 40px;
+	margin: 40px auto;
+	white-space: nowrap;
+	max-width: 1024px;
+	transition: 0.5s transform;
+}
+.flights .tooltip-content {
+	padding: 5px 10px 5px 5px;
+	display: flex;
+	flex-direction: row;
+	gap: 8px;
+	border: 1px solid rgba(0, 0, 0, 0.6);
+	color: rgba(0, 0, 0, 0.8);
+	border-radius: 8px;
+	align-items: center;
+}
+.flights-tooltip-overlay {
+	width: 250px;
+	background-color: #fff;
+	filter: drop-shadow(0 4px 15px rgba(0, 0, 0, 0.5));
+}
+.flights-tooltip-overlay .tooltip-overlay-body {
+	color: rgba(0, 0, 0, 0.85);
+	background-color: #fff3ee !important;
+	font-size: 12px;
+	padding: 10px 15px !important;
+}
+.MuiTooltip-arrow::before {
+	background-color: white !important;
+}
+.MuiTooltip-popper div {
+	background-color: white;
+	padding: 0;
+}
+.flights-search .search-pannel {
+	background: linear-gradient(45deg, #721053, #ad2e41);
+	padding: 10px 0;
+}
+.flights-search .swap-button {
+	margin: auto 8px;
+	padding: 1.6px;
+	height: fit-content;
+	border: 2px solid white;
+}
+.flights-search .search-btn {
+	color: #fff;
+	padding: 8px 56px;
+	font-weight: 700;
+	font-size: 16px;
+	border-radius: 2px;
+	background-color: #ec5b24;
+	&:hover {
+		background-color: #ec5b24;
+	}
+}
+.flights-search .search-pannel .MuiInputLabel-root {
+	color: rgba(255, 255, 255, 0.6);
+}
+
+.flights-search .search-pannel .MuiInput-root::before {
+	border-bottom: 2px solid #fff;
+}
+.flights-search
+	.search-pannel
+	.MuiInput-root:hover:not(.Mui-disabled, .Mui-error):before {
+	border-bottom: 2px solid rgba(255, 255, 255, 0.87);
+}
+.flights-search .search-pannel .MuiInput-input {
+	color: #fff;
+}
+.flights-search .filter-options .MuiSlider-markLabel {
+	font-size: 12px;
+}
+.flights-search
+	.filter-options
+	.MuiInput-root:hover:not(.Mui-disabled, .Mui-error):before {
+	border-bottom: 1px solid rgba(0, 0, 0, 0.42);
+}
+.flights-search .filter-options {
+	padding: 10px;
+	background-color: #fff;
+}
+.flights-search .toggle-button-group {
+	margin-top: 16px;
+	& button:hover {
+		color: #ec5b24;
+		background-color: rgba(236, 91, 36, 0.08);
+	}
+	& button.Mui-selected {
+		color: white;
+		background-color: #ec5b24;
+	}
+	& button.Mui-selected:hover {
+		color: white;
+		background-color: #ec5b24;
+	}
+}
+.flights-search .airlines {
+	width: 250px;
+}
+.flights-search .sort-menu {
+	font-size: 12px;
+	font-weight: 600;
+	color: #ec5b24;
+}
+.flight-search-popper {
+	border: 0;
+	padding: 4px 8px;
+	font-size: 14px;
+	background-color: #fff;
+	color: #d50000;
+	font-weight: 500;
+	display: flex;
+	align-items: center;
+	margin-top: 0;
+	border-bottom-left-radius: 5px;
+	border-bottom-right-radius: 5px;
+}
+@media only screen and (max-width: 1400px) {
+	.flights-search .filter-options {
+		padding: 5px;
+	}
+	.flights-search .toggle-button-group {
+		display: grid;
+		grid-template-columns: auto auto;
+	}
+	.flights-search .airlines {
+		width: 200px;
+	}
+}
+@media only screen and (max-width: 1300px) {
+	.flights .flight-search-pannel {
+		gap: 20px;
+		display: grid;
+		grid-template-columns: auto auto auto;
+	}
+	.flights .banner img {
+		width: 750px;
+	}
+	.flights-search .search-pannel {
+		gap: 20px;
+		display: grid;
+		grid-template-columns: auto auto auto;
+	}
+	.flights-search .swap-button {
+		margin: auto;
+	}
+}
+@media only screen and (max-width: 1000px) {
+	.flights .background-image-info {
+		right: 30px;
+	}
+}
+@media only screen and (max-width: 800px) {
+	.flights .flight-search-pannel {
+		grid-template-columns: auto auto;
+	}
+	.flights .swap-icon {
+		display: none;
+	}
+	.flights .search-button {
+		grid-column: span 2;
+	}
+	.flights .banner img {
+		width: 500px;
+	}
+	.flights-search .search-pannel {
+		grid-template-columns: auto auto;
+	}
+	.flights-search .swap-button {
+		display: none;
+	}
+	.flights-search .search-btn {
+		grid-column: span 2;
+	}
+}
+@media only screen and (max-width: 550px) {
+	.flights .flight-search-pannel {
+		grid-template-columns: auto;
+	}
+	.flights .search-button {
+		grid-column: span 1;
+	}
+	.flights .overlay {
+		padding-top: 120px;
+		padding-bottom: 70px;
+	}
+	.flights .banner {
+		display: none;
+	}
+	.flights-search .search-pannel {
+		grid-template-columns: auto;
+	}
+	.flights-search .search-btn {
+		grid-column: span 1;
+	}
+}
+.custom-popper {
+	width: fit-content !important;
+}
