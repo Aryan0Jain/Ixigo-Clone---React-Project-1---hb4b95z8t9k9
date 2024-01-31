@@ -1,51 +1,94 @@
 import { Container, IconButton, Stack, Typography } from "@mui/material";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import { HOTEL_OFFERS_CAROUSEL } from "../../../constants";
-import { FaArrowLeft } from "react-icons/fa6";
-import { FaArrowRight } from "react-icons/fa6";
+import { IoIosArrowBack } from "react-icons/io";
+import { IoIosArrowForward } from "react-icons/io";
 
-export default function OffersCarousel() {
-	const [index, setIndex] = useState(0);
-	function setPrevIndex() {
-		if (index > 0) setIndex((prev) => prev - 1);
+const OffersCarousel = () => {
+	const [translate, setTranslate] = useState(0);
+	const containerRef = useRef();
+	function moveRight() {
+		if (
+			translate >
+			-(
+				HOTEL_OFFERS_CAROUSEL.length * 400 -
+				containerRef.current.offsetWidth
+			)
+		)
+			setTranslate((prev) => prev - 400);
 	}
-	function setNextIndex() {
-		if (index < 3) setIndex((prev) => prev + 1);
+	function moveLeft() {
+		if (translate < 0) setTranslate((prev) => prev + 400);
 	}
 	return (
-		<Container sx={{ overflowX: "hidden" }}>
-			{index > 0 && (
+		<Container
+			sx={{
+				overflow: "hidden",
+				position: "relative",
+				mt: "45px",
+				// py: 10,
+			}}
+		>
+			{translate < 0 && (
 				<IconButton
-					onClick={setPrevIndex}
+					onClick={moveLeft}
 					disableRipple
-					className="left-button"
+					sx={{
+						bgcolor: "#fff",
+						position: "absolute",
+						left: "50px",
+						top: "85px",
+						zIndex: 1,
+						padding: "8px",
+						boxShadow: "0px 4px 5px 2px rgba(0, 0, 0, 0.3)",
+					}}
 				>
-					<FaArrowLeft color="black" />
+					<IoIosArrowBack color="rgba(7,112,228,.7)" size="18" />
 				</IconButton>
 			)}
-			{index < 3 && (
+			{translate >
+				-(
+					HOTEL_OFFERS_CAROUSEL.length * 400 -
+					(containerRef.current
+						? containerRef.current.offsetWidth
+						: 0)
+				) && (
 				<IconButton
-					onClick={setNextIndex}
+					onClick={moveRight}
 					disableRipple
-					className="right-button"
+					sx={{
+						bgcolor: "#fff",
+						position: "absolute",
+						right: "50px",
+						top: "85px",
+						zIndex: 1,
+						padding: "8px",
+						boxShadow: "0px 4px 5px 2px rgba(0, 0, 0, 0.3)",
+					}}
 				>
-					<FaArrowRight color="black" />
+					<IoIosArrowForward color="rgba(7,112,228,.7)" size="18" />
 				</IconButton>
 			)}
-			<Typography fontWeight={600} fontSize={20}>
+			<Typography fontWeight={700} fontSize={22}>
 				Why Book Hotels With ixigo?
 			</Typography>
 			<Stack
+				ref={containerRef}
 				direction={"row"}
 				gap="40px"
 				sx={{
-					transform: `translateX(${index * -400}px)`,
+					width: "100%",
+					my: "20px",
+					transform: `translateX(${translate}px)`,
 					transition: "0.5s transform",
+					whiteSpace: "nowrap",
 				}}
 			>
-				{HOTEL_OFFERS_CAROUSEL.map(({ src }) => {
+				{HOTEL_OFFERS_CAROUSEL.map(({ src }, index) => {
 					return (
 						<img
+							key={index}
+							loading="lazy"
 							src={src}
 							style={{ width: 360, borderRadius: 20 }}
 						/>
@@ -54,4 +97,5 @@ export default function OffersCarousel() {
 			</Stack>
 		</Container>
 	);
-}
+};
+export default React.memo(OffersCarousel);

@@ -109,7 +109,7 @@ export default function DashboardMenu() {
 				open={open}
 				anchorEl={anchorRef.current}
 				placement="bottom"
-				disablePortal
+				sx={{ zIndex: 5000 }}
 			>
 				<Paper>
 					<ClickAwayListener onClickAway={handleClose}>

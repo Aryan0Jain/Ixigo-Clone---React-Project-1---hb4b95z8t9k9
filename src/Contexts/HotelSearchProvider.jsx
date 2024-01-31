@@ -10,9 +10,14 @@ export const useHotelSearchContext = () => {
 export default function HotelSearchProvider({ children }) {
 	const [location, setLocation] = useState(0);
 	const [checkinDate, setCheckinDate] = useState(new dayjs());
-	const [checkoutDate, setCheckoutDate] = useState(new dayjs());
+	const [checkoutDate, setCheckoutDate] = useState(new dayjs().add(1, "day"));
 	const [hotelsData, setHotelsData] = useState([]);
-	async function searchHotels(setIsLoading) {
+	async function searchHotels(
+		setIsLoading,
+		filters,
+		sortingMethod,
+		priceRange
+	) {
 		const searchVal = JSON.stringify({
 			location: LOCATIONS[location].city,
 		});
@@ -26,7 +31,35 @@ export default function HotelSearchProvider({ children }) {
 				},
 			});
 			const res = await data.json();
-			setHotelsData(res.data.hotels);
+
+			let hotels = res.data.hotels;
+			if (filters.length > 0) {
+				hotels = hotels.filter((item) => {
+					return (
+						(item.rating * 1.9).toFixed(1) >= filters[0].minRating
+					);
+				});
+			}
+			if (sortingMethod === "priceup") {
+				hotels = hotels.sort(
+					(a, b) => a.avgCostPerNight - b.avgCostPerNight
+				);
+			}
+			if (sortingMethod === "pricedown") {
+				hotels = hotels.sort(
+					(a, b) => b.avgCostPerNight - a.avgCostPerNight
+				);
+			}
+			if (sortingMethod === "rating") {
+				hotels = hotels.sort((a, b) => b.rating * 1.9 - a.rating * 1.9);
+			}
+			hotels = hotels.filter(
+				(item) =>
+					item.avgCostPerNight >= priceRange[0] &&
+					item.avgCostPerNight <= priceRange[1]
+			);
+			// console.log(hotels);
+			setHotelsData(hotels);
 		} catch (error) {
 			console.log(error);
 			setHotelsData(null);

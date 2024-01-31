@@ -60,6 +60,19 @@ import hotelOffer3 from "./assests/images/hotel-carousel/3.png";
 import hotelOffer4 from "./assests/images/hotel-carousel/4.png";
 import hotelOffer5 from "./assests/images/hotel-carousel/5.png";
 import hotelOffer6 from "./assests/images/hotel-carousel/6.png";
+import popularDestinationImg1 from "./assests/images/hotel-popular-destinations/1.jpeg";
+import popularDestinationImg2 from "./assests/images/hotel-popular-destinations/2.jpeg";
+import popularDestinationImg3 from "./assests/images/hotel-popular-destinations/3.jpeg";
+import popularDestinationImg4 from "./assests/images/hotel-popular-destinations/4.jpeg";
+import popularDestinationImg5 from "./assests/images/hotel-popular-destinations/5.jpeg";
+import popularDestinationImg6 from "./assests/images/hotel-popular-destinations/6.jpeg";
+import popularDestinationImg7 from "./assests/images/hotel-popular-destinations/7.jpeg";
+import popularDestinationImg8 from "./assests/images/hotel-popular-destinations/8.jpeg";
+import { MdSpa } from "react-icons/md";
+import { MdRestaurantMenu } from "react-icons/md";
+import { MdLocalBar } from "react-icons/md";
+import { CgGym } from "react-icons/cg";
+import { MdPool } from "react-icons/md";
 
 export const projectID = "hb4b95z8t9k9";
 export const appType = "bookingportals";
@@ -69,6 +82,19 @@ export const FLGIHT_DEPARTURE_TIME_RANGES = [
 	{ name: "Morning", range: "06:00 - 12:00", value: "morning" },
 	{ name: "Mid Day", range: "12:00 - 18:00", value: "mid-day" },
 	{ name: "Night", range: "18:00 - 24:00", value: "night" },
+];
+export const HOTEL_AMENITIES = [
+	{ name: "Spa", icon: MdSpa },
+	{ name: "Free WiFi", icon: FaWifi },
+	{ name: "Restaurant", icon: MdRestaurantMenu },
+	{ name: "Bar", icon: MdLocalBar },
+	{ name: "Gym", icon: CgGym },
+	{ name: "Swimming Pool", icon: MdPool },
+];
+export const HOTEL_COST_FREQUENCY = [
+	0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 2, 4, 8, 16, 29, 39,
+	56, 66, 92, 89, 115, 114, 95, 102, 109, 78, 60, 46, 38, 12, 13, 9, 1, 3, 1,
+	0, 0, 0, 0, 0, 0, 0,
 ];
 export const FLIGHT_SEARCH_PANNEL_SPECIAL_FARES = [
 	{
@@ -110,11 +136,11 @@ export const FLIGHT_CAROUSEL_OFFERS = [
 ];
 export const HOTEL_OFFERS_CAROUSEL = [
 	{ src: hotelOffer1 },
-	{ src: hotelOffer2 },
 	{ src: hotelOffer3 },
 	{ src: hotelOffer4 },
 	{ src: hotelOffer5 },
 	{ src: hotelOffer6 },
+	{ src: hotelOffer2 },
 ];
 
 export const FLIGHT_BANNERS_OF_THE_DAY = [
@@ -217,6 +243,25 @@ export const AIRLINES_INFO = [
 	{ name: "Vistara", key: "UK" },
 	{ name: "SpiceJet", key: "SG" },
 	{ name: "Go First", key: "G8" },
+];
+export const HOTEL_RATINGS = [
+	{ name: "Exceptional: 9+", minRating: 9 },
+	{ name: "Excellent: 8+", minRating: 8 },
+	{ name: "Very Good: 7+", minRating: 7 },
+	{ name: "Good: 6+", minRating: 6 },
+	{ name: "Pleasant: 5+", minRating: 5 },
+];
+// export const HOTEL_SORTING_OPTIONS = [
+// 	{ type: "Popularity", value: "popularity", subtext: null },
+// 	{ type: "Price", subtext: "Low to High", value: "priceup" },
+// 	{ type: "Price", subtext: "High to Low", value: "pricedown" },
+// 	{ type: "User Rating", subtext: "Highest First", value: "rating" },
+// ];
+export const HOTEL_SORTING_OPTIONS = [
+	{ type: "Popularity", value: "popularity" },
+	{ type: "Price Low to High", value: "priceup" },
+	{ type: "Price High to Low", value: "pricedown" },
+	{ type: "User Rating Highest First", value: "rating" },
 ];
 export const AIRPORTS = [
 	{
@@ -842,6 +887,48 @@ export const LOCATIONS = [
 	{
 		city: "Vadodara",
 		state: "Gujarat",
+	},
+];
+export const POPULAR_DESTINATIONS = [
+	{
+		city: "New Delhi",
+		state: "DELHI",
+		img: popularDestinationImg1,
+	},
+	{
+		city: "Mumbai",
+		state: "MAHARASHTRA",
+		img: popularDestinationImg2,
+	},
+	{
+		city: "Chennai",
+		state: "TAMIL NADU",
+		img: popularDestinationImg3,
+	},
+	{
+		city: "Kolkata",
+		state: "WEST BENGAL",
+		img: popularDestinationImg4,
+	},
+	{
+		city: "Hyderabad",
+		state: "TELANGANA",
+		img: popularDestinationImg5,
+	},
+	{
+		city: "Jaipur",
+		state: "RAJASTHAN",
+		img: popularDestinationImg6,
+	},
+	{
+		city: "Pune",
+		state: "MAHARASHTRA",
+		img: popularDestinationImg7,
+	},
+	{
+		city: "Visakhapatnam",
+		state: "Andhra Pradesh",
+		img: popularDestinationImg8,
 	},
 ];
 export const AVATAR_BACKGROUND_COLORS = [

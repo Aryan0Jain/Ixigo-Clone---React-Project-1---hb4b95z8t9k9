@@ -1,3 +1,4 @@
+@import url("https://fonts.googleapis.com/css2?family=Hepta+Slab:wght@300;400;500;600&display=swap");
 .nav-tabs a {
 	color: rgba(0, 0, 0, 0.87);
 }
@@ -138,4 +139,51 @@
 .train-search-pannel
 	.MuiInput-root:hover:not(.Mui-disabled, .Mui-error):before {
 	border-bottom: 2px solid rgba(255, 255, 255, 0.87);
+}
+.hotel-popular-destination * {
+	font-family: "Hepta Slab", serif !important;
+}
+.hotel-main-pannel .MuiInputBase-root:hover .MuiOutlinedInput-notchedOutline,
+.hotel-search-pannel .MuiInputBase-root:hover .MuiOutlinedInput-notchedOutline {
+	border-color: rgba(0, 0, 0, 0.2);
+}
+.hotel-main-pannel
+	.MuiInputBase-root.Mui-focused
+	.MuiOutlinedInput-notchedOutline {
+	border-color: #ec5b24;
+}
+.hotel-search-pannel
+	.MuiInputBase-root.Mui-focused
+	.MuiOutlinedInput-notchedOutline {
+	border-color: #0770e4;
+}
+
+.hotel-search-pannel .Mui-focused .MuiInputLabel-outlined,
+.hotel-search-pannel .Mui-focused.MuiInputLabel-outlined {
+	color: #0770e4 !important;
+}
+/* .hotel-loader {
+	background: linear-gradient(90deg, #0001 33%, #0005 50%, #0001 66%) #f2f2f2;
+	background-size: 300% 100%;
+	animation: hotel 1s infinite linear;
+}
+@keyframes hotel {
+	0% {
+		background-position: right;
+	}
+} */
+.hotel-loader {
+	background: linear-gradient(94deg, #f0f0f1 15.51%, #e7e8ea 89.6%);
+	animation-delay: 0.5s;
+	animation: shimmer 3s;
+	animation-iteration-count: infinite;
+	background-size: 1000px 100%;
+}
+@keyframes shimmer {
+	0% {
+		background-position: -1000px 0;
+	}
+	100% {
+		background-position: 1000px 0;
+	}
 }
