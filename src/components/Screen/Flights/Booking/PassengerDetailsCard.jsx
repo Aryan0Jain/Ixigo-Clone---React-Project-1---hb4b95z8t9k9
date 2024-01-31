@@ -9,6 +9,7 @@ import {
 } from "@mui/material";
 import React from "react";
 import { AIRPORTS, COUNTRIES, TITLES } from "../../../../constants";
+import FlightInfoCard from "./FlightInfoCard";
 export default function PassengerDetailsCard({
 	airlineImg,
 	airlineName,
@@ -31,138 +32,22 @@ export default function PassengerDetailsCard({
 }) {
 	return (
 		<Stack sx={{ width: 940 }} gap={5}>
-			<Stack
-				sx={{
-					mx: "auto",
-					pl: 2,
-					p: 2,
-					width: "100%",
-					flexDirection: "row",
-					bgcolor: "#fff",
+			<FlightInfoCard
+				{...{
+					airlineImg,
+					airlineName,
+					flightName,
+					calculatedDuration,
+					stops,
+					source,
+					depDate,
+					departureTime,
+					destination,
+					arrDate,
+					arrivalTime,
+					contactEmail,
 				}}
-				divider={<Divider orientation="vertical" flexItem />}
-				gap={4}
-			>
-				<Stack justifyContent={"center"} alignItems={"center"}>
-					<img
-						src={airlineImg}
-						style={{
-							width: "50px",
-							height:
-								airlineName == "AIR INDIA" ? "50px" : "40px",
-							marginBottom: "10px",
-						}}
-					/>
-					<Typography fontSize={"12px"} color="rgba(0,0,0,0.4)">
-						{airlineName}
-					</Typography>
-					<Typography fontSize={"12px"} color="rgba(0,0,0,0.4)">
-						{flightName}
-					</Typography>
-				</Stack>
-				<Stack
-					divider={
-						<Stack alignItems={"center"} gap={1}>
-							<Typography
-								color="rgb(0,0,0,0.5)"
-								fontSize={"12px"}
-							>
-								{calculatedDuration}
-							</Typography>
-							<Stack
-								justifyContent={"space-between"}
-								alignItems={"center"}
-								direction={"row"}
-								sx={{
-									height: "2px",
-									bgcolor: "rgb(187, 187, 187) ",
-									width: "250px",
-									mx: 3,
-								}}
-							>
-								<div
-									style={{
-										width: "6px",
-										height: "6px",
-										borderRadius: "6px",
-										backgroundColor: "rgb(117, 117, 117)",
-										mt: "-2px",
-									}}
-								></div>
-								<div
-									style={{
-										width: "6px",
-										height: "6px",
-										borderRadius: "6px",
-										backgroundColor: "rgb(117, 117, 117)",
-										mt: "-2px",
-									}}
-								></div>
-							</Stack>
-							<Typography
-								color="rgb(0,0,0,0.5)"
-								fontSize={"12px"}
-							>
-								Stops: {stops}
-							</Typography>
-						</Stack>
-					}
-					flexDirection={"row"}
-					alignItems={"center"}
-					justifyContent={"center"}
-				>
-					<Stack textAlign={"right"}>
-						<Typography fontSize={"14px"} color="rgba(0,0,0,0.7)">
-							{source}
-						</Typography>
-						<Typography
-							fontWeight={600}
-							variant="h5"
-							fontSize={"22px"}
-						>
-							{departureTime}
-						</Typography>
-						<Typography fontSize={"12px"} color="rgb(0,0,0,0.5)">
-							{depDate.toUTCString().slice(0, 11)}
-						</Typography>
-						<Typography fontSize={"12px"} color="rgb(0,0,0,0.5)">
-							{AIRPORTS[sourceIndex].city}
-						</Typography>
-					</Stack>
-					{/* <Divider> </Divider> */}
-					<Stack textAlign={"left"}>
-						<Typography fontSize={"14px"} color="rgba(0,0,0,0.7)">
-							{destination}
-						</Typography>
-						<Typography
-							fontWeight={600}
-							variant="h5"
-							fontSize={"22px"}
-						>
-							{arrivalTime}
-						</Typography>
-						<Typography fontSize={"12px"} color="rgb(0,0,0,0.5)">
-							{arrDate.toUTCString().slice(0, 11)}
-						</Typography>
-						<Typography fontSize={"12px"} color="rgb(0,0,0,0.5)">
-							{AIRPORTS[destinationIndex].city}
-						</Typography>
-					</Stack>
-				</Stack>
-				<Stack
-					width="100%"
-					direction={"row"}
-					alignItems={"center"}
-					justifyContent={"space-between"}
-				>
-					<Typography color="rgba(0,0,0,.64)" fontSize={12}>
-						{contactEmail}
-					</Typography>
-					<Button disableRipple sx={{ fontSize: 16 }}>
-						Modify
-					</Button>
-				</Stack>
-			</Stack>
+			/>
 			<Box
 				sx={{
 					bgcolor: "#E1E1E1",

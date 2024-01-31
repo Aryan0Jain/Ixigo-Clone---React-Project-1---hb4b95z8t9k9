@@ -67,7 +67,6 @@ export default function AuthProvider({ children }) {
 				localStorage.setItem("authToken", JSON.stringify(data.token));
 				const user = { name: data.data.name, email: data.data.email };
 				localStorage.setItem("userDetails", JSON.stringify(user));
-				console.log(data);
 				setIsLoggedIn(true);
 				if (redirect) {
 					setRedirect(false);

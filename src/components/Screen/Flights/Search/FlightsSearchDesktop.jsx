@@ -60,8 +60,6 @@ export default function FlightsSearchDesktop() {
 	const [stops, setStops] = useState(2);
 	const [alignment, setAlignment] = useState(null);
 	const [price, setPrice] = useState(2500);
-	const [withfilters, setWithFilters] = useState(false);
-	const [filteredData, setFilteredData] = useState([]);
 	const [anchorEl, setAnchorEl] = useState(null);
 	const [errorMesaage, setErrorMessage] = useState("");
 	const [sortingMethod, setSortingMethod] = useState("recommended");
@@ -92,9 +90,19 @@ export default function FlightsSearchDesktop() {
 		setTravellers(searchParams.get("travellers") - 1);
 		window.scrollTo(0, 0);
 	}, []);
-	useEffect(() => {
-		searchBookings(setIsLoading);
+	function upDateResults() {
+		searchBookings(
+			setIsLoading,
+			stops,
+			alignment,
+			airlines,
+			sortingMethod,
+			price
+		);
 		setPageNumber(1);
+	}
+	useEffect(() => {
+		upDateResults();
 	}, [location]);
 	const priceLabelFormat = (x) =>
 		"₹" +
@@ -140,77 +148,25 @@ export default function FlightsSearchDesktop() {
 		setAnchorEl(null);
 	}
 	function handleFilters() {
-		setWithFilters(true);
-		setPageNumber(1);
-		let newData = [...data];
-		if (stops < 2) {
-			newData = newData.filter((item) => item.stops <= stops);
-		}
-		if (alignment == "early-morning")
-			newData = newData.filter(
-				(item) =>
-					item.departureTime >= "00:00" &&
-					item.departureTime <= "06:00"
-			);
-		if (alignment == "morning")
-			newData = newData.filter(
-				(item) =>
-					item.departureTime >= "06:00" &&
-					item.departureTime <= "12:00"
-			);
-		if (alignment == "mid-day")
-			newData = newData.filter(
-				(item) =>
-					item.departureTime >= "12:00" &&
-					item.departureTime <= "18:00"
-			);
-		if (alignment == "night")
-			newData = newData.filter(
-				(item) =>
-					item.departureTime >= "18:00" &&
-					item.departureTime <= "24:00"
-			);
-		if (Object.values(airlines).includes(true)) {
-			newData = newData.filter(
-				(item) => airlines[item.flightID.slice(0, 2)]
-			);
-		}
-		newData = newData.filter((item) => item.ticketPrice <= price);
-		switch (sortingMethod) {
-			case "cheapest":
-				newData.sort((a, b) => a.ticketPrice - b.ticketPrice);
-				break;
-			case "quickest":
-				newData.sort((a, b) => a.duration - b.duration);
-				break;
-			case "earliest":
-				newData.sort((a, b) => {
-					const aTime =
-						+a.departureTime.slice(0, 2) * 60 +
-						+a.departureTime.slice(3, 5);
-					const bTime =
-						+b.departureTime.slice(0, 2) * 60 +
-						+b.departureTime.slice(3, 5);
-					return aTime - bTime;
-				});
-				break;
-			default:
-				break;
-		}
-		setFilteredData(newData);
+		setIsLoading(true);
+		upDateResults();
 	}
 	function handleResetFilters() {
-		setWithFilters(false);
+		setIsLoading(true);
 		setStops(2);
 		setAlignment(null);
-		setAirlines({
+		const newAirlines = {
 			"6E": false,
 			AI: false,
 			UK: false,
 			SG: false,
 			G8: false,
-		});
+		};
+		setAirlines(newAirlines);
+		setSortingMethod("recommended");
 		setPrice(2500);
+		searchBookings(setIsLoading, 2, null, newAirlines, "recommended", 2500);
+		setPageNumber(1);
 	}
 	function handleBook(id) {
 		const { aircraftModel, airline, amenities, ...flightdata } =
@@ -543,8 +499,7 @@ export default function FlightsSearchDesktop() {
 			)}
 			{!isLoading && data != null && (
 				<Stack gap={2} sx={{ pt: 2 }} className="data-container">
-					{((withfilters && filteredData.length == 0) ||
-						(!withfilters && data.length == 0)) && (
+					{data.length == 0 && (
 						<Stack alignItems={"center"} gap={2} sx={{ my: 2 }}>
 							<img src={notFound} style={{ width: "800px" }} />
 							<Typography color="rgba(0,0,0,.64)" fontSize={20}>
@@ -564,36 +519,27 @@ export default function FlightsSearchDesktop() {
 							</Button>
 						</Stack>
 					)}
-					{(withfilters
-						? filteredData.slice(
-								8 * (pageNumber - 1),
-								Math.min(8 * pageNumber, filteredData.length)
-						  )
-						: data.slice(
-								8 * (pageNumber - 1),
-								Math.min(8 * pageNumber, data.length)
-						  )
-					).map((item) => (
-						<FlightCard
-							key={item._id}
-							{...item}
-							handleBook={handleBook}
-							searchParams={searchParams}
-						/>
-					))}
-					{((withfilters && filteredData.length != 0) ||
-						(!withfilters && data.length != 0)) && (
+					{data
+						.slice(
+							8 * (pageNumber - 1),
+							Math.min(8 * pageNumber, data.length)
+						)
+						.map((item) => (
+							<FlightCard
+								key={item._id}
+								{...item}
+								handleBook={handleBook}
+								searchParams={searchParams}
+							/>
+						))}
+					{data.length != 0 && (
 						<Pagination
 							color="secondary"
 							className="pagination"
 							sx={{ alignSelf: "center", m: 2 }}
 							page={pageNumber}
 							onChange={(e, p) => setPageNumber(p)}
-							count={
-								withfilters
-									? Math.ceil(filteredData.length / 8)
-									: Math.ceil(data.length / 8)
-							}
+							count={Math.ceil(data.length / 8)}
 							shape="rounded"
 						/>
 					)}

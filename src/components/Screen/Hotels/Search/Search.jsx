@@ -63,18 +63,6 @@ export default function HotelsSearch() {
 	};
 	const handlePriceRangeFilterChange = (e, newRange) => {
 		setPriceRangeFilter(newRange);
-		// if (!Array.isArray(newRange)) return;
-		// if (activeSlider == 0) {
-		// 	setPriceRangeFilter([
-		// 		Math.min(newRange[0], priceRangeFilter[1]),
-		// 		priceRangeFilter[1],
-		// 	]);
-		// } else {
-		// 	setPriceRangeFilter([
-		// 		priceRangeFilter[0],
-		// 		Math.max(newRange[1], priceRangeFilter[0]),
-		// 	]);
-		// }
 	};
 	function handleRatingChange(e) {
 		setMinimumRating(e.target.value);
@@ -124,11 +112,16 @@ export default function HotelsSearch() {
 							width: "25%",
 							bgcolor: "#FFFFFF",
 							p: 2,
+							mb: 2,
 							borderRadius: "8px",
 							textAlign: "left",
 							height: "fit-content",
 							position: "sticky",
-							top: "170px",
+							// top: "160px",
+							bottom: "20px",
+						}}
+						onScroll={(e) => {
+							e.stopPropagation();
 						}}
 						divider={<Divider orientation="horizontal" flexItem />}
 						gap={2}

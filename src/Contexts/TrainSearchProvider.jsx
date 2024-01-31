@@ -7,14 +7,19 @@ const TrainSearchContext = createContext();
 export const useTrainSearchContext = () => {
 	return useContext(TrainSearchContext);
 };
-
+function getTimeRange(time) {
+	if (time >= "00:00" && time <= "06:00") return "early-morning";
+	if (time > "06:00" && time <= "12:00") return "morning";
+	if (time > "12:00" && time <= "18:00") return "mid-day";
+	if (time > "18:00" && time <= "24:00") return "night";
+}
 export default function TrainSearchProvider({ children }) {
 	const [searchParams] = useSearchParams();
 	const [fromStation, setFromStation] = useState(0);
 	const [toStation, setToStation] = useState(1);
 	const [trainRoutes, setTrainRoutes] = useState([]);
 	const [departureDate, setDepartureDate] = useState(new dayjs());
-	async function searchTrains(setIsLoading) {
+	async function searchTrains(setIsLoading, classes, depTimeRange, sortBy) {
 		const day = WEEKDAYS[new dayjs(searchParams.get("date")).day()];
 		const searchVal = JSON.stringify({
 			source: TRAIN_STATIONS[fromStation],
@@ -33,17 +38,58 @@ export default function TrainSearchProvider({ children }) {
 			const res = await data.json();
 			// console.log(res);
 			if (!res.message) {
-				setTrainRoutes(
-					res.data.trains.sort((a, b) => {
+				let newData = res.data.trains.sort((a, b) => {
+					const aTime =
+						+a.departureTime.slice(0, 2) * 60 +
+						+a.departureTime.slice(3, 5);
+					const bTime =
+						+b.departureTime.slice(0, 2) * 60 +
+						+b.departureTime.slice(3, 5);
+					return aTime - bTime;
+				});
+				if (Object.values(classes).includes(true)) {
+					newData = newData.filter(({ coaches }) => {
+						return coaches.some(
+							({ coachType }) => classes[coachType]
+						);
+					});
+				}
+				if (depTimeRange.length > 0 && depTimeRange.length < 4) {
+					newData = newData.filter(({ departureTime }) =>
+						depTimeRange.includes(getTimeRange(departureTime))
+					);
+				}
+				if (sortBy === "arrival") {
+					newData = newData.sort((a, b) => {
 						const aTime =
-							+a.departureTime.slice(0, 2) * 60 +
-							+a.departureTime.slice(3, 5);
+							+a.arrivalTime.slice(0, 2) * 60 +
+							+a.arrivalTime.slice(3, 5);
 						const bTime =
-							+b.departureTime.slice(0, 2) * 60 +
-							+b.departureTime.slice(3, 5);
+							+b.arrivalTime.slice(0, 2) * 60 +
+							+b.arrivalTime.slice(3, 5);
+						console.log(aTime - bTime);
 						return aTime - bTime;
-					})
-				);
+					});
+				}
+				if (sortBy === "duration") {
+					newData = newData.sort((a, b) => {
+						let duration = a.travelDuration.split(" ");
+						const aDuration =
+							+duration[0].slice(0, -1) * 60 +
+							+duration[1].slice(0, -1);
+						duration = b.travelDuration.split(" ");
+						const bDuration =
+							+duration[0].slice(0, -1) * 60 +
+							+duration[1].slice(0, -1);
+						return aDuration - bDuration;
+					});
+				}
+				if (sortBy === "name") {
+					newData = newData.sort((a, b) =>
+						a.trainName.localeCompare(b.trainName)
+					);
+				}
+				setTrainRoutes(newData);
 			} else {
 				setTrainRoutes([]);
 			}

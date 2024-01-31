@@ -15,7 +15,14 @@ export default function SearchProvider({ children }) {
 	const [departureDate, setDepartureDate] = useState(new dayjs());
 	const [travellers, setTravellers] = useState(0);
 	const [data, setData] = useState([]);
-	async function searchBookings(setIsLoading) {
+	async function searchBookings(
+		setIsLoading,
+		stops,
+		alignment,
+		airlines,
+		sortingMethod,
+		price
+	) {
 		const day = weekDays[new dayjs(searchParams.get("date")).day()];
 		const searchVal = JSON.stringify({
 			source: searchParams.get("from"),
@@ -34,9 +41,67 @@ export default function SearchProvider({ children }) {
 				}
 			);
 			resp = await res.json();
-			setData(resp.data.flights);
+			let newData = resp.data.flights;
+
+			if (stops < 2) {
+				newData = newData.filter((item) => item.stops <= stops);
+			}
+			if (alignment == "early-morning")
+				newData = newData.filter(
+					(item) =>
+						item.departureTime >= "00:00" &&
+						item.departureTime <= "06:00"
+				);
+			if (alignment == "morning")
+				newData = newData.filter(
+					(item) =>
+						item.departureTime >= "06:00" &&
+						item.departureTime <= "12:00"
+				);
+			if (alignment == "mid-day")
+				newData = newData.filter(
+					(item) =>
+						item.departureTime >= "12:00" &&
+						item.departureTime <= "18:00"
+				);
+			if (alignment == "night")
+				newData = newData.filter(
+					(item) =>
+						item.departureTime >= "18:00" &&
+						item.departureTime <= "24:00"
+				);
+			if (Object.values(airlines).includes(true)) {
+				newData = newData.filter(
+					(item) => airlines[item.flightID.slice(0, 2)]
+				);
+			}
+			newData = newData.filter((item) => item.ticketPrice <= price);
+			switch (sortingMethod) {
+				case "cheapest":
+					newData.sort((a, b) => a.ticketPrice - b.ticketPrice);
+					break;
+				case "quickest":
+					newData.sort((a, b) => a.duration - b.duration);
+					break;
+				case "earliest":
+					newData.sort((a, b) => {
+						const aTime =
+							+a.departureTime.slice(0, 2) * 60 +
+							+a.departureTime.slice(3, 5);
+						const bTime =
+							+b.departureTime.slice(0, 2) * 60 +
+							+b.departureTime.slice(3, 5);
+						return aTime - bTime;
+					});
+					break;
+				default:
+					break;
+			}
+
+			setData(newData);
 		} catch (error) {
 			setData(null);
+			console.log(error);
 		} finally {
 			setIsLoading(false);
 		}
@@ -94,6 +159,7 @@ export default function SearchProvider({ children }) {
 			return { message: "Some Error Occurred!" };
 		}
 	}
+
 	const provider = {
 		fromCity,
 		setFromCity,

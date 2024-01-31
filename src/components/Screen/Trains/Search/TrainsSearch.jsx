@@ -51,8 +51,6 @@ export default function TrainsSearch() {
 	const [depTimeRange, setDepTimeRange] = useState([]);
 	const [isLoading, setIsLoading] = useState(true);
 	const [sortBy, setSortBy] = useState("departure");
-	const [filtered, setFiltered] = useState(false);
-	const [filteredData, setFilteredData] = useState([]);
 	const [availablityBoxId, setAvailablityBoxId] = useState(0);
 	const [pageNumber, setPageNumber] = useState(1);
 	const [classes, setClasses] = useState({
@@ -87,9 +85,12 @@ export default function TrainsSearch() {
 		// setTravellers(searchParams.get("travellers") - 1);
 		window.scrollTo(0, 0);
 	}, []);
+	function updateResults() {
+		searchTrains(setIsLoading, classes, depTimeRange, sortBy);
+		setPageNumber(1);
+	}
 	useEffect(() => {
-		searchTrains(setIsLoading);
-		handleResetFilters();
+		updateResults();
 	}, [location]);
 	function handleBook(id, coachType) {
 		const { coaches, daysOfOperation, ...trainDetails } =
@@ -148,70 +149,20 @@ export default function TrainsSearch() {
 	}
 	function handleApplyFiltersButton() {
 		setIsLoading(true);
-		setFiltered(true);
-		handleApplyFilters();
-	}
-	function handleApplyFilters() {
-		let newData = [...trainRoutes];
-		console.log(trainRoutes);
-		if (Object.values(classes).includes(true)) {
-			newData = newData.filter(({ coaches }) => {
-				return coaches.some(({ coachType }) => classes[coachType]);
-			});
-		}
-		if (depTimeRange.length > 0 && depTimeRange.length < 4) {
-			newData = newData.filter(({ departureTime }) =>
-				depTimeRange.includes(getTimeRange(departureTime))
-			);
-		}
-		console.log(sortBy === "arrival");
-		if (sortBy === "arrival") {
-			newData = newData.sort((a, b) => {
-				const aTime =
-					+a.arrivalTime.slice(0, 2) * 60 +
-					+a.arrivalTime.slice(3, 5);
-				const bTime =
-					+b.arrivalTime.slice(0, 2) * 60 +
-					+b.arrivalTime.slice(3, 5);
-				console.log(aTime - bTime);
-				return aTime - bTime;
-			});
-		}
-		if (sortBy === "duration") {
-			newData = newData.sort((a, b) => {
-				let duration = a.travelDuration.split(" ");
-				const aDuration =
-					+duration[0].slice(0, -1) * 60 + +duration[1].slice(0, -1);
-				duration = b.travelDuration.split(" ");
-				const bDuration =
-					+duration[0].slice(0, -1) * 60 + +duration[1].slice(0, -1);
-				return aDuration - bDuration;
-			});
-		}
-		if (sortBy === "name") {
-			newData = newData.sort((a, b) =>
-				a.trainName.localeCompare(b.trainName)
-			);
-		}
-		setFilteredData(newData);
-		setIsLoading(false);
+		updateResults();
 	}
 	function handleResetFiltersButton() {
 		setIsLoading(true);
 		handleResetFilters();
 	}
 	function handleResetFilters() {
-		setFiltered(false);
-		Object.keys(classes).forEach((key) => (classes[key] = false));
+		let newClasses = { ...classes };
+		Object.keys(newClasses).forEach((key) => (newClasses[key] = false));
+		setClasses(newClasses);
 		setDepTimeRange([]);
 		setSortBy("departure");
-		setIsLoading(false);
-	}
-	function getTimeRange(time) {
-		if (time >= "00:00" && time <= "06:00") return "early-morning";
-		if (time > "06:00" && time <= "12:00") return "morning";
-		if (time > "12:00" && time <= "18:00") return "mid-day";
-		if (time > "18:00" && time <= "24:00") return "night";
+		searchTrains(setIsLoading, newClasses, [], "departure");
+		setPageNumber(1);
 	}
 
 	return (
@@ -535,7 +486,7 @@ export default function TrainsSearch() {
 			)}
 			{!isLoading && trainRoutes != null && (
 				<>
-					{!filtered && trainRoutes.length == 0 && (
+					{trainRoutes.length == 0 && (
 						<Stack
 							direction={"row"}
 							alignItems={"center"}
@@ -565,7 +516,7 @@ export default function TrainsSearch() {
 							</Box>
 						</Stack>
 					)}
-					{!filtered && trainRoutes.length > 0 && (
+					{trainRoutes.length > 0 && (
 						<Stack gap={2} sx={{ my: 5 }}>
 							{trainRoutes
 								.slice(
@@ -588,80 +539,7 @@ export default function TrainsSearch() {
 								})}
 						</Stack>
 					)}
-					{filtered && filteredData.length > 0 && (
-						<Stack gap={2} sx={{ my: 5 }}>
-							{filteredData
-								.slice(
-									5 * (pageNumber - 1),
-									Math.min(
-										5 * pageNumber,
-										filteredData.length
-									)
-								)
-								.map((train) => {
-									return (
-										<TrainCard
-											handleBook={handleBook}
-											key={train._id}
-											train={train}
-											departureDate={departureDate}
-											availablityBoxId={availablityBoxId}
-											setAvailablityBoxId={
-												setAvailablityBoxId
-											}
-										/>
-									);
-								})}
-						</Stack>
-					)}
-					{filtered && filteredData.length == 0 && (
-						<Stack
-							direction={"row"}
-							alignItems={"center"}
-							sx={{
-								width: "fit-content",
-								mx: "auto",
-								my: 4,
-							}}
-							gap={5}
-						>
-							<img src={notFound} style={{ width: "400px" }} />
-							<Stack
-								sx={{ width: 380 }}
-								alignItems={"center"}
-								gap={1}
-							>
-								<Typography
-									fontSize={20}
-									color="rgba(0,0,0,.64)"
-								>
-									No trains found
-								</Typography>
-								<Typography
-									fontSize={14}
-									color="rgba(0,0,0,.64)"
-								>
-									Sorry! No trains found for the selected
-									filters.
-								</Typography>
-								<Button
-									disableRipple
-									variant="contained"
-									sx={{
-										px: 2,
-										fontWeight: 700,
-										mr: 1,
-										mt: 1,
-									}}
-									onClick={handleResetFiltersButton}
-								>
-									Reset Filters
-								</Button>
-							</Stack>
-						</Stack>
-					)}
-					{((filtered && filteredData.length != 0) ||
-						(!filtered && trainRoutes.length != 0)) && (
+					{trainRoutes.length != 0 && (
 						<Pagination
 							color="secondary"
 							className="pagination"
@@ -673,11 +551,7 @@ export default function TrainsSearch() {
 							}}
 							page={pageNumber}
 							onChange={(e, p) => setPageNumber(p)}
-							count={
-								filtered
-									? Math.ceil(filteredData.length / 5)
-									: Math.ceil(trainRoutes.length / 5)
-							}
+							count={Math.ceil(trainRoutes.length / 5)}
 							shape="rounded"
 						/>
 					)}
