@@ -27,7 +27,7 @@ import {
 } from "../../../../constants";
 import { IoIosArrowDown } from "react-icons/io";
 import { useHotelSearchContext } from "../../../../Contexts/HotelSearchProvider";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import SearchInputPannel from "./SearchInputPannel";
 import HotelCard from "./HotelCard";
 import { CURRENCY_FORMATTER } from "../../../../utils";
@@ -40,6 +40,7 @@ export default function HotelsSearch() {
 		useHotelSearchContext();
 	const [isLoading, setIsLoading] = useState(true);
 	const urlLocation = useLocation();
+	const navigate = useNavigate();
 	const [guests, setGuests] = useState(2);
 	const [rooms, setRooms] = useState(1);
 	const [priceRange, setPriceRange] = useState([0, 10000]);
@@ -83,12 +84,15 @@ export default function HotelsSearch() {
 		setPriceRange([0, 10000]);
 		setPriceRangeFilter([0, 10000]);
 	}
+	function handleBook(id) {
+		let url = `/hotels/${id}?checkin=${checkinDate.toJSON()}&checkout=${checkoutDate.toJSON()}&rooms=${rooms}&guests=${guests}`;
+		navigate(url);
+	}
 	useEffect(() => {
 		window.scrollTo(0, 0);
 		setIsLoading(true);
 		searchHotels(setIsLoading, filters, sortingMethod, priceRangeFilter);
 		fromLocation = LOCATIONS[location].city;
-		console.log(priceRangeFilter);
 	}, [urlLocation, filters, sortingMethod, priceRangeFilter]);
 	return (
 		<Box
@@ -116,9 +120,6 @@ export default function HotelsSearch() {
 							borderRadius: "8px",
 							textAlign: "left",
 							height: "fit-content",
-							position: "sticky",
-							// top: "160px",
-							bottom: "20px",
 						}}
 						onScroll={(e) => {
 							e.stopPropagation();
@@ -412,6 +413,7 @@ export default function HotelsSearch() {
 											key={item._id}
 											hotelData={item}
 											checkinDate={checkinDate}
+											handleBook={handleBook}
 										/>
 									);
 								})}

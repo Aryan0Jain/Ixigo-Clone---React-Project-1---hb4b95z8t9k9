@@ -23,6 +23,7 @@ import Hotels from "./Screen/Hotels/Hotels.jsx";
 import HotelSearchProvider from "../Contexts/HotelSearchProvider.jsx";
 import HotelsSearch from "./Screen/Hotels/Search/Search.jsx";
 import HotelDetail from "./Screen/Hotels/HotelDetail/HotelDetail.jsx";
+import HotelBooking from "./Screen/Hotels/HotelBooking/HotelBooking.jsx";
 
 function App() {
 	return (
@@ -87,6 +88,10 @@ function App() {
 											<Route
 												path="/hotels/:id"
 												element={<HotelDetail />}
+											/>
+											<Route
+												path="/hotels/booking/:details"
+												element={<HotelBooking />}
 											/>
 										</Routes>
 										<Footer />

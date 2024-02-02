@@ -274,7 +274,7 @@ export default function TrainsSearch() {
 				gap={2}
 				divider={<Divider orientation="vertical" flexItem />}
 				sx={{
-					py: 2,
+					py: 0,
 					px: 2,
 					backgroundColor: "#fff",
 					boxShadow: "0 0 5px rgba(0,0,0,0.15)",
@@ -282,7 +282,7 @@ export default function TrainsSearch() {
 			>
 				<Stack>
 					<Typography>Class</Typography>
-					<Grid2 container spacing={0} sx={{ width: 250 }}>
+					<Grid2 container spacing={0} sx={{ width: 220 }}>
 						{Object.keys(classes).map((type) => {
 							return (
 								<Grid2 key={type} xs={4}>
@@ -509,10 +509,17 @@ export default function TrainsSearch() {
 									fontSize={14}
 									color="rgba(0,0,0,.64)"
 								>
-									Sorry! No trains found in the selected
-									route. Please choose a different origin and
-									destination & try again
+									Sorry! No trains found for the applied
+									filters.
 								</Typography>
+								<Button
+									variant="contained"
+									disableRipple
+									sx={{ mt: 1 }}
+									onClick={handleResetFiltersButton}
+								>
+									Reset Filters
+								</Button>
 							</Box>
 						</Stack>
 					)}
@@ -575,6 +582,7 @@ function ClassCheckBox({ classes, setClasses, name }) {
 							return newObj;
 						})
 					}
+					sx={{ p: "5px" }}
 				/>
 			}
 			label={<Typography fontSize={"14px"}>{name}</Typography>}

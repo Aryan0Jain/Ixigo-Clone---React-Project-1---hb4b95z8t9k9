@@ -147,6 +147,9 @@
 .hotel-search-pannel .MuiInputBase-root:hover .MuiOutlinedInput-notchedOutline {
 	border-color: rgba(0, 0, 0, 0.2);
 }
+.hotel-booking .MuiInputBase-root:hover .MuiOutlinedInput-notchedOutline {
+	border-width: 2px;
+}
 .hotel-main-pannel
 	.MuiInputBase-root.Mui-focused
 	.MuiOutlinedInput-notchedOutline {
@@ -154,12 +157,15 @@
 }
 .hotel-search-pannel
 	.MuiInputBase-root.Mui-focused
-	.MuiOutlinedInput-notchedOutline {
+	.MuiOutlinedInput-notchedOutline
+/* .hotel-booking .MuiInputBase-root.Mui-focused .MuiOutlinedInput-notchedOutline */ {
 	border-color: #0770e4;
 }
 
 .hotel-search-pannel .Mui-focused .MuiInputLabel-outlined,
-.hotel-search-pannel .Mui-focused.MuiInputLabel-outlined {
+.hotel-search-pannel .Mui-focused.MuiInputLabel-outlined
+/* .hotel-booking .Mui-focused .MuiInputLabel-outlined,
+.hotel-booking .Mui-focused.MuiInputLabel-outlined */ {
 	color: #0770e4 !important;
 }
 /* .hotel-loader {

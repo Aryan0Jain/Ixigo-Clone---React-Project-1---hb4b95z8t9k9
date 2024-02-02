@@ -67,14 +67,33 @@ export default function HotelSearchProvider({ children }) {
 			setIsLoading(false);
 		}
 	}
-	async function bookHotel(id, depDate, arrDate) {
+	async function getHotelData(id) {
+		try {
+			const data = await (
+				await fetch(
+					`https://academics.newtonschool.co/api/v1/bookingportals/hotel/${id}`,
+					{
+						method: "GET",
+						headers: {
+							"Content-Type": "application/json",
+							projectID: projectID,
+						},
+					}
+				)
+			).json();
+			return data.data;
+		} catch (error) {
+			return null;
+		}
+	}
+	async function bookHotel(id, checkin, checkout) {
 		const JWT = JSON.parse(localStorage.getItem("authToken"));
 		const body = {
 			bookingType: "hotel",
 			bookingDetails: {
 				hotelId: id,
-				startdate: depDate.toJSON(),
-				endDate: arrDate.toJSON(),
+				startdate: checkin.toJSON(),
+				endDate: checkout.toJSON(),
 			},
 		};
 		try {
@@ -107,6 +126,7 @@ export default function HotelSearchProvider({ children }) {
 		bookHotel,
 		checkoutDate,
 		setCheckoutDate,
+		getHotelData,
 	};
 	return (
 		<HotelSearchContext.Provider value={{ ...provider }}>

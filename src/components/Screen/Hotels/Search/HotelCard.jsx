@@ -5,8 +5,14 @@ import { IoCheckmarkSharp } from "react-icons/io5";
 import { IoKeySharp } from "react-icons/io5";
 import { CURRENCY_FORMATTER } from "../../../../utils";
 import { HOTEL_AMENITIES } from "../../../../constants";
-
-export default function HotelCard({ hotelData, checkinDate }) {
+function getRating(rating) {
+	if (rating >= 9) return "Exceptional";
+	if (rating >= 8) return "Excellent";
+	if (rating >= 7) return "Very Good";
+	if (rating >= 6) return "Good";
+	return "Pleasant";
+}
+export default function HotelCard({ hotelData, checkinDate, handleBook }) {
 	const {
 		amenities,
 		avgCostPerNight,
@@ -71,7 +77,9 @@ export default function HotelCard({ hotelData, checkinDate }) {
 						>
 							{(rating * 1.9).toFixed(1)}
 						</Typography>
-						<Typography fontWeight={600}>Excellent</Typography>
+						<Typography fontWeight={600}>
+							{getRating((rating * 1.9).toFixed(1))}
+						</Typography>
 					</Stack>
 					<Stack
 						direction={"row"}
@@ -187,6 +195,7 @@ export default function HotelCard({ hotelData, checkinDate }) {
 								bgcolor: "rgb(253, 148, 61)",
 							},
 						}}
+						onClick={() => handleBook(_id)}
 					>
 						Book Now
 					</Button>

@@ -357,14 +357,9 @@ export default function FlightsSearchDesktop() {
 						)}
 					</ToggleButtonGroup>
 				</Stack>
-				<Stack>
+				<Stack sx={{ width: "200px" }}>
 					<Typography>Airlines</Typography>
-					<Grid2
-						container
-						spacing={0}
-						// sx={{ width: "250px" }}
-						className="airlines"
-					>
+					<Grid2 container spacing={0} className="airlines">
 						{AIRLINES_INFO.map(({ name, key }) => {
 							return (
 								<Grid2 xs={6} key={key}>
@@ -383,6 +378,7 @@ export default function FlightsSearchDesktop() {
 														return newAirlines;
 													})
 												}
+												sx={{ p: 1 }}
 											/>
 										}
 										label={
@@ -437,17 +433,6 @@ export default function FlightsSearchDesktop() {
 						sx={{ mt: 1 }}
 						gap={1}
 					>
-						<Button
-							onClick={handleFilters}
-							disableRipple
-							variant="contained"
-							sx={{ px: 4, fontWeight: 700 }}
-						>
-							Apply
-						</Button>
-						<Button onClick={handleResetFilters}>
-							Reset Filters
-						</Button>
 						<FormControl sx={{ width: "150px", p: 0 }}>
 							<InputLabel>Sort</InputLabel>
 							<Select
@@ -477,6 +462,17 @@ export default function FlightsSearchDesktop() {
 								)}
 							</Select>
 						</FormControl>
+						<Button
+							onClick={handleFilters}
+							disableRipple
+							variant="contained"
+							sx={{ px: 4, fontWeight: 700 }}
+						>
+							Apply
+						</Button>
+						<Button onClick={handleResetFilters}>
+							Reset Filters
+						</Button>
 					</Stack>
 				</Stack>
 			</Stack>

@@ -96,6 +96,24 @@ export const HOTEL_COST_FREQUENCY = [
 	56, 66, 92, 89, 115, 114, 95, 102, 109, 78, 60, 46, 38, 12, 13, 9, 1, 3, 1,
 	0, 0, 0, 0, 0, 0, 0,
 ];
+export const CHILD_AND_EXTRA_BEDS = [
+	{
+		head: "Infant 0-1 year(s)",
+		body: "Stay for free if using existing bedding. Note, if you need a cot there may be an extra charge.",
+	},
+	{
+		head: "Children 2-5 year(s)",
+		body: "Must use an extra bed which will incur an additional charge.",
+	},
+	{
+		head: "Guests above 6 year(s)",
+		body: "Must use an extra bed which will incur an additional charge.",
+	},
+	{
+		head: "Other",
+		body: "Extra beds are dependent on the room you choose. Please check the individual room capacity for more details.",
+	},
+];
 export const FLIGHT_SEARCH_PANNEL_SPECIAL_FARES = [
 	{
 		logo: specialFareSVG1,
