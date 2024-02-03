@@ -908,11 +908,11 @@ export const LOCATIONS = [
 	},
 ];
 export const POPULAR_DESTINATIONS = [
-	{
-		city: "New Delhi",
-		state: "DELHI",
-		img: popularDestinationImg1,
-	},
+	// {
+	// 	city: "New Delhi",
+	// 	state: "DELHI",
+	// 	img: popularDestinationImg1,
+	// },
 	{
 		city: "Mumbai",
 		state: "MAHARASHTRA",

@@ -1,15 +1,29 @@
 import { Container, IconButton, Stack, Typography } from "@mui/material";
 import React, { useState } from "react";
-import { POPULAR_DESTINATIONS } from "../../../constants";
+import { LOCATIONS, POPULAR_DESTINATIONS } from "../../../constants";
 import { IoIosArrowBack } from "react-icons/io";
 import { IoIosArrowForward } from "react-icons/io";
+import dayjs from "dayjs";
+import { useNavigate } from "react-router-dom";
+import { useHotelSearchContext } from "../../../Contexts/HotelSearchProvider";
 const PopularDestinations = () => {
 	const [index, setIndex] = useState(0);
+	const navigate = useNavigate();
+	const { setLocation } = useHotelSearchContext();
 	function setPrevIndex() {
 		if (index > 0) setIndex((prev) => prev - 1);
 	}
 	function setNextIndex() {
-		if (index < 4) setIndex((prev) => prev + 1);
+		if (index < 3) setIndex((prev) => prev + 1);
+	}
+	function handleCardClick(city) {
+		setLocation(LOCATIONS.findIndex((item) => item.city === city));
+		const url = `/hotels/search?location=${city}&from=${new dayjs()
+			.add(7, "day")
+			.toJSON()}&to=${new dayjs()
+			.add(8, "day")
+			.toJSON()}&guests=${2}&rooms=${1}`;
+		navigate(url);
 	}
 	return (
 		<Container
@@ -32,7 +46,7 @@ const PopularDestinations = () => {
 					<IoIosArrowBack color="rgba(7,112,228,.7)" size="18" />
 				</IconButton>
 			)}
-			{index < 4 && (
+			{index < 3 && (
 				<IconButton
 					onClick={setNextIndex}
 					disableRipple
@@ -78,7 +92,9 @@ const PopularDestinations = () => {
 								borderRadius: "20px",
 								flexShrink: 0,
 								color: "#FFF",
+								cursor: "pointer",
 							}}
+							onClick={() => handleCardClick(city)}
 							className="hotel-popular-destination"
 						>
 							<img

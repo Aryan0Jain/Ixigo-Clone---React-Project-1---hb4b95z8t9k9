@@ -22,7 +22,7 @@ export default function DeskTopCarousel() {
 					disableRipple
 					className="left-button"
 				>
-					<FaArrowLeft color="black" />
+					<FaArrowLeft color="black" size={16} />
 				</IconButton>
 			)}
 			{index < 8 && (
@@ -31,7 +31,7 @@ export default function DeskTopCarousel() {
 					disableRipple
 					className="right-button"
 				>
-					<FaArrowRight color="black" />
+					<FaArrowRight color="black" size={16} />
 				</IconButton>
 			)}
 			<Typography align="center" variant="h5">
