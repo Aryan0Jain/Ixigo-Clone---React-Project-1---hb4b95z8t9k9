@@ -51,7 +51,13 @@ export default function HotelBooking() {
 	]);
 	const [email, setEmail] = useState(user?.email ?? "");
 	function isvalidName(name) {
-		if (name && name.length >= 3 && name.length <= 20) return true;
+		if (
+			name &&
+			name.length >= 1 &&
+			name.length <= 20 &&
+			name.match(/\d/) === null
+		)
+			return true;
 		return false;
 	}
 	function handleChangeTitle(e, v) {
@@ -221,7 +227,7 @@ export default function HotelBooking() {
 								helperText={
 									isvalidName(names[0])
 										? ""
-										: "Your first name should have 3-20 characters"
+										: "Your first name should have 1-20 characters and should contain no digits"
 								}
 							/>
 							<TextField
@@ -248,7 +254,7 @@ export default function HotelBooking() {
 								helperText={
 									isvalidName(names[1])
 										? ""
-										: "Your last name should have 3-20 characters"
+										: "Your last name should have 1-20 characters and should contain no digits"
 								}
 							/>
 							<TextField

@@ -160,7 +160,7 @@ export default function FlightBooking() {
 					setErrorMessage("Please select your title!");
 					return;
 				}
-				if (firstName.length < 4) {
+				if (firstName === "") {
 					const element = document.getElementById(
 						passgengerIDs[i].firstNameID
 					);
@@ -169,7 +169,7 @@ export default function FlightBooking() {
 					setErrorMessage("Please enter a valid first name!");
 					return;
 				}
-				if (lastName.length < 4) {
+				if (lastName === "") {
 					const element = document.getElementById(
 						passgengerIDs[i].lastNameID
 					);

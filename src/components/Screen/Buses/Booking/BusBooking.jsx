@@ -53,6 +53,7 @@ export default function BusBooking() {
 		("" + (duration % 60)).padStart(2, "0") +
 		" hrs";
 	const [travellers, setTravellers] = useState([]);
+	const [tempNationality, setTempNationality] = useState(0);
 	const [anchorEl, setAnchorEl] = useState(null);
 	const [errorMesaage, setErrorMessage] = useState("");
 	const [bookingWait, setBookingWait] = useState({
@@ -69,16 +70,28 @@ export default function BusBooking() {
 		return date.format("ddd, DD MMM");
 	}
 	function handleAddTraveller() {
-		if (nameRef.current.value.length < 4) {
+		if (nameRef.current.value === "") {
 			setAnchorEl(nameRef.current);
 			nameRef.current.focus();
 			setErrorMessage("Please Enter a valid name!");
+			return;
+		}
+		if (nameRef.current.value.match(/\d/) !== null) {
+			setAnchorEl(nameRef.current);
+			nameRef.current.focus();
+			setErrorMessage("Name cannot have digits!");
 			return;
 		}
 		if (ageRef.current.value === "") {
 			setAnchorEl(ageRef.current);
 			ageRef.current.focus();
 			setErrorMessage("Please Enter Traveller's age!");
+			return;
+		}
+		if (ageRef.current.value < 0 || ageRef.current.value > 150) {
+			setAnchorEl(ageRef.current);
+			ageRef.current.focus();
+			setErrorMessage("Age must be between 0 to 150");
 			return;
 		}
 		if (!nationalityRef.current.value) {
@@ -101,6 +114,7 @@ export default function BusBooking() {
 		nameRef.current.value = "";
 		ageRef.current.value = "";
 		setGender("male");
+		setTempNationality(0);
 	}
 	function isValidPincode(code) {
 		return code.length == 6 && code[0] != "0";
@@ -338,8 +352,20 @@ export default function BusBooking() {
 								</RadioGroup>
 							</FormControl>
 							<Autocomplete
+								disableClearable
 								options={COUNTRIES}
 								getOptionLabel={(option) => option}
+								value={COUNTRIES[tempNationality]}
+								onChange={(e, v) => {
+									setAnchorEl(null);
+									setTempNationality(
+										v
+											? COUNTRIES.findIndex(
+													(item) => item === v
+											  )
+											: null
+									);
+								}}
 								renderInput={(params) => (
 									<TextField
 										{...params}
@@ -362,9 +388,6 @@ export default function BusBooking() {
 									"& input": {
 										fontSize: 14,
 									},
-								}}
-								onChange={(e, v) => {
-									setAnchorEl(null);
 								}}
 							/>
 							<Button

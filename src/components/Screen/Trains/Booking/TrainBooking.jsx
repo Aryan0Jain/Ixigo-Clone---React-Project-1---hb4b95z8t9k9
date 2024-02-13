@@ -46,6 +46,7 @@ export default function TrainBooking() {
 	const [travellers, setTravellers] = useState([]);
 	const [anchorEl, setAnchorEl] = useState(null);
 	const [errorMesaage, setErrorMessage] = useState("");
+	const [tempNationality, setTempNationality] = useState(0);
 	const [bookingWait, setBookingWait] = useState({
 		startWaiting: false,
 		recieved: false,
@@ -61,16 +62,28 @@ export default function TrainBooking() {
 		return `${dateArr[0]}, ${dateArr[1]} ${dateArr[2]}`;
 	}
 	function handleAddTraveller() {
-		if (nameRef.current.value.length < 4) {
+		if (nameRef.current.value === "") {
 			setAnchorEl(nameRef.current);
 			nameRef.current.focus();
 			setErrorMessage("Please Enter a valid name!");
+			return;
+		}
+		if (nameRef.current.value.match(/\d/) !== null) {
+			setAnchorEl(nameRef.current);
+			nameRef.current.focus();
+			setErrorMessage("Name cannot have digits!");
 			return;
 		}
 		if (ageRef.current.value === "") {
 			setAnchorEl(ageRef.current);
 			ageRef.current.focus();
 			setErrorMessage("Please Enter Traveller's age!");
+			return;
+		}
+		if (ageRef.current.value < 0 || ageRef.current.value > 150) {
+			setAnchorEl(ageRef.current);
+			ageRef.current.focus();
+			setErrorMessage("Age must be between 0 to 150");
 			return;
 		}
 		if (!nationalityRef.current.value) {
@@ -92,6 +105,7 @@ export default function TrainBooking() {
 		});
 		nameRef.current.value = "";
 		ageRef.current.value = "";
+		setTempNationality(0);
 		setGender("male");
 	}
 	function isValidPincode(code) {
@@ -354,9 +368,21 @@ export default function TrainBooking() {
 								</RadioGroup>
 							</FormControl>
 							<Autocomplete
-								key={new Date().getTime()}
+								// key={new Date().getTime()}
+								disableClearable
 								options={COUNTRIES}
 								getOptionLabel={(option) => option}
+								value={COUNTRIES[tempNationality]}
+								onChange={(e, v) => {
+									setAnchorEl(null);
+									setTempNationality(
+										v
+											? COUNTRIES.findIndex(
+													(item) => item === v
+											  )
+											: null
+									);
+								}}
 								renderInput={(params) => (
 									<TextField
 										{...params}
@@ -379,9 +405,6 @@ export default function TrainBooking() {
 									"& input": {
 										fontSize: 14,
 									},
-								}}
-								onChange={(e, v) => {
-									setAnchorEl(null);
 								}}
 							/>
 							<Button

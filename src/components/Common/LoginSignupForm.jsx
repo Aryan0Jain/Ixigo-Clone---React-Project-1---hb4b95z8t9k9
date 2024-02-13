@@ -65,6 +65,7 @@ function LogInTab() {
 	const [errorMesaage, setErrorMessage] = useState("");
 	const loginEmailRef = useRef();
 	const loginPasswordRef = useRef();
+	const loginButtonRef = useRef();
 	async function handleLoginButton(e) {
 		e.preventDefault();
 		if (loginEmailRef.current.value === "") {
@@ -92,8 +93,8 @@ function LogInTab() {
 		logIn(user).then((res) => {
 			if (res && res.message == "Incorrect EmailId or Password") {
 				setErrorMessage("Incorrect EmailId or Password");
-				loginEmailRef.current.focus();
-				setAnchorEl(loginEmailRef.current);
+				// loginEmailRef.current.focus();
+				setAnchorEl(loginButtonRef.current);
 				return;
 			} else {
 				setShowLoginSignupForm(false);
@@ -128,10 +129,10 @@ function LogInTab() {
 				variant="standard"
 				type="password"
 			/>
-			<Button type="submit" sx={{ ...buttonSX }}>
+			<Button ref={loginButtonRef} type="submit" sx={{ ...buttonSX }}>
 				Login
 			</Button>
-			<Box>
+			<Box sx={{ mt: 2 }}>
 				<Typography variant="caption" color="rgba(0,0,0,0.74)">
 					By signing up, I understand & agree to ixigo terms of use
 					and privacy policy
@@ -149,7 +150,13 @@ function LogInTab() {
 				anchorEl={anchorEl}
 				sx={{ zIndex: 2000 }}
 			>
-				<Box sx={{ ...popperSX }} textAlign={"center"}>
+				<Box
+					sx={{
+						...popperSX,
+						mt: anchorEl === loginButtonRef.current ? 1.5 : 0,
+					}}
+					textAlign={"center"}
+				>
 					<BiSolidError size="15px" />{" "}
 					<Typography fontSize={12}>{errorMesaage}</Typography>
 				</Box>
@@ -301,11 +308,7 @@ function CustomTabPanel(props) {
 
 	return (
 		<div role="tabpanel" hidden={value !== index} {...other}>
-			{value === index && (
-				<Box sx={{ p: 3 }}>
-					{children}
-				</Box>
-			)}
+			{value === index && <Box sx={{ p: 3 }}>{children}</Box>}
 		</div>
 	);
 }
@@ -319,39 +322,37 @@ export default function LoginSignupForm() {
 	const handleOpen = () => setShowLoginSignupForm(true);
 	const handleClose = () => setShowLoginSignupForm(false);
 	return (
-		
-			<Modal
-				open={showLoginSignupForm}
-				onClose={handleClose}
-				disableScrollLock
-				keepMounted
-			>
-				<Stack sx={style} direction={"row"}>
-					<img src={loginSignupImg} style={{ width: "300px" }} />
-					<Stack
-						className="signup-login-form"
-						direction={"column"}
-						sx={{ px: 6, py: 1, width: "500px" }}
+		<Modal
+			open={showLoginSignupForm}
+			onClose={handleClose}
+			disableScrollLock
+			keepMounted
+		>
+			<Stack sx={style} direction={"row"}>
+				<img src={loginSignupImg} style={{ width: "300px" }} />
+				<Stack
+					className="signup-login-form"
+					direction={"column"}
+					sx={{ px: 6, py: 1, width: "500px" }}
+				>
+					<Tabs
+						variant="fullWidth"
+						textColor="secondary"
+						indicatorColor="secondary"
+						value={tab}
+						onChange={handleChange}
 					>
-						<Tabs
-							variant="fullWidth"
-							textColor="secondary"
-							indicatorColor="secondary"
-							value={tab}
-							onChange={handleChange}
-						>
-							<Tab disableRipple label="LogIn" />
-							<Tab disableRipple label="SignUp" />
-						</Tabs>
-						<CustomTabPanel value={tab} index={0}>
-							<LogInTab handleModalClose={handleClose} />
-						</CustomTabPanel>
-						<CustomTabPanel value={tab} index={1}>
-							<SignUpTab handleModalClose={handleClose} />
-						</CustomTabPanel>
-					</Stack>
+						<Tab disableRipple label="LogIn" />
+						<Tab disableRipple label="SignUp" />
+					</Tabs>
+					<CustomTabPanel value={tab} index={0}>
+						<LogInTab handleModalClose={handleClose} />
+					</CustomTabPanel>
+					<CustomTabPanel value={tab} index={1}>
+						<SignUpTab handleModalClose={handleClose} />
+					</CustomTabPanel>
 				</Stack>
-			</Modal>
-		
+			</Stack>
+		</Modal>
 	);
 }

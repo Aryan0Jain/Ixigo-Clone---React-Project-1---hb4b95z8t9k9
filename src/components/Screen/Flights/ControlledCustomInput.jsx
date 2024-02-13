@@ -4,6 +4,7 @@ import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import React from "react";
 import { AIRPORTS, FLIGHT_PASSENGERS } from "../../../constants";
+import { FILTER_AIRPORTS } from "../../../utils";
 
 const ControlledCustomInput = React.forwardRef(
 	(
@@ -18,6 +19,7 @@ const ControlledCustomInput = React.forwardRef(
 						disablePortal
 						disableClearable
 						openOnFocus
+						filterOptions={FILTER_AIRPORTS}
 						options={AIRPORTS}
 						value={AIRPORTS[value]}
 						ref={ref}
