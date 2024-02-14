@@ -19,9 +19,9 @@ import { FaArrowRightLong } from "react-icons/fa6";
 
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import Travellers from "./Travellers";
-import BookingModal from "../../../Common/BookingModal";
 import { useTrainSearchContext } from "../../../../Contexts/TrainSearchProvider";
 import { COUNTRIES } from "../../../../constants";
+import { usePaymentContext } from "../../../../Contexts/PaymentContextProvider";
 
 export default function TrainBooking() {
 	const [searchParams] = useSearchParams();
@@ -47,11 +47,12 @@ export default function TrainBooking() {
 	const [anchorEl, setAnchorEl] = useState(null);
 	const [errorMesaage, setErrorMessage] = useState("");
 	const [tempNationality, setTempNationality] = useState(0);
-	const [bookingWait, setBookingWait] = useState({
-		startWaiting: false,
-		recieved: false,
-		message: "",
-	});
+	const {
+		paymentIsPending,
+		setPaymentisPending,
+		setAmount,
+		setBookingFunction,
+	} = usePaymentContext();
 	const { bookTrain } = useTrainSearchContext();
 	const user = JSON.parse(localStorage.getItem("userDetails")) || {};
 	useEffect(() => {
@@ -135,15 +136,22 @@ export default function TrainBooking() {
 			setErrorMessage("Please Enter Email!");
 			return;
 		}
-		setBookingWait((prev) => {
-			return { ...prev, startWaiting: true };
-		});
-		const message = await bookTrain(train_id, depDate, arrDate);
-		setBookingWait((prev) => {
-			setTimeout(() => navigate("/"), 5000);
-			return { ...prev, message: message.message, recieved: true };
-		});
+		setPaymentisPending(true);
+		setAmount(getTotalFare());
+		const bookingFunc = bookTrain.bind(null, train_id, depDate, arrDate);
+		setBookingFunction(bookingFunc);
+		// setBookingWait((prev) => {
+		// 	return { ...prev, startWaiting: true };
+		// });
+		// const message = await bookTrain(train_id, depDate, arrDate);
+		// setBookingWait((prev) => {
+		// 	setTimeout(() => navigate("/"), 5000);
+		// 	return { ...prev, message: message.message, recieved: true };
+		// });
 	}
+	useEffect(() => {
+		if (paymentIsPending) navigate("/payment");
+	}, [paymentIsPending]);
 	return (
 		<Box sx={{ mt: 8.2, width: "100%", mb: 3 }}>
 			<Box
@@ -572,7 +580,6 @@ export default function TrainBooking() {
 					<Typography fontSize={14}>{errorMesaage}</Typography>
 				</Box>
 			</Popper>
-			<BookingModal {...{ bookingWait }} />
 		</Box>
 	);
 }

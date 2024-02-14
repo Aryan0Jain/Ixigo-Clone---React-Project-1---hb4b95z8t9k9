@@ -13,11 +13,11 @@ import { useSearchContext } from "../../../../Contexts/SearchProdiver";
 import ReviewCard from "./ReviewCard";
 import PassengerDetailsCard from "./PassengerDetailsCard";
 import ReviewAndPay from "./ReviewAndPay";
-import BookingModal from "../../../Common/BookingModal";
 import {
 	FLIGHT_BOOKING_PROGRESS_STAGES,
 	AIRPORTS,
 } from "../../../../constants";
+import { usePaymentContext } from "../../../../Contexts/PaymentContextProvider";
 function isValidEmail(email) {
 	const pattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 	return pattern.test(email);
@@ -40,11 +40,12 @@ export default function FlightBooking() {
 	const flight_id = params.details;
 	const departureDate = searchParams.get("date");
 	const travellers = searchParams.get("travellers");
-	const [bookingWait, setBookingWait] = useState({
-		startWaiting: false,
-		recieved: false,
-		message: "",
-	});
+	const {
+		paymentIsPending,
+		setPaymentisPending,
+		setAmount,
+		setBookingFunction,
+	} = usePaymentContext();
 	const [passengerDetails, setPassengerDetails] = useState(
 		Array.from({ length: travellers }).map((_, i) => {
 			return {
@@ -199,15 +200,22 @@ export default function FlightBooking() {
 		}
 	}
 	async function handlePayButton() {
-		setBookingWait((prev) => {
-			return { ...prev, startWaiting: true };
-		});
-		const message = await bookFlight(flight_id, depDate, arrDate);
-		setBookingWait((prev) => {
-			setTimeout(() => navigate("/"), 5000);
-			return { ...prev, message: message.message, recieved: true };
-		});
+		setPaymentisPending(true);
+		setAmount(travellers * ticketPrice + extraCharges);
+		const bookingFunc = bookFlight.bind(null, flight_id, depDate, arrDate);
+		setBookingFunction(bookingFunc);
+		// setBookingWait((prev) => {
+		// 	return { ...prev, startWaiting: true };
+		// });
+		// const message = await bookFlight(flight_id, depDate, arrDate);
+		// setBookingWait((prev) => {
+		// 	setTimeout(() => navigate("/"), 5000);
+		// 	return { ...prev, message: message.message, recieved: true };
+		// });
 	}
+	useEffect(() => {
+		if (paymentIsPending) navigate("/payment");
+	}, [paymentIsPending]);
 
 	return (
 		<Box sx={{ mt: 8.2, width: "100%" }}>
@@ -499,7 +507,6 @@ export default function FlightBooking() {
 					<Typography fontSize={14}>{errorMesaage}</Typography>
 				</Box>
 			</Popper>
-			<BookingModal {...{ bookingWait }} />
 		</Box>
 	);
 }

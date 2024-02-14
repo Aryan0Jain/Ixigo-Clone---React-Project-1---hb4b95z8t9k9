@@ -11,14 +11,14 @@ import {
 	Typography,
 } from "@mui/material";
 import dayjs from "dayjs";
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { CURRENCY_FORMATTER, IS_VALID_EMAIL } from "../../../../utils";
 import { COUNTRIES } from "../../../../constants";
-import BookingModal from "../../../Common/BookingModal";
 import { useHotelSearchContext } from "../../../../Contexts/HotelSearchProvider";
 import { PiDoorOpenDuotone } from "react-icons/pi";
 import { MdOutlinePeopleAlt } from "react-icons/md";
+import { usePaymentContext } from "../../../../Contexts/PaymentContextProvider";
 
 export default function HotelBooking() {
 	const params = useParams();
@@ -33,12 +33,17 @@ export default function HotelBooking() {
 	const cost = +searchParams.get("cost");
 	const nights = checkout.diff(checkin, "day");
 	const hotel = JSON.parse(searchParams.get("hotel"));
-	console.log(hotel);
-	const [bookingWait, setBookingWait] = useState({
-		startWaiting: false,
-		recieved: false,
-		message: "",
-	});
+	const {
+		paymentIsPending,
+		setPaymentisPending,
+		setAmount,
+		setBookingFunction,
+	} = usePaymentContext();
+	// const [bookingWait, setBookingWait] = useState({
+	// 	startWaiting: false,
+	// 	recieved: false,
+	// 	message: "",
+	// });
 	const firstNameRef = useRef();
 	const lastNameRef = useRef();
 	const emailRef = useRef();
@@ -83,15 +88,22 @@ export default function HotelBooking() {
 			emailRef.current.focus();
 			return;
 		}
-		setBookingWait((prev) => {
-			return { ...prev, startWaiting: true };
-		});
-		const message = await bookHotel(hotelID, checkin, checkout);
-		setBookingWait((prev) => {
-			setTimeout(() => navigate("/"), 5000);
-			return { ...prev, message: message.message, recieved: true };
-		});
+		setPaymentisPending(true);
+		setAmount(cost * rooms * nights * 1.18);
+		const bookingFunc = bookHotel.bind(null, hotelID, checkin, checkout);
+		setBookingFunction(bookingFunc);
+		// setBookingWait((prev) => {
+		// 	return { ...prev, startWaiting: true };
+		// });
+		// const message = await bookHotel(hotelID, checkin, checkout);
+		// setBookingWait((prev) => {
+		// 	setTimeout(() => navigate("/"), 5000);
+		// 	return { ...prev, message: message.message, recieved: true };
+		// });
 	}
+	useEffect(() => {
+		if (paymentIsPending) navigate("/payment");
+	}, [paymentIsPending]);
 	return (
 		<Container sx={{ mt: 10, py: 3 }}>
 			<Stack direction={"row"} gap={3}>
@@ -366,7 +378,6 @@ export default function HotelBooking() {
 					</Stack>
 				</Stack>
 			</Stack>
-			<BookingModal {...{ bookingWait }} />
 		</Container>
 	);
 }

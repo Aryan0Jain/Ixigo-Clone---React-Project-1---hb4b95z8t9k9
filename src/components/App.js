@@ -24,6 +24,8 @@ import HotelSearchProvider from "../Contexts/HotelSearchProvider.jsx";
 import HotelsSearch from "./Screen/Hotels/Search/Search.jsx";
 import HotelDetail from "./Screen/Hotels/HotelDetail/HotelDetail.jsx";
 import HotelBooking from "./Screen/Hotels/HotelBooking/HotelBooking.jsx";
+import Payment from "./Screen/Payment/Payment.jsx";
+import PaymentContextProvider from "../Contexts/PaymentContextProvider.jsx";
 
 function App() {
 	return (
@@ -35,66 +37,72 @@ function App() {
 							<TrainSearchProvider>
 								<BusSearchProvider>
 									<HotelSearchProvider>
-										<Navbar />
-										<Routes>
-											<Route
-												path="/"
-												element={<Flights />}
-											/>
-											<Route
-												path="/flights"
-												element={<Flights />}
-											/>
-											<Route
-												path="/flights/search"
-												element={<FlightSearch />}
-											/>
-											<Route
-												path="/flights/booking/:progress/:details"
-												element={<FlightBooking />}
-											/>
-											<Route
-												path="/trains"
-												element={<Trains />}
-											/>
-											<Route
-												path="/trains/search"
-												element={<TrainsSearch />}
-											/>
-											<Route
-												path="/trains/booking/:details"
-												element={<TrainBooking />}
-											/>
-											<Route
-												path="/buses"
-												element={<Buses />}
-											/>
-											<Route
-												path="/buses/search"
-												element={<BusSearch />}
-											/>
-											<Route
-												path="/buses/booking/:details"
-												element={<BusBooking />}
-											/>
-											<Route
-												path="/hotels"
-												element={<Hotels />}
-											/>
-											<Route
-												path="/hotels/search"
-												element={<HotelsSearch />}
-											/>
-											<Route
-												path="/hotels/:id"
-												element={<HotelDetail />}
-											/>
-											<Route
-												path="/hotels/booking/:details"
-												element={<HotelBooking />}
-											/>
-										</Routes>
-										<Footer />
+										<PaymentContextProvider>
+											<Navbar />
+											<Routes>
+												<Route
+													path="/"
+													element={<Flights />}
+												/>
+												<Route
+													path="/flights"
+													element={<Flights />}
+												/>
+												<Route
+													path="/flights/search"
+													element={<FlightSearch />}
+												/>
+												<Route
+													path="/flights/booking/:progress/:details"
+													element={<FlightBooking />}
+												/>
+												<Route
+													path="/trains"
+													element={<Trains />}
+												/>
+												<Route
+													path="/trains/search"
+													element={<TrainsSearch />}
+												/>
+												<Route
+													path="/trains/booking/:details"
+													element={<TrainBooking />}
+												/>
+												<Route
+													path="/buses"
+													element={<Buses />}
+												/>
+												<Route
+													path="/buses/search"
+													element={<BusSearch />}
+												/>
+												<Route
+													path="/buses/booking/:details"
+													element={<BusBooking />}
+												/>
+												<Route
+													path="/hotels"
+													element={<Hotels />}
+												/>
+												<Route
+													path="/hotels/search"
+													element={<HotelsSearch />}
+												/>
+												<Route
+													path="/hotels/:id"
+													element={<HotelDetail />}
+												/>
+												<Route
+													path="/hotels/booking/:details"
+													element={<HotelBooking />}
+												/>
+												<Route
+													path="/payment"
+													element={<Payment />}
+												/>
+											</Routes>
+											<Footer />
+										</PaymentContextProvider>
 									</HotelSearchProvider>
 								</BusSearchProvider>
 							</TrainSearchProvider>
