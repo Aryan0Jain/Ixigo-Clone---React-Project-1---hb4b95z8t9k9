@@ -142,9 +142,9 @@ export default function Payment() {
 		}
 	}
 	useEffect(() => {
-		// if (!paymentIsPending) {
-		// 	navigate("/");
-		// }
+		if (!paymentIsPending) {
+			navigate("/");
+		}
 		setPaymentisPending(false);
 		const id = setInterval(() => {
 			setTime((prev) => (prev === 0 ? 0 : prev - 1));
