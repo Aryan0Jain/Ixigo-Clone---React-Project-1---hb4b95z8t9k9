@@ -25,7 +25,6 @@ import UpiTab from "./UpiTab";
 export default function Payment() {
 	const { bookingFunction, paymentIsPending, setPaymentisPending, amount } =
 		usePaymentContext();
-	// console.dir(bookingFunction);
 	const navigate = useNavigate();
 	const [time, setTime] = useState(300);
 	const [tabIndex, setTabIndex] = useState(0);
