@@ -146,16 +146,9 @@ export default function BusBooking() {
 		}
 		setPaymentisPending(true);
 		setAmount(getTotalFare());
-		const bookingFunc = bookBus.bind(null, bus_id, depDate, arrDate);
-		setBookingFunction(bookingFunc);
-		// setBookingWait((prev) => {
-		// 	return { ...prev, startWaiting: true };
-		// });
-		// const message = await bookBus(bus_id, depDate, arrDate);
-		// setBookingWait((prev) => {
-		// 	setTimeout(() => navigate("/"), 5000);
-		// 	return { ...prev, message: message.message, recieved: true };
-		// });
+		setBookingFunction({
+			bookingFunction: bookBus.bind(null, bus_id, depDate, arrDate),
+		});
 	}
 	useEffect(() => {
 		if (paymentIsPending) navigate("/payment");

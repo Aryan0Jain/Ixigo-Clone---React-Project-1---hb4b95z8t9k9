@@ -138,16 +138,9 @@ export default function TrainBooking() {
 		}
 		setPaymentisPending(true);
 		setAmount(getTotalFare());
-		const bookingFunc = bookTrain.bind(null, train_id, depDate, arrDate);
-		setBookingFunction(bookingFunc);
-		// setBookingWait((prev) => {
-		// 	return { ...prev, startWaiting: true };
-		// });
-		// const message = await bookTrain(train_id, depDate, arrDate);
-		// setBookingWait((prev) => {
-		// 	setTimeout(() => navigate("/"), 5000);
-		// 	return { ...prev, message: message.message, recieved: true };
-		// });
+		setBookingFunction({
+			bookingFunction: bookTrain.bind(null, train_id, depDate, arrDate),
+		});
 	}
 	useEffect(() => {
 		if (paymentIsPending) navigate("/payment");

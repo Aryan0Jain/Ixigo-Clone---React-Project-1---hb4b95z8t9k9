@@ -38,6 +38,9 @@ export default function HotelBooking() {
 		setPaymentisPending,
 		setAmount,
 		setBookingFunction,
+		setID,
+		setStartDate,
+		setEndDate,
 	} = usePaymentContext();
 	// const [bookingWait, setBookingWait] = useState({
 	// 	startWaiting: false,
@@ -88,18 +91,11 @@ export default function HotelBooking() {
 			emailRef.current.focus();
 			return;
 		}
-		setPaymentisPending(true);
 		setAmount(cost * rooms * nights * 1.18);
-		const bookingFunc = bookHotel.bind(null, hotelID, checkin, checkout);
-		setBookingFunction(bookingFunc);
-		// setBookingWait((prev) => {
-		// 	return { ...prev, startWaiting: true };
-		// });
-		// const message = await bookHotel(hotelID, checkin, checkout);
-		// setBookingWait((prev) => {
-		// 	setTimeout(() => navigate("/"), 5000);
-		// 	return { ...prev, message: message.message, recieved: true };
-		// });
+		setBookingFunction({
+			bookingFunction: bookHotel.bind(null, hotelID, checkin, checkout),
+		});
+		setPaymentisPending(true);
 	}
 	useEffect(() => {
 		if (paymentIsPending) navigate("/payment");

@@ -5,7 +5,7 @@ export const usePaymentContext = () => {
 	return useContext(PaymentContext);
 };
 export default function PaymentContextProvider({ children }) {
-	const [bookingFunction, setBookingFunction] = useState();
+	const [bookingFunction, setBookingFunction] = useState({});
 	const [paymentIsPending, setPaymentisPending] = useState(false);
 	const [amount, setAmount] = useState(0);
 	const context = {

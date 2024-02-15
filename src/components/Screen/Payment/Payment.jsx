@@ -14,24 +14,18 @@ import React, { useEffect, useState } from "react";
 import { FaRegClock } from "react-icons/fa6";
 import { UpiActive, Upi } from "./Upi";
 import { CardActive, Card } from "./Card";
-import phonepeImg from "../../../assests/images/payment/jp_phonepe.png";
-import googlepayImg from "../../../assests/images/payment/jp_googlepay.png";
-import paytmImg from "../../../assests/images/payment/jp_paytm.png";
-import cred_logoImg from "../../../assests/images/payment/jp_cred_logo.png";
-import amazonpayImg from "../../../assests/images/payment/jp_amazonpay.png";
-import bhimImg from "../../../assests/images/payment/jp_bhim.png";
-import qr from "../../../assests/images/payment/qr.gif";
+
 import inputCard from "../../../assests/images/payment/jp_default_card.png";
-import barcode from "../../../assests/images/payment/barcode.gif";
-import { IoIosArrowBack } from "react-icons/io";
 import { usePaymentContext } from "../../../Contexts/PaymentContextProvider";
 import BookingModal from "../../Common/BookingModal";
 import { Link, useNavigate } from "react-router-dom";
 import { CURRENCY_FORMATTER } from "../../../utils";
+import UpiTab from "./UpiTab";
 
 export default function Payment() {
 	const { bookingFunction, paymentIsPending, setPaymentisPending, amount } =
 		usePaymentContext();
+	// console.dir(bookingFunction);
 	const navigate = useNavigate();
 	const [time, setTime] = useState(300);
 	const [tabIndex, setTabIndex] = useState(0);
@@ -43,11 +37,12 @@ export default function Payment() {
 	const [generatingQR, setGeneratingQR] = useState(false);
 	const [qrCodeGenerated, setQRCodeGenerated] = useState(false);
 	const [showModal, setShowModal] = useState(false);
-	const [upiID, setUPIID] = useState("");
 	const [cardNumber, setCardNumber] = useState("");
 	const [cardHasError, setCardHasError] = useState(false);
-	const [expiryDate, setExpiryDate] = useState("");
-	const [dateHasError, setDateHasError] = useState(false);
+	const [expiryMonth, setExpiryMonth] = useState("");
+	const [expiryYear, setExpiryYear] = useState("");
+	const [monthHasError, setMonthHasError] = useState(false);
+	const [yearHasError, setYearHasError] = useState(false);
 	const [cvv, setCvv] = useState("");
 	const [cvvHasError, setCvvHasError] = useState(false);
 	const [showErrorModal, setShowErrorModal] = useState(false);
@@ -63,12 +58,20 @@ export default function Payment() {
 		setBookingWait((prev) => {
 			return { ...prev, startWaiting: true };
 		});
-		const message = await bookingFunction();
+		const message = await bookingFunction.bookingFunction();
 		setBookingWait((prev) => {
-			setTimeout(() => navigate("/"), 5000);
 			return { ...prev, message: message.message, recieved: true };
 		});
 	}
+	useEffect(() => {
+		let id;
+		if (bookingWait.recieved) {
+			id = setTimeout(() => navigate("/"), 5000);
+		}
+		return () => {
+			clearTimeout(id);
+		};
+	}, [bookingWait]);
 	function handleTabChange(e, v) {
 		setTabIndex(v);
 	}
@@ -76,39 +79,59 @@ export default function Payment() {
 		setPaymentisPending(false);
 	}
 	function isValidCardNumber(num) {
-		return num.match(/^[0-9]{16}$/);
+		return num.match(/^\d{4} \d{4} \d{4} \d{4}$/);
 	}
 	function handleCardChange(e) {
-		setCardNumber(e.target.value);
-		if (e.target.value !== "" && !isValidCardNumber(e.target.value)) {
+		setCardHasError(false);
+		const input = e.target.value.replace(/\D/g, "");
+		let updatedInput = "";
+		for (let i = 0; i < input.length; i++) {
+			if (i > 0 && i % 4 == 0) updatedInput += " ";
+			updatedInput += input.at(i);
+		}
+		setCardNumber(updatedInput);
+		if (!isValidCardNumber(e.target.value)) {
 			setCardHasError(true);
 		}
-		if (e.target.value !== "" && isValidCardNumber(e.target.value)) {
-			setCardHasError(false);
+	}
+	function isValidExpiryMonth(month) {
+		return month >= 1 && month <= 12;
+	}
+	function isValidExpiryYear(year) {
+		const curYear = new Date().getFullYear();
+		return year >= curYear && year <= curYear + 10;
+	}
+	function handleExpiryMonthChange(e) {
+		// if (e.target.value > 12) e.target.value = 12;
+		setMonthHasError(false);
+		if (e.target.value <= 0) e.target.value = "";
+		if (e.target.value.length > 2)
+			e.target.value = e.target.value.slice(0, 2);
+		setExpiryMonth(e.target.value);
+		if (!isValidExpiryMonth(e.target.value)) {
+			setMonthHasError(true);
 		}
 	}
-	function isValidExpiryDate(date) {
-		return date.match(/^(0[1-9]|1[0-2])\/?([0-9]{4}|[0-9]{2})$/);
-	}
-	function handleDateChange(e) {
-		setExpiryDate(e.target.value);
-		if (e.target.value !== "" && !isValidExpiryDate(e.target.value)) {
-			setDateHasError(true);
-		}
-		if (e.target.value !== "" && isValidExpiryDate(e.target.value)) {
-			setDateHasError(false);
+	function handleExpiryYearChange(e) {
+		setYearHasError(false);
+		if (e.target.value <= 0) e.target.value = 0;
+		if (e.target.value.length > 4)
+			e.target.value = e.target.value.slice(0, 4);
+		setExpiryYear(e.target.value);
+		if (!isValidExpiryYear(e.target.value)) {
+			setYearHasError(true);
 		}
 	}
 	function isValidCVV(num) {
 		return num.match(/^[0-9]{3}$/);
 	}
 	function handleCvvChange(e) {
+		setCvvHasError(false);
+		if (e.target.value.length > 3)
+			e.target.value = e.target.value.slice(0, 3);
 		setCvv(e.target.value);
-		if (e.target.value !== "" && !isValidCVV(e.target.value)) {
+		if (!isValidCVV(e.target.value)) {
 			setCvvHasError(true);
-		}
-		if (e.target.value !== "" && isValidCVV(e.target.value)) {
-			setCvvHasError(false);
 		}
 	}
 	function handleGenerateQRCode() {
@@ -119,19 +142,10 @@ export default function Payment() {
 			}, 2000);
 		}
 	}
-	function handleGoBack() {
-		setShowModal(true);
-	}
-	function closeModal() {
-		setShowModal(false);
-	}
-	function isValidUPI(upi) {
-		return upi.match(/^[0-9A-Za-z.-]{2,256}@[A-Za-z]{2,64}$/);
-	}
 	useEffect(() => {
-		if (!paymentIsPending) {
-			navigate("/");
-		}
+		// if (!paymentIsPending) {
+		// 	navigate("/");
+		// }
 		setPaymentisPending(false);
 		const id = setInterval(() => {
 			setTime((prev) => (prev === 0 ? 0 : prev - 1));
@@ -244,336 +258,22 @@ export default function Payment() {
 							}}
 						/>
 					</Tabs>
-					<Box
-						role="tabpanel"
-						hidden={tabIndex !== 0}
-						sx={{ width: "100%" }}
-					>
-						{tabIndex === 0 && (
-							<>
-								{!qrCodeGenerated && (
-									<Stack>
-										<Stack
-											direction={"row"}
-											justifyContent={"space-between"}
-										>
-											<Stack
-												gap={2}
-												sx={{ p: 3 }}
-												alignItems={"flex-start"}
-											>
-												<Typography fontWeight={600}>
-													Pay by an UPI app
-												</Typography>
-												<Typography
-													fontSize={14}
-													color={"rgba(0,0,0,0.6)"}
-												>
-													Scan the QR using any UPI
-													app on your mobile phone
-													line PhonePe, Paytm,
-													GooglePay, BHIM, etc
-												</Typography>
-												<Stack
-													direction={"row"}
-													gap={2}
-												>
-													{[
-														phonepeImg,
-														googlepayImg,
-														paytmImg,
-														cred_logoImg,
-														amazonpayImg,
-														bhimImg,
-													].map((src, index) => {
-														return (
-															<img
-																src={src}
-																key={index}
-																alt={src}
-																style={{
-																	width: "32px",
-																}}
-															/>
-														);
-													})}
-												</Stack>
-												<Box>
-													<Button
-														disableRipple
-														variant="contained"
-														onClick={
-															handleGenerateQRCode
-														}
-														sx={{
-															px: 3,
-															backgroundColor:
-																"transparent",
-															background: `linear-gradient(to right, #aa1004 50%, #ec5b24 50%)`,
-															backgroundSize:
-																"200% 100%",
-															backgroundPosition:
-																generatingQR
-																	? "left bottom"
-																	: "right bottom",
-															transition:
-																"all 2s ease-out",
-															cursor: generatingQR
-																? "default"
-																: "pointer",
-														}}
-													>
-														{generatingQR
-															? "Generating QR"
-															: "Generate QR Code"}
-													</Button>
-												</Box>
-											</Stack>
-											<img
-												src={qr}
-												style={{
-													width: "30%",
-													objectFit: "contain",
-												}}
-											/>
-										</Stack>
-										<Divider
-											flexItem
-											orientation="horizontal"
-											sx={{
-												fontSize: "13px",
-												color: "rgba(0,0,0,0.3)",
-												"&::before": {
-													borderColor:
-														"rgba(0,0,0,0.2)",
-													borderWidth: "1.25px",
-												},
-												"&::after": {
-													borderColor:
-														"rgba(0,0,0,0.2)",
-													borderWidth: "1.25px",
-												},
-											}}
-										>
-											OR
-										</Divider>
-										<Stack
-											gap={1.5}
-											sx={{ p: 3 }}
-											alignItems={"flex-start"}
-										>
-											<Typography color={"#ec5b24"}>
-												UPI ID / VPA
-											</Typography>
-											<TextField
-												variant="standard"
-												InputLabelProps={{
-													shrink: true,
-												}}
-												helperText="A collect request will be sent to this UPI ID"
-												placeholder="Username@bankname"
-												sx={{ width: 400 }}
-												FormHelperTextProps={{
-													sx: { fontSize: "16px" },
-												}}
-												value={upiID}
-												onChange={(e) =>
-													setUPIID(e.target.value)
-												}
-											/>
-											<Button
-												disableRipple
-												disabled={!isValidUPI(upiID)}
-												variant="contained"
-												onClick={handlePay}
-												sx={{ px: 5 }}
-											>
-												Verify and Pay
-											</Button>
-										</Stack>
-									</Stack>
-								)}
-								{qrCodeGenerated && (
-									<Stack
-										sx={{
-											mt: 2,
-											mb: 4,
-											px: 2,
-											width: "100%",
-										}}
-										gap={3}
-									>
-										<Stack
-											direction={"row"}
-											gap={2}
-											alignItems={"center"}
-											sx={{
-												p: 2,
-												width: "fit-content",
-												cursor: "pointer",
-												":hover": {
-													bgcolor: "rgba(0,0,0,0.05)",
-												},
-												borderRadius: 1,
-												transition: "background 200ms",
-											}}
-											onClick={() => {
-												handleGoBack();
-											}}
-										>
-											<IoIosArrowBack
-												size={24}
-												color="rgba(0,0,0,0.6)"
-											/>
-											<Typography
-												fontSize={16}
-												color="rgba(0,0,0,0.8)"
-											>
-												Go Back
-											</Typography>
-										</Stack>
-										<Modal open={showModal}>
-											<Box
-												sx={{
-													position: "absolute",
-													top: "50%",
-													left: "50%",
-													transform:
-														"translate(-50%, -50%)",
-													width: "fit-content",
-													bgcolor: "background.paper",
-													boxShadow: 24,
-													p: 5,
-													textAlign: "center",
-													borderRadius: 2,
-												}}
-											>
-												<Typography
-													sx={{ mb: 2 }}
-													fontSize={18}
-												>
-													Do you want to cancel the
-													transaction?
-												</Typography>
-												<Stack
-													direction={"row"}
-													justifyContent={
-														"space-between"
-													}
-												>
-													<Button
-														onClick={() => {
-															closeModal();
-															setQRCodeGenerated(
-																false
-															);
-															setGeneratingQR(
-																false
-															);
-														}}
-													>
-														Yes
-													</Button>
-													<Button
-														variant="contained"
-														onClick={() => {
-															closeModal();
-														}}
-													>
-														No
-													</Button>
-												</Stack>
-											</Box>
-										</Modal>
-										<Stack
-											gap={1.5}
-											alignItems={"center"}
-											sx={{
-												width: "100%",
-												width: 350,
-												mx: "auto",
-											}}
-										>
-											<img
-												src={barcode}
-												alt="barcode to scan"
-												style={{
-													width: 250,
-												}}
-											/>
-											<Typography>
-												Scan QR and Pay
-											</Typography>
-											<Stack direction={"row"} gap={2}>
-												{[
-													phonepeImg,
-													googlepayImg,
-													paytmImg,
-													cred_logoImg,
-													amazonpayImg,
-													bhimImg,
-												].map((src, index) => {
-													return (
-														<img
-															src={src}
-															key={index}
-															alt={src}
-															style={{
-																width: "32px",
-															}}
-														/>
-													);
-												})}
-											</Stack>
-											<Typography
-												fontSize={14}
-												fontWeight={600}
-												textAlign={"center"}
-											>
-												Scan the QR using any UPI app on
-												your mobile phone line PhonePe,
-												Paytm, GooglePay, BHIM, etc
-											</Typography>
-										</Stack>
-										<Stack gap={1} alignItems={"center"}>
-											<Button
-												variant="contained"
-												disableRipple
-												sx={{ mb: 2 }}
-												onClick={handlePay}
-											>
-												Pay
-											</Button>
-											<Box
-												sx={{
-													width: "100%",
-													height: 5,
-													bgcolor: "rgba(0,0,0,0.1)",
-													borderRadius: 2,
-												}}
-											>
-												<Box
-													sx={{
-														width: `${time / 3}%`,
-														height: "100%",
-														bgcolor: "#ec5b24",
-														borderRadius: 2,
-														transition: "all 1s",
-													}}
-												></Box>
-											</Box>
-											<Typography>
-												Approve Payment within:{" "}
-												<span>
-													{mins}:{secs}
-												</span>
-											</Typography>
-										</Stack>
-									</Stack>
-								)}
-							</>
-						)}
-					</Box>
+					<UpiTab
+						{...{
+							tabIndex,
+							qrCodeGenerated,
+							showModal,
+							handleGenerateQRCode,
+							generatingQR,
+							setShowModal,
+							handlePay,
+							time,
+							mins,
+							secs,
+							setQRCodeGenerated,
+							setGeneratingQR,
+						}}
+					/>
 					<Box
 						role="tabpanel"
 						hidden={tabIndex !== 1}
@@ -614,39 +314,63 @@ export default function Payment() {
 											/>
 										),
 									}}
+									inputProps={{ maxLength: 19 }}
 								/>
-								<Stack direction={"row"} gap={2} sx={{ px: 3 }}>
-									<TextField
-										error={dateHasError}
-										helperText={
-											dateHasError ? "Invalid Date" : ""
-										}
-										label="Expiry Date"
-										placeholder="MM/YY"
-										variant="standard"
-										value={expiryDate}
-										onChange={handleDateChange}
-										InputLabelProps={{ shrink: true }}
-									/>
-									<TextField
-										error={cvvHasError}
-										helperText={
-											cvvHasError ? "Invalid CVV" : ""
-										}
-										type="password"
-										label="CVV"
-										placeholder="XXX"
-										variant="standard"
-										InputLabelProps={{ shrink: true }}
-										value={cvv}
-										onChange={handleCvvChange}
-									/>
+								<Stack sx={{ px: 3 }}>
+									<Typography>Expiry Date</Typography>
+									<Stack direction={"row"} gap={2}>
+										<TextField
+											error={monthHasError}
+											helperText={
+												monthHasError
+													? "Invalid Date"
+													: ""
+											}
+											label="Month"
+											placeholder="MM"
+											variant="standard"
+											value={expiryMonth}
+											onChange={handleExpiryMonthChange}
+											type="number"
+											InputLabelProps={{ shrink: true }}
+										/>
+										<TextField
+											error={yearHasError}
+											helperText={
+												yearHasError
+													? "Invalid Year"
+													: ""
+											}
+											type="number"
+											label="Year"
+											placeholder="YYYY"
+											variant="standard"
+											value={expiryYear}
+											onChange={handleExpiryYearChange}
+											InputLabelProps={{ shrink: true }}
+										/>
+									</Stack>
 								</Stack>
+								<TextField
+									sx={{ ml: 3 }}
+									error={cvvHasError}
+									helperText={
+										cvvHasError ? "Invalid CVV" : ""
+									}
+									type="password"
+									label="CVV"
+									placeholder="XXX"
+									variant="standard"
+									InputLabelProps={{ shrink: true }}
+									value={cvv}
+									onChange={handleCvvChange}
+								/>
 								<Button
 									disabled={
 										!(
 											isValidCardNumber(cardNumber) &&
-											isValidExpiryDate(expiryDate) &&
+											isValidExpiryMonth(expiryMonth) &&
+											isValidExpiryYear(expiryYear) &&
 											isValidCVV(cvv)
 										)
 									}

@@ -202,8 +202,9 @@ export default function FlightBooking() {
 	async function handlePayButton() {
 		setPaymentisPending(true);
 		setAmount(travellers * ticketPrice + extraCharges);
-		const bookingFunc = bookFlight.bind(null, flight_id, depDate, arrDate);
-		setBookingFunction(bookingFunc);
+		setBookingFunction({
+			bookingFunction: bookFlight.bind(null, flight_id, depDate, arrDate),
+		});
 		// setBookingWait((prev) => {
 		// 	return { ...prev, startWaiting: true };
 		// });
