@@ -1,3 +1,7 @@
+/*******************************
+ Forms for login and signup.
+ *******************************/
+
 import React, { useRef, useState } from "react";
 import { useAuthContext } from "../../Contexts/AuthProvider";
 
@@ -44,7 +48,6 @@ const popperSX = {
 	border: 0,
 	py: 0.5,
 	px: 1,
-
 	fontSize: "12px",
 	bgcolor: "rgba(255,0,0,0.1)",
 	color: "#D50000",
@@ -303,6 +306,7 @@ function SignUpTab() {
 		</form>
 	);
 }
+// Pannel so that user can switch between login and signup tabs
 function CustomTabPanel(props) {
 	const { children, value, index, ...other } = props;
 

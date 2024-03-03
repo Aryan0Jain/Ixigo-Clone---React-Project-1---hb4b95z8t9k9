@@ -1,6 +1,11 @@
-import Box from "@mui/material/Box"
-import Modal from "@mui/material/Modal"
-import Typography from "@mui/material/Typography"
+/************
+ This is the component which will be displayed when the user
+ initiates the payment.
+*************/
+
+import Box from "@mui/material/Box";
+import Modal from "@mui/material/Modal";
+import Typography from "@mui/material/Typography";
 import React from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { IoIosThumbsUp } from "react-icons/io";
@@ -20,9 +25,11 @@ export default function BookingModal({ bookingWait }) {
 	return (
 		<Modal open={bookingWait.startWaiting} onClose={() => navigate("/")}>
 			<Box sx={modalStyle}>
+				{/* Loader until booking is pending */}
 				{!bookingWait.recieved && (
 					<div className="booking-loader">Booking</div>
 				)}
+				{/* If booking is successful */}
 				{bookingWait.recieved &&
 					bookingWait.message == "Booking successful" && (
 						<Box
@@ -65,6 +72,7 @@ export default function BookingModal({ bookingWait }) {
 							</Typography>
 						</Box>
 					)}
+				{/* If booking is failed */}
 				{bookingWait.recieved &&
 					bookingWait.message != "Booking successful" && (
 						<Box

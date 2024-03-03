@@ -1,3 +1,6 @@
+/*******************************
+ Navigation bar so that users can navigate through the website
+ *******************************/
 import AppBar from "@mui/material/AppBar";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
@@ -89,6 +92,7 @@ export default function Navbar() {
 							style={{ width: "60px", verticalAlign: "middle" }}
 						/>
 					</NavLink>
+					{/* SideBar for small screens */}
 					<Menu
 						anchorEl={anchorElNav}
 						anchorOrigin={{

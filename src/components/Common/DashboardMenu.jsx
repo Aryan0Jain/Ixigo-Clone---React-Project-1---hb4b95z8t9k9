@@ -1,3 +1,6 @@
+/**********************
+ When user is logged in this component will be displayed in place of login/signup
+ *********************/
 import React, { useEffect, useRef, useState } from "react";
 import Button from "@mui/material/Button";
 import ClickAwayListener from "@mui/material/ClickAwayListener";
@@ -27,7 +30,6 @@ export default function DashboardMenu() {
 		if (anchorRef.current && anchorRef.current.contains(event.target)) {
 			return;
 		}
-
 		setOpen(false);
 	};
 	const prevOpen = useRef(open);
