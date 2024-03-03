@@ -113,7 +113,7 @@ export default function Payment() {
 	}
 	function handleExpiryYearChange(e) {
 		setYearHasError(false);
-		if (e.target.value <= 0) e.target.value = 0;
+		if (e.target.value <= 0) e.target.value = "";
 		if (e.target.value.length > 4)
 			e.target.value = e.target.value.slice(0, 4);
 		setExpiryYear(e.target.value);
@@ -322,7 +322,7 @@ export default function Payment() {
 											error={monthHasError}
 											helperText={
 												monthHasError
-													? "Invalid Date"
+													? "Invalid Month"
 													: ""
 											}
 											label="Month"
