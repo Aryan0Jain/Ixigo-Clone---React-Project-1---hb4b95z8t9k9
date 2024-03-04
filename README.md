@@ -1,70 +1,52 @@
-# Getting Started with Create React App
+# Ixigo Clone - React Project
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+Welcome to the Ixigo Clone React project! This project aims to replicate the functionality of the popular booking platform Ixigo. Users can perform various actions such as login/signup, search for flights, trains, buses, and hotels, as well as book tickets and hotel rooms.
 
-## Available Scripts
+## Hosted Link
 
-In the project directory, you can run:
+You can access the project via the following link: [Ixigo Clone](https://ixigo-clone-by-aryan.netlify.app/)
 
-### `npm start`
+## GitHub Repository
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+You can find the source code for this project on GitHub: [Ixigo Clone GitHub Repository](https://github.com/Aryan0Jain/Ixigo-Clone---React-Project-1---hb4b95z8t9k9)
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+## Tech Stack
 
-### `npm test`
+-   HTML
+-   CSS
+-   JavaScript
+-   React
+-   Material UI
+-   React Router
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Features
 
-### `npm run build`
+-   **User Authentication:** Users can sign up for an account or log in with existing credentials.
+-   **Flight Search:** Search for available flights between two cities/airports.
+-   **Train Search:** Find trains between two cities or junctions.
+-   **Bus Search:** Search for buses between two cities.
+-   **Hotel Search:** Look for hotels in a specific city.
+-   **Ticket Booking:** Users can book tickets for flights, trains, and buses.
+-   **Hotel Room Booking:** Book rooms in hotels.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+## Installation
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+To run this project locally, follow these steps:
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+1. Clone the repository:
 
-### `npm run eject`
+### git clone git@github.com:Aryan0Jain/Ixigo-Clone---React-Project-1---hb4b95z8t9k9.git
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+2. Navigate into the project directory:
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+### cd Ixigo-Clone---React-Project-1---hb4b95z8t9k9
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+3. Install dependencies:
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+### npm install
 
-## Learn More
+4. Start the development server:
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+### npm start
 
-To learn React, check out the [React documentation](https://reactjs.org/).
-
-### Code Splitting
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
-
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+5. Open your browser and visit [http://localhost:3000](http://localhost:3000) to view the application.
